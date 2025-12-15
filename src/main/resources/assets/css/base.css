@@ -1,0 +1,11 @@
+* {
+  -fx-underline: none;
+}
+
+.root {
+  -fx-font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  -fx-font-size: 14px;
+  -fx-font-weight: normal;
+  -fx-antialiasing: subpixel;
+  -fx-font-smoothing-type: gray;
+}
