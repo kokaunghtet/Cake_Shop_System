@@ -1,21 +1,107 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.Blend?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 
-
-<StackPane xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <VBox alignment="CENTER" maxHeight="500.0" maxWidth="600.0" minHeight="400.0" minWidth="500.0" prefHeight="500.0" prefWidth="550.0" styleClass="root" StackPane.alignment="CENTER">
-         <children>
-            <Label styleClass="root" text="Hello" VBox.vgrow="ALWAYS">
-               <font>
-                  <Font size="100.0" />
-               </font>
-            </Label>
-         </children>
-      </VBox>
-   </children>
+<StackPane styleClass="root" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.cakeshopsystem.controllers.LoginFormController">
+    <children>
+        <VBox alignment="CENTER" maxHeight="500.0" maxWidth="700.0" minHeight="400.0" minWidth="500.0"
+              prefHeight="400.0" prefWidth="800.0" StackPane.alignment="CENTER">
+            <children>
+                <HBox prefHeight="300.0" styleClass="container">
+                    <children>
+                        <VBox HBox.hgrow="ALWAYS">
+                            <children>
+                                <HBox VBox.vgrow="ALWAYS">
+                                    <children>
+                                        <Label text="Login Form" styleClass="title"/>
+                                    </children>
+                                </HBox>
+                                <HBox VBox.vgrow="SOMETIMES">
+                                    <children>
+                                        <GridPane alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" vgap="15.0"
+                                                  HBox.hgrow="ALWAYS">
+                                            <columnConstraints>
+                                                <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES"
+                                                                   maxWidth="1.7976931348623157E308"/>
+                                            </columnConstraints>
+                                            <rowConstraints>
+                                                <RowConstraints vgrow="SOMETIMES"/>
+                                                <RowConstraints vgrow="SOMETIMES"/>
+                                                <RowConstraints vgrow="SOMETIMES"/>
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                                            </rowConstraints>
+                                            <children>
+                                                <TextField GridPane.rowIndex="1"/>
+                                                <TextField promptText="Username">
+                                                    <padding>
+                                                        <Insets bottom="10.0" left="30.0" right="10.0" top="10.0"/>
+                                                    </padding>
+                                                </TextField>
+                                                <PasswordField promptText="Password" GridPane.rowIndex="1">
+                                                    <opaqueInsets>
+                                                        <Insets/>
+                                                    </opaqueInsets>
+                                                    <padding>
+                                                        <Insets bottom="10.0" left="30.0" right="10.0" top="10.0"/>
+                                                    </padding>
+                                                </PasswordField>
+                                                <Hyperlink text="Forget Password?" GridPane.rowIndex="2"/>
+                                                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+                                                        text="Login" GridPane.rowIndex="3"/>
+                                                <FontAwesomeIconView glyphName="USER" size="24">
+                                                    <GridPane.margin>
+                                                        <Insets left="7.0"/>
+                                                    </GridPane.margin>
+                                                </FontAwesomeIconView>
+                                                <FontAwesomeIconView glyphName="LOCK" size="24" GridPane.rowIndex="1">
+                                                    <GridPane.margin>
+                                                        <Insets left="7.0"/>
+                                                    </GridPane.margin>
+                                                </FontAwesomeIconView>
+                                            </children>
+                                        </GridPane>
+                                    </children>
+                                </HBox>
+                            </children>
+                            <padding>
+                                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+                            </padding>
+                        </VBox>
+                        <VBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                            <children>
+                                <ImageView fitHeight="250.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true"
+                                           VBox.vgrow="ALWAYS">
+                                    <image>
+                                        <Image url="@../images/nub-cat-cake.gif"/>
+                                    </image>
+                                    <effect>
+                                        <Blend/>
+                                    </effect>
+                                </ImageView>
+                            </children>
+                        </VBox>
+                    </children>
+                </HBox>
+            </children>
+            <padding>
+                <Insets bottom="50.0" left="50.0" right="50.0" top="50.0"/>
+            </padding>
+        </VBox>
+    </children>
 </StackPane>
