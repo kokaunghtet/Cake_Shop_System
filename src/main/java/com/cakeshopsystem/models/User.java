@@ -9,6 +9,9 @@ public class User {
     private boolean isActive = true;
     private int roleId;
 
+    public User() {
+    }
+
     public User(int userId, String userName, String email, String password, String imagePath, boolean isActive, int roleId) {
         this.userId = userId;
         this.userName = userName;
@@ -77,14 +80,6 @@ public class User {
 
     @Override
     public String toString() {
-        return "User{" +
-                "userId=" + userId +
-                ", userName='" + userName + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", imagePath='" + imagePath + '\'' +
-                ", isActive=" + isActive +
-                ", roleId=" + roleId +
-                '}';
+        return "User{" + "userId=" + userId + ", userName='" + userName + '\'' + ", email='" + email + '\'' + ", password='" + password + '\'' + ", imagePath='" + imagePath + '\'' + ", isActive=" + isActive + ", roleId=" + roleId + '}';
     }
 }

@@ -6,6 +6,7 @@ module Cake.Shop.System {
     requires java.sql;
     requires org.kordamp.ikonli.javafx;
     requires io.github.cdimascio.dotenv.java;
+    requires mysql.connector.j;
 
     opens com.cakeshopsystem to javafx.fxml;
     opens com.cakeshopsystem.controllers to javafx.fxml;

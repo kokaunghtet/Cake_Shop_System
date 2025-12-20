@@ -3,27 +3,19 @@ package com.cakeshopsystem.models;
 public class OrderItem {
 
     private int orderItemId;
-    private int orderId;
-    private int productId;
+    private Order order;
+    private Product product;
     private int quantity;
     private double unitPrice;
 
     public OrderItem(){}
 
-    public OrderItem(int orderId, int orderItemId, int productId, int quantity, double unitPrice) {
-        this.orderId = orderId;
+    public OrderItem(int orderItemId, Order order, Product product, int quantity, double unitPrice) {
         this.orderItemId = orderItemId;
-        this.productId = productId;
+        this.order = order;
+        this.product = product;
         this.quantity = quantity;
         this.unitPrice = unitPrice;
-    }
-
-    public int getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(int orderId) {
-        this.orderId = orderId;
     }
 
     public int getOrderItemId() {
@@ -34,12 +26,20 @@ public class OrderItem {
         this.orderItemId = orderItemId;
     }
 
-    public int getProductId() {
-        return productId;
+    public Order getOrder() {
+        return order;
     }
 
-    public void setProductId(int productId) {
-        this.productId = productId;
+    public void setOrder(Order order) {
+        this.order = order;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
     public int getQuantity() {
@@ -61,9 +61,9 @@ public class OrderItem {
     @Override
     public String toString() {
         return "OrderItem{" +
-                "orderId=" + orderId +
-                ", orderItemId=" + orderItemId +
-                ", productId=" + productId +
+                "orderItemId=" + orderItemId +
+                ", order=" + order +
+                ", product=" + product +
                 ", quantity=" + quantity +
                 ", unitPrice=" + unitPrice +
                 '}';

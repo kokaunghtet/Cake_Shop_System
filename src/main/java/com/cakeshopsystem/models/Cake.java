@@ -1,27 +1,29 @@
 package com.cakeshopsystem.models;
 
+import com.cakeshopsystem.utils.constants.Cake_Shape;
+
 public class Cake {
 
     private int cakeId;
-    private int productId;
+    private Product product;
     private String flavour;
     private String filling;
-    private int cakeTypeId;
+    private CakeType cakeType;
     private int sizeInches;
-    private String shape;
+    private Cake_Shape shape;
     private String decoration;
 
     public Cake(){}
 
-    public Cake(int cakeId, int cakeTypeId, String decoration, String filling, String flavour, int productId, String shape, int sizeInches) {
+    public Cake(int cakeId, Product product, String flavour, String filling, CakeType cakeType, int sizeInches, Cake_Shape shape, String decoration) {
         this.cakeId = cakeId;
-        this.cakeTypeId = cakeTypeId;
-        this.decoration = decoration;
-        this.filling = filling;
+        this.product = product;
         this.flavour = flavour;
-        this.productId = productId;
-        this.shape = shape;
+        this.filling = filling;
+        this.cakeType = cakeType;
         this.sizeInches = sizeInches;
+        this.shape = shape;
+        this.decoration = decoration;
     }
 
     public int getCakeId() {
@@ -32,28 +34,12 @@ public class Cake {
         this.cakeId = cakeId;
     }
 
-    public int getCakeTypeId() {
-        return cakeTypeId;
+    public Product getProduct() {
+        return product;
     }
 
-    public void setCakeTypeId(int cakeTypeId) {
-        this.cakeTypeId = cakeTypeId;
-    }
-
-    public String getDecoration() {
-        return decoration;
-    }
-
-    public void setDecoration(String decoration) {
-        this.decoration = decoration;
-    }
-
-    public String getFilling() {
-        return filling;
-    }
-
-    public void setFilling(String filling) {
-        this.filling = filling;
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
     public String getFlavour() {
@@ -64,20 +50,20 @@ public class Cake {
         this.flavour = flavour;
     }
 
-    public int getProductId() {
-        return productId;
+    public String getFilling() {
+        return filling;
     }
 
-    public void setProductId(int productId) {
-        this.productId = productId;
+    public void setFilling(String filling) {
+        this.filling = filling;
     }
 
-    public String getShape() {
-        return shape;
+    public CakeType getCakeType() {
+        return cakeType;
     }
 
-    public void setShape(String shape) {
-        this.shape = shape;
+    public void setCakeType(CakeType cakeType) {
+        this.cakeType = cakeType;
     }
 
     public int getSizeInches() {
@@ -88,14 +74,30 @@ public class Cake {
         this.sizeInches = sizeInches;
     }
 
+    public Cake_Shape getShape() {
+        return shape;
+    }
+
+    public void setShape(Cake_Shape shape) {
+        this.shape = shape;
+    }
+
+    public String getDecoration() {
+        return decoration;
+    }
+
+    public void setDecoration(String decoration) {
+        this.decoration = decoration;
+    }
+
     @Override
     public String toString() {
         return "Cake{" +
                 "cakeId=" + cakeId +
-                ", productId=" + productId +
+                ", product=" + product +
                 ", flavour='" + flavour + '\'' +
                 ", filling='" + filling + '\'' +
-                ", cakeTypeId=" + cakeTypeId +
+                ", cakeType=" + cakeType +
                 ", sizeInches=" + sizeInches +
                 ", shape='" + shape + '\'' +
                 ", decoration='" + decoration + '\'' +

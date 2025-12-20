@@ -5,47 +5,23 @@ import java.time.LocalDate;
 public class CustomCakeOrder {
 
     private int customCakeOrderId;
-    private int orderId;
-    private int customCakeId;
-    private int bookingId;
+    private Order order;
+    private CustomCake customCake;
+    private Booking booking;
     private LocalDate pickupDate;
     private String customMessage;
     private double additionPrice;
 
     public CustomCakeOrder(){}
 
-    public CustomCakeOrder(double additionPrice, int bookingId, int customCakeId, int customCakeOrderId, String customMessage, int orderId, LocalDate pickupDate) {
-        this.additionPrice = additionPrice;
-        this.bookingId = bookingId;
-        this.customCakeId = customCakeId;
+    public CustomCakeOrder(int customCakeOrderId, Order order, CustomCake customCake, Booking booking, LocalDate pickupDate, String customMessage, double additionPrice) {
         this.customCakeOrderId = customCakeOrderId;
-        this.customMessage = customMessage;
-        this.orderId = orderId;
+        this.order = order;
+        this.customCake = customCake;
+        this.booking = booking;
         this.pickupDate = pickupDate;
-    }
-
-    public double getAdditionPrice() {
-        return additionPrice;
-    }
-
-    public void setAdditionPrice(double additionPrice) {
+        this.customMessage = customMessage;
         this.additionPrice = additionPrice;
-    }
-
-    public int getBookingId() {
-        return bookingId;
-    }
-
-    public void setBookingId(int bookingId) {
-        this.bookingId = bookingId;
-    }
-
-    public int getCustomCakeId() {
-        return customCakeId;
-    }
-
-    public void setCustomCakeId(int customCakeId) {
-        this.customCakeId = customCakeId;
     }
 
     public int getCustomCakeOrderId() {
@@ -56,20 +32,28 @@ public class CustomCakeOrder {
         this.customCakeOrderId = customCakeOrderId;
     }
 
-    public String getCustomMessage() {
-        return customMessage;
+    public Order getOrder() {
+        return order;
     }
 
-    public void setCustomMessage(String customMessage) {
-        this.customMessage = customMessage;
+    public void setOrder(Order order) {
+        this.order = order;
     }
 
-    public int getOrderId() {
-        return orderId;
+    public CustomCake getCustomCake() {
+        return customCake;
     }
 
-    public void setOrderId(int orderId) {
-        this.orderId = orderId;
+    public void setCustomCake(CustomCake customCake) {
+        this.customCake = customCake;
+    }
+
+    public Booking getBooking() {
+        return booking;
+    }
+
+    public void setBooking(Booking booking) {
+        this.booking = booking;
     }
 
     public LocalDate getPickupDate() {
@@ -80,16 +64,32 @@ public class CustomCakeOrder {
         this.pickupDate = pickupDate;
     }
 
+    public String getCustomMessage() {
+        return customMessage;
+    }
+
+    public void setCustomMessage(String customMessage) {
+        this.customMessage = customMessage;
+    }
+
+    public double getAdditionPrice() {
+        return additionPrice;
+    }
+
+    public void setAdditionPrice(double additionPrice) {
+        this.additionPrice = additionPrice;
+    }
+
     @Override
     public String toString() {
         return "CustomCakeOrder{" +
-                "additionPrice=" + additionPrice +
-                ", customCakeOrderId=" + customCakeOrderId +
-                ", orderId=" + orderId +
-                ", customCakeId=" + customCakeId +
-                ", bookingId=" + bookingId +
+                "customCakeOrderId=" + customCakeOrderId +
+                ", order=" + order +
+                ", customCake=" + customCake +
+                ", booking=" + booking +
                 ", pickupDate=" + pickupDate +
                 ", customMessage='" + customMessage + '\'' +
+                ", additionPrice=" + additionPrice +
                 '}';
     }
 }

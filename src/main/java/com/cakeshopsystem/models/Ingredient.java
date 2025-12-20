@@ -1,25 +1,27 @@
 package com.cakeshopsystem.models;
 
+import com.cakeshopsystem.utils.constants.Ingredient_Unit;
+
 public class Ingredient {
 
     private int ingredientId;
-    private String ingerdientName;
-    private String unit;
+    private String ingredientName;
+    private Ingredient_Unit unit;
 
     public Ingredient(){}
 
-    public Ingredient(String ingerdientName, int ingredientId, String unit) {
-        this.ingerdientName = ingerdientName;
+    public Ingredient(String ingredientName, int ingredientId, Ingredient_Unit unit) {
+        this.ingredientName = ingredientName;
         this.ingredientId = ingredientId;
         this.unit = unit;
     }
 
-    public String getIngerdientName() {
-        return ingerdientName;
+    public String getIngredientName() {
+        return ingredientName;
     }
 
-    public void setIngerdientName(String ingerdientName) {
-        this.ingerdientName = ingerdientName;
+    public void setIngredientName(String ingredientName) {
+        this.ingredientName = ingredientName;
     }
 
     public int getIngredientId() {
@@ -30,18 +32,18 @@ public class Ingredient {
         this.ingredientId = ingredientId;
     }
 
-    public String getUnit() {
+    public Ingredient_Unit getUnit() {
         return unit;
     }
 
-    public void setUnit(String unit) {
+    public void setUnit(Ingredient_Unit unit) {
         this.unit = unit;
     }
 
     @Override
     public String toString() {
         return "Ingredient{" +
-                "ingerdientName='" + ingerdientName + '\'' +
+                "ingredientName='" + ingredientName + '\'' +
                 ", ingredientId=" + ingredientId +
                 ", unit='" + unit + '\'' +
                 '}';

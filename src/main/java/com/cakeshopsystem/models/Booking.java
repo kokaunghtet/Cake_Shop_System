@@ -1,27 +1,21 @@
 package com.cakeshopsystem.models;
 
+import com.cakeshopsystem.utils.constants.Booking_Status;
+
 import java.time.LocalDate;
 
 public class Booking {
 
     private int bookingId;
     private LocalDate bookingDate;
-    private String bookingStatus;
+    private Booking_Status bookingStatus;
 
     public Booking(){}
 
-    public Booking(LocalDate bookingDate, int bookingId, String bookingStatus) {
-        this.bookingDate = bookingDate;
+    public Booking(int bookingId, LocalDate bookingDate, Booking_Status bookingStatus) {
         this.bookingId = bookingId;
-        this.bookingStatus = bookingStatus;
-    }
-
-    public LocalDate getBookingDate() {
-        return bookingDate;
-    }
-
-    public void setBookingDate(LocalDate bookingDate) {
         this.bookingDate = bookingDate;
+        this.bookingStatus = bookingStatus;
     }
 
     public int getBookingId() {
@@ -32,20 +26,28 @@ public class Booking {
         this.bookingId = bookingId;
     }
 
-    public String getBookingStatus() {
+    public LocalDate getBookingDate() {
+        return bookingDate;
+    }
+
+    public void setBookingDate(LocalDate bookingDate) {
+        this.bookingDate = bookingDate;
+    }
+
+    public Booking_Status getBookingStatus() {
         return bookingStatus;
     }
 
-    public void setBookingStatus(String bookingStatus) {
+    public void setBookingStatus(Booking_Status bookingStatus) {
         this.bookingStatus = bookingStatus;
     }
 
     @Override
     public String toString() {
         return "Booking{" +
-                "bookingDate=" + bookingDate +
-                ", bookingId=" + bookingId +
-                ", bookingStatus='" + bookingStatus + '\'' +
+                "bookingId=" + bookingId +
+                ", bookingDate=" + bookingDate +
+                ", bookingStatus=" + bookingStatus +
                 '}';
     }
 }

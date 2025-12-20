@@ -5,7 +5,8 @@ public class Role {
     private int roleId;
     private String roleName;
 
-    public Role(){}
+    public Role() {
+    }
 
     public Role(int roleId, String roleName) {
         this.roleId = roleId;
@@ -30,9 +31,6 @@ public class Role {
 
     @Override
     public String toString() {
-        return "Role{" +
-                "roleId=" + roleId +
-                ", roleName='" + roleName + '\'' +
-                '}';
+        return roleName;
     }
 }
