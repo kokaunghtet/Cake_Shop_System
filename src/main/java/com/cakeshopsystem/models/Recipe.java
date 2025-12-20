@@ -3,33 +3,17 @@ package com.cakeshopsystem.models;
 public class Recipe {
 
     private int recipeId;
-    private int cakeId;
-    private int ingredientId;
+    private Cake cake;
+    private Ingredient ingredient;
     private int requiredQuantity;
 
     public Recipe(){}
 
-    public Recipe(int cakeId, int ingredientId, int recipeId, int requiredQuantity) {
-        this.cakeId = cakeId;
-        this.ingredientId = ingredientId;
+    public Recipe(int recipeId, Cake cake, Ingredient ingredient, int requiredQuantity) {
         this.recipeId = recipeId;
+        this.cake = cake;
+        this.ingredient = ingredient;
         this.requiredQuantity = requiredQuantity;
-    }
-
-    public int getCakeId() {
-        return cakeId;
-    }
-
-    public void setCakeId(int cakeId) {
-        this.cakeId = cakeId;
-    }
-
-    public int getIngredientId() {
-        return ingredientId;
-    }
-
-    public void setIngredientId(int ingredientId) {
-        this.ingredientId = ingredientId;
     }
 
     public int getRecipeId() {
@@ -38,6 +22,22 @@ public class Recipe {
 
     public void setRecipeId(int recipeId) {
         this.recipeId = recipeId;
+    }
+
+    public Cake getCake() {
+        return cake;
+    }
+
+    public void setCake(Cake cake) {
+        this.cake = cake;
+    }
+
+    public Ingredient getIngredient() {
+        return ingredient;
+    }
+
+    public void setIngredient(Ingredient ingredient) {
+        this.ingredient = ingredient;
     }
 
     public int getRequiredQuantity() {
@@ -51,9 +51,9 @@ public class Recipe {
     @Override
     public String toString() {
         return "Recipe{" +
-                "cakeId=" + cakeId +
-                ", recipeId=" + recipeId +
-                ", ingredientId=" + ingredientId +
+                "recipeId=" + recipeId +
+                ", cake=" + cake +
+                ", ingredient=" + ingredient +
                 ", requiredQuantity=" + requiredQuantity +
                 '}';
     }

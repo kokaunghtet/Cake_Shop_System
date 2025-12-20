@@ -1,31 +1,24 @@
 package com.cakeshopsystem.models;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class Order {
 
     private int orderId;
-    private LocalDate orderDate;
+    private LocalDateTime orderDate = LocalDateTime.now();
     private double totalAmount;
-    private int userId;
-    private int paymentId;
+    private User user;
+    private Payment payment;
 
     public Order(){}
 
-    public Order(LocalDate orderDate, int orderId, int paymentId, double totalAmount, int userId) {
-        this.orderDate = orderDate;
+    public Order(int orderId, LocalDateTime orderDate, double totalAmount, User user, Payment payment) {
         this.orderId = orderId;
-        this.paymentId = paymentId;
-        this.totalAmount = totalAmount;
-        this.userId = userId;
-    }
-
-    public LocalDate getOrderDate() {
-        return orderDate;
-    }
-
-    public void setOrderDate(LocalDate orderDate) {
         this.orderDate = orderDate;
+        this.totalAmount = totalAmount;
+        this.user = user;
+        this.payment = payment;
     }
 
     public int getOrderId() {
@@ -36,12 +29,12 @@ public class Order {
         this.orderId = orderId;
     }
 
-    public int getPaymentId() {
-        return paymentId;
+    public LocalDateTime getOrderDate() {
+        return orderDate;
     }
 
-    public void setPaymentId(int paymentId) {
-        this.paymentId = paymentId;
+    public void setOrderDate(LocalDateTime orderDate) {
+        this.orderDate = orderDate;
     }
 
     public double getTotalAmount() {
@@ -52,22 +45,30 @@ public class Order {
         this.totalAmount = totalAmount;
     }
 
-    public int getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Payment getPayment() {
+        return payment;
+    }
+
+    public void setPayment(Payment payment) {
+        this.payment = payment;
     }
 
     @Override
     public String toString() {
         return "Order{" +
-                "orderDate=" + orderDate +
-                ", orderId=" + orderId +
+                "orderId=" + orderId +
+                ", orderDate=" + orderDate +
                 ", totalAmount=" + totalAmount +
-                ", userId=" + userId +
-                ", paymentId=" + paymentId +
+                ", user=" + user +
+                ", payment=" + payment +
                 '}';
     }
 }

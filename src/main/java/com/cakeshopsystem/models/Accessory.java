@@ -3,13 +3,13 @@ package com.cakeshopsystem.models;
 public class Accessory {
 
     private int accessoryId;
-    private int productId;
+    private Product product;
 
     public Accessory(){}
 
-    public Accessory(int accessoryId, int cakeId) {
+    public Accessory(int accessoryId, Product product) {
         this.accessoryId = accessoryId;
-        this.productId = cakeId;
+        this.product = product;
     }
 
     public int getAccessoryId() {
@@ -20,19 +20,19 @@ public class Accessory {
         this.accessoryId = accessoryId;
     }
 
-    public int getCakeId() {
-        return productId;
+    public Product getProduct() {
+        return product;
     }
 
-    public void setCakeId(int productId) {
-        this.productId = productId;
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
     @Override
     public String toString() {
         return "Accessory{" +
                 "accessoryId=" + accessoryId +
-                ", cakeId=" + productId +
+                ", product=" + product +
                 '}';
     }
 }

@@ -3,31 +3,15 @@ package com.cakeshopsystem.models;
 public class PrebakedCake {
 
     private int prebakedCakeId;
-    private int cakeId;
+    private Cake cake;
     private boolean isDiy;
 
     public PrebakedCake(){}
 
-    public PrebakedCake(int cakeId, boolean isDiy, int prebakedCakeId) {
-        this.cakeId = cakeId;
-        this.isDiy = isDiy;
+    public PrebakedCake(int prebakedCakeId, Cake cake, boolean isDiy) {
         this.prebakedCakeId = prebakedCakeId;
-    }
-
-    public int getCakeId() {
-        return cakeId;
-    }
-
-    public void setCakeId(int cakeId) {
-        this.cakeId = cakeId;
-    }
-
-    public boolean isDiy() {
-        return isDiy;
-    }
-
-    public void setDiy(boolean diy) {
-        isDiy = diy;
+        this.cake = cake;
+        this.isDiy = isDiy;
     }
 
     public int getPrebakedCakeId() {
@@ -38,11 +22,27 @@ public class PrebakedCake {
         this.prebakedCakeId = prebakedCakeId;
     }
 
+    public Cake getCake() {
+        return cake;
+    }
+
+    public void setCake(Cake cake) {
+        this.cake = cake;
+    }
+
+    public boolean isDiy() {
+        return isDiy;
+    }
+
+    public void setDiy(boolean diy) {
+        isDiy = diy;
+    }
+
     @Override
     public String toString() {
         return "PrebakedCake{" +
-                "cakeId=" + cakeId +
-                ", prebakedCakeId=" + prebakedCakeId +
+                "prebakedCakeId=" + prebakedCakeId +
+                ", cake=" + cake +
                 ", isDiy=" + isDiy +
                 '}';
     }

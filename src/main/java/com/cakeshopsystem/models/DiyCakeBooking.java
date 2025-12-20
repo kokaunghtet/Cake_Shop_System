@@ -1,45 +1,29 @@
 package com.cakeshopsystem.models;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 public class DiyCakeBooking {
 
     private int diyCakeBookingId;
-    private int bookingId;
-    private int customerId;
-    private int prebakedCakeId;
-    private int orderId;
-    private LocalTime startTime;
-    private LocalTime endTime;
+    private Booking booking;
+    private Customer customer;
+    private PrebakedCake prebakedCake;
+    private Order order;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
     private double serviceCharges;
 
     public DiyCakeBooking(){}
 
-    public DiyCakeBooking(int bookingId, int customerId, int diyCakeBookingId, LocalTime endTime, int orderId, int prebakedCakeId, double serviceCharges, LocalTime startTime) {
-        this.bookingId = bookingId;
-        this.customerId = customerId;
+    public DiyCakeBooking(int diyCakeBookingId, Booking booking, Customer customer, PrebakedCake prebakedCake, Order order, LocalDateTime startTime, LocalDateTime endTime, double serviceCharges) {
         this.diyCakeBookingId = diyCakeBookingId;
-        this.endTime = endTime;
-        this.orderId = orderId;
-        this.prebakedCakeId = prebakedCakeId;
-        this.serviceCharges = serviceCharges;
+        this.booking = booking;
+        this.customer = customer;
+        this.prebakedCake = prebakedCake;
+        this.order = order;
         this.startTime = startTime;
-    }
-
-    public int getBookingId() {
-        return bookingId;
-    }
-
-    public void setBookingId(int bookingId) {
-        this.bookingId = bookingId;
-    }
-
-    public int getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(int customerId) {
-        this.customerId = customerId;
+        this.endTime = endTime;
+        this.serviceCharges = serviceCharges;
     }
 
     public int getDiyCakeBookingId() {
@@ -50,28 +34,52 @@ public class DiyCakeBooking {
         this.diyCakeBookingId = diyCakeBookingId;
     }
 
-    public LocalTime getEndTime() {
+    public Booking getBooking() {
+        return booking;
+    }
+
+    public void setBooking(Booking booking) {
+        this.booking = booking;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    public PrebakedCake getPrebakedCake() {
+        return prebakedCake;
+    }
+
+    public void setPrebakedCake(PrebakedCake prebakedCake) {
+        this.prebakedCake = prebakedCake;
+    }
+
+    public Order getOrder() {
+        return order;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(LocalTime endTime) {
+    public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
-    }
-
-    public int getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(int orderId) {
-        this.orderId = orderId;
-    }
-
-    public int getPrebakedCakeId() {
-        return prebakedCakeId;
-    }
-
-    public void setPrebakedCakeId(int prebakedCakeId) {
-        this.prebakedCakeId = prebakedCakeId;
     }
 
     public double getServiceCharges() {
@@ -82,22 +90,14 @@ public class DiyCakeBooking {
         this.serviceCharges = serviceCharges;
     }
 
-    public LocalTime getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(LocalTime startTime) {
-        this.startTime = startTime;
-    }
-
     @Override
     public String toString() {
         return "DiyCakeBooking{" +
-                "bookingId=" + bookingId +
-                ", diyCakeBookingId=" + diyCakeBookingId +
-                ", customerId=" + customerId +
-                ", prebakedCakeId=" + prebakedCakeId +
-                ", orderId=" + orderId +
+                "diyCakeBookingId=" + diyCakeBookingId +
+                ", booking=" + booking +
+                ", customer=" + customer +
+                ", prebakedCake=" + prebakedCake +
+                ", order=" + order +
                 ", startTime=" + startTime +
                 ", endTime=" + endTime +
                 ", serviceCharges=" + serviceCharges +

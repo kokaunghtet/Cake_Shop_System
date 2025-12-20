@@ -1,19 +1,21 @@
 package com.cakeshopsystem.models;
 
+import com.cakeshopsystem.utils.constants.Drinks_Size;
+
 public class Drink {
 
     private int drinkId;
-    private int size;
+    private Drinks_Size size;
     private boolean isCold;
-    private int productId;
+    private Product product;
 
     public Drink(){}
 
-    public Drink(int drinkId, boolean isCold, int productId, int size) {
+    public Drink(int drinkId, Drinks_Size size, boolean isCold, Product product) {
         this.drinkId = drinkId;
-        this.isCold = isCold;
-        this.productId = productId;
         this.size = size;
+        this.isCold = isCold;
+        this.product = product;
     }
 
     public int getDrinkId() {
@@ -24,6 +26,14 @@ public class Drink {
         this.drinkId = drinkId;
     }
 
+    public Drinks_Size getSize() {
+        return size;
+    }
+
+    public void setSize(Drinks_Size size) {
+        this.size = size;
+    }
+
     public boolean isCold() {
         return isCold;
     }
@@ -32,20 +42,12 @@ public class Drink {
         isCold = cold;
     }
 
-    public int getProductId() {
-        return productId;
+    public Product getProduct() {
+        return product;
     }
 
-    public void setProductId(int productId) {
-        this.productId = productId;
-    }
-
-    public int getSize() {
-        return size;
-    }
-
-    public void setSize(int size) {
-        this.size = size;
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
     @Override
@@ -54,7 +56,7 @@ public class Drink {
                 "drinkId=" + drinkId +
                 ", size=" + size +
                 ", isCold=" + isCold +
-                ", productId=" + productId +
+                ", product=" + product +
                 '}';
     }
 }

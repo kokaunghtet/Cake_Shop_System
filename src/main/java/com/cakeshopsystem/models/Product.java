@@ -4,44 +4,20 @@ public class Product {
 
     private int productId;
     private String productName;
-    private int categoryId;
+    private Category category;
     private double sellPrice;
-    private boolean isActive;
-    private String imgPath;
+    private boolean isActive = true;
+    private String imgPath = null;
 
     public Product(){}
 
-    public Product(int categoryId, String imgPath, boolean isActive, int productId, String productName, double sellPrice) {
-        this.categoryId = categoryId;
-        this.imgPath = imgPath;
-        this.isActive = isActive;
+    public Product(int productId, String productName, Category category, double sellPrice, boolean isActive, String imgPath) {
         this.productId = productId;
         this.productName = productName;
+        this.category = category;
         this.sellPrice = sellPrice;
-    }
-
-    public int getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(int categoryId) {
-        this.categoryId = categoryId;
-    }
-
-    public String getImgPath() {
-        return imgPath;
-    }
-
-    public void setImgPath(String imgPath) {
+        this.isActive = isActive;
         this.imgPath = imgPath;
-    }
-
-    public boolean isActive() {
-        return isActive;
-    }
-
-    public void setActive(boolean active) {
-        isActive = active;
     }
 
     public int getProductId() {
@@ -60,6 +36,14 @@ public class Product {
         this.productName = productName;
     }
 
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
     public double getSellPrice() {
         return sellPrice;
     }
@@ -68,12 +52,28 @@ public class Product {
         this.sellPrice = sellPrice;
     }
 
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
+    public String getImgPath() {
+        return imgPath;
+    }
+
+    public void setImgPath(String imgPath) {
+        this.imgPath = imgPath;
+    }
+
     @Override
     public String toString() {
         return "Product{" +
-                "categoryId=" + categoryId +
-                ", productId=" + productId +
+                "productId=" + productId +
                 ", productName='" + productName + '\'' +
+                ", category=" + category +
                 ", sellPrice=" + sellPrice +
                 ", isActive=" + isActive +
                 ", imgPath='" + imgPath + '\'' +
