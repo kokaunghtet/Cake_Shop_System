@@ -1,0 +1,40 @@
+.snack-bar {
+    -fx-background-radius: 10;
+    -fx-padding: 10 15;
+    -fx-background-color: -fx-primary-color;
+    -fx-effect: -fx-strong-shadow;
+}
+
+.snack-title {
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+}
+
+.snack-message {
+    -fx-text-fill: -fx-text-color;
+    -fx-font-size: 12px;
+}
+
+/* Types */
+.snack-info    { -fx-background-color: #2196F3; }
+.snack-success { -fx-background-color: #4CAF50; }
+.snack-warning { -fx-background-color: #FFC107; }
+.snack-error   { -fx-background-color: #F44336; }
+
+/* Buttons */
+.snack-action1 {
+    -fx-background-color: transparent;
+    -fx-text-fill: #BB86FC;
+    -fx-font-weight: bold;
+}
+.snack-action2 {
+    -fx-background-color: transparent;
+    -fx-text-fill: #03DAC6;
+    -fx-font-weight: bold;
+}
+.snack-close {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
