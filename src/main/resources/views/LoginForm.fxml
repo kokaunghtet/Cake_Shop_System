@@ -18,18 +18,18 @@
 <?import javafx.scene.layout.VBox?>
 
 <StackPane styleClass="root" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1"
-           fx:controller="com.cakeshopsystem.controllers.LoginFormController">
+           fx:controller="com.cakeshopsystem.controllers.LoginFormController" fx:id="loginStackPane">
     <children>
-        <VBox alignment="CENTER" maxHeight="500.0" maxWidth="700.0" minHeight="400.0" minWidth="500.0"
-              prefHeight="400.0" prefWidth="800.0" StackPane.alignment="CENTER">
+        <VBox alignment="CENTER" maxHeight="500.0" maxWidth="700.0" minHeight="400.0" minWidth="400.0"
+              prefHeight="500.0" prefWidth="800.0" StackPane.alignment="CENTER">
             <children>
-                <HBox prefHeight="300.0" styleClass="container">
+                <HBox prefHeight="350.0" styleClass="container">
                     <children>
                         <VBox HBox.hgrow="ALWAYS">
                             <children>
                                 <HBox VBox.vgrow="ALWAYS">
                                     <children>
-                                        <Label text="Login Form" styleClass="title"/>
+                                        <Label styleClass="title" text="Login Form"/>
                                     </children>
                                 </HBox>
                                 <HBox VBox.vgrow="SOMETIMES">
@@ -47,23 +47,32 @@
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
                                             </rowConstraints>
                                             <children>
-                                                <TextField GridPane.rowIndex="1"/>
-                                                <TextField promptText="Username">
+                                                <TextField fx:id="usernameTextField" promptText="Username"
+                                                           styleClass="login-text-field">
                                                     <padding>
-                                                        <Insets bottom="10.0" left="30.0" right="10.0" top="10.0"/>
+                                                        <Insets/>
                                                     </padding>
                                                 </TextField>
-                                                <PasswordField promptText="Password" GridPane.rowIndex="1">
+                                                <PasswordField fx:id="pswPasswordField" promptText="Password"
+                                                               styleClass="login-password-field" GridPane.rowIndex="1">
                                                     <opaqueInsets>
                                                         <Insets/>
                                                     </opaqueInsets>
                                                     <padding>
-                                                        <Insets bottom="10.0" left="30.0" right="10.0" top="10.0"/>
+                                                        <Insets/>
                                                     </padding>
                                                 </PasswordField>
-                                                <Hyperlink text="Forget Password?" GridPane.rowIndex="2"/>
-                                                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false"
-                                                        text="Login" GridPane.rowIndex="3"/>
+                                                <TextField fx:id="pswTextField" promptText="Password"
+                                                           styleClass="login-text-field" visible="false"
+                                                           GridPane.rowIndex="1">
+                                                    <opaqueInsets>
+                                                        <Insets/>
+                                                    </opaqueInsets>
+                                                </TextField>
+                                                <Hyperlink fx:id="forgetPasswordLink" text="Forget Password?"
+                                                           GridPane.rowIndex="2"/>
+                                                <Button fx:id="loginButton" maxWidth="1.7976931348623157E308"
+                                                        mnemonicParsing="false" text="Login" GridPane.rowIndex="3"/>
                                                 <FontAwesomeIconView glyphName="USER" size="24">
                                                     <GridPane.margin>
                                                         <Insets left="7.0"/>
@@ -72,6 +81,12 @@
                                                 <FontAwesomeIconView glyphName="LOCK" size="24" GridPane.rowIndex="1">
                                                     <GridPane.margin>
                                                         <Insets left="7.0"/>
+                                                    </GridPane.margin>
+                                                </FontAwesomeIconView>
+                                                <FontAwesomeIconView fx:id="eyeSlashToggleButton" glyphName="EYE_SLASH"
+                                                                     size="24" GridPane.rowIndex="1">
+                                                    <GridPane.margin>
+                                                        <Insets left="220.0"/>
                                                     </GridPane.margin>
                                                 </FontAwesomeIconView>
                                             </children>

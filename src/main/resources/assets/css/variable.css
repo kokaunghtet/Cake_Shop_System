@@ -1,3 +1,11 @@
 .root {
-    -fx-text-color: #1d1402;
+    -fx-text-color: #1D1402;
+    -fx-bg-color: #C6E6E3;
+    -fx-primary-color: #F3A2BE;
+    -fx-secondary-color: #FFD3D3;
+    -fx-accent-color: #81BFB7;
+    -fx-container-bg: #C6E6E3;
+    -fx-button-text-color: #1D1402;
+    -fx-soft-shadow: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 8, 0.2, 0, 2);
+    -fx-strong-shadow: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 16, 0.3, 0, 4);
 }
