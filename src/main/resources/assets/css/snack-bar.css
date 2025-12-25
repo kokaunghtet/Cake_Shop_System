@@ -2,18 +2,18 @@
     -fx-background-radius: 10;
     -fx-padding: 10 15;
     -fx-background-color: -fx-primary-color;
-    -fx-effect: -fx-strong-shadow;
+    -fx-effect: -fx-soft-shadow;
 }
 
 .snack-title {
     -fx-font-weight: bold;
-    -fx-text-fill: white;
-    -fx-font-size: 14px;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 16px;
 }
 
 .snack-message {
     -fx-text-fill: -fx-text-color;
-    -fx-font-size: 12px;
+    -fx-font-size: 14px;
 }
 
 /* Types */

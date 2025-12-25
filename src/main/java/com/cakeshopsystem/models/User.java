@@ -22,6 +22,13 @@ public class User {
         this.roleId = roleId;
     }
 
+    public User(int userId, String userName, String email, int roleId) {
+        this.userId = userId;
+        this.userName = userName;
+        this.email = email;
+        this.roleId = roleId;
+    }
+
     public int getUserId() {
         return userId;
     }

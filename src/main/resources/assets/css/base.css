@@ -4,7 +4,7 @@
 }
 
 .root {
-  -fx-font-family: Arial, Helvetica, Verdana, Tahoma, sans-serif;
+  -fx-font-family:  "Segoe UI", Arial, Helvetica, Verdana, Tahoma, sans-serif;
   -fx-font-size: 14px;
   -fx-font-weight: normal;
   -fx-antialiasing: subpixel;
@@ -41,19 +41,21 @@
 .text-field,
 .password-field,
 .combo-box {
+    -fx-prompt-text-fill: -fx-text-color;
     -fx-background-radius: 10;
     -fx-padding: 10 16;
     -fx-border-color: -fx-text-color;
     -fx-border-radius: 10;
 }
 
-FontAwesomeIconView {
-    -fx-fill: -fx-text-color;
-}
-
 .login-text-field,
 .login-password-field{
     -fx-padding: 10 16 10 30;
+}
+
+FontAwesomeIconView {
+    -fx-fill: -fx-text-color;
+    -fx-cursor: hand;
 }
 
 /***********************
