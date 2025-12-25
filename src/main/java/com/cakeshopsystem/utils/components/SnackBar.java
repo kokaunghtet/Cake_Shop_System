@@ -84,15 +84,17 @@ public class SnackBar {
         activeSnackBars.add(root);
 
         // --- Slide-In Animation ---
-        root.setTranslateX(WIDTH);
+        double startY = -root.getHeight();
+        root.setTranslateY(startY);
         root.setOpacity(0);
         Timeline slideIn = new Timeline(
                 new KeyFrame(Duration.ZERO,
-                        new KeyValue(root.translateXProperty(), WIDTH),
+                        new KeyValue(root.translateYProperty(), 0),
                         new KeyValue(root.opacityProperty(), 0)),
                 new KeyFrame(SLIDE_DURATION,
-                        new KeyValue(root.translateXProperty(), 0),
-                        new KeyValue(root.opacityProperty(), 1)));
+                        new KeyValue(root.translateYProperty(), startY),
+                        new KeyValue(root.opacityProperty(), 1))
+        );
         slideIn.play();
 
         // Automatic Dismiss after Duration
@@ -103,15 +105,17 @@ public class SnackBar {
     }
 
     private static void dismiss(VBox root) {
+        double startY = -root.getHeight();
+
         root.setMinHeight(root.getHeight());
         root.setMinWidth(root.getWidth());
 
         Timeline slideOut = new Timeline(
                 new KeyFrame(Duration.ZERO,
-                        new KeyValue(root.translateXProperty(), 0),
+                        new KeyValue(root.translateYProperty(), 0),
                         new KeyValue(root.opacityProperty(), 1)),
                 new KeyFrame(SLIDE_DURATION,
-                        new KeyValue(root.translateXProperty(), WIDTH),
+                        new KeyValue(root.translateYProperty(), startY),
                         new KeyValue(root.opacityProperty(), 0)));
 
         slideOut.setOnFinished(e -> {

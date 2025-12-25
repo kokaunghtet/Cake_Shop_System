@@ -1,0 +1,15 @@
+.error-message {
+  -fx-text-fill: -fx-error-color;
+}
+
+.success-message {
+  -fx-text-fill: -fx-success-color;
+}
+
+.warning-message {
+  -fx-text-fill: -fx-warning-color;
+}
+
+.info-message {
+  -fx-text-fill: -fx-info-color;
+}

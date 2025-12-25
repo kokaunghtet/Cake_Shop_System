@@ -7,7 +7,6 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.effect.Blend?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -17,11 +16,15 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<StackPane styleClass="root" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1"
-           fx:controller="com.cakeshopsystem.controllers.LoginFormController" fx:id="loginStackPane">
+<StackPane fx:id="loginStackPane" styleClass="root" xmlns="http://javafx.com/javafx/25"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.cakeshopsystem.controllers.LoginFormController">
     <children>
-        <VBox alignment="CENTER" maxHeight="500.0" maxWidth="700.0" minHeight="400.0" minWidth="400.0"
-              prefHeight="500.0" prefWidth="800.0" StackPane.alignment="CENTER">
+        <!-- Main Content -->
+        <VBox alignment="CENTER"
+              maxWidth="700.0"
+              fillWidth="true"
+              StackPane.alignment="CENTER">
             <children>
                 <HBox prefHeight="350.0" styleClass="container">
                     <children>
@@ -32,7 +35,7 @@
                                         <Label styleClass="title" text="Login Form"/>
                                     </children>
                                 </HBox>
-                                <HBox VBox.vgrow="SOMETIMES">
+                                <HBox VBox.vgrow="SOMETIMES" minWidth="300.0">
                                     <children>
                                         <GridPane alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" vgap="15.0"
                                                   HBox.hgrow="ALWAYS">
@@ -41,20 +44,23 @@
                                                                    maxWidth="1.7976931348623157E308"/>
                                             </columnConstraints>
                                             <rowConstraints>
+                                                <RowConstraints minHeight="10.0" valignment="CENTER"/>
+                                                <RowConstraints vgrow="SOMETIMES"/>
+                                                <RowConstraints minHeight="10.0" valignment="CENTER"/>
                                                 <RowConstraints vgrow="SOMETIMES"/>
                                                 <RowConstraints vgrow="SOMETIMES"/>
-                                                <RowConstraints vgrow="SOMETIMES"/>
+                                                <RowConstraints minHeight="10.0" valignment="CENTER"/>
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
                                             </rowConstraints>
                                             <children>
                                                 <TextField fx:id="usernameTextField" promptText="Username"
-                                                           styleClass="login-text-field">
+                                                           styleClass="login-text-field" GridPane.rowIndex="1">
                                                     <padding>
                                                         <Insets/>
                                                     </padding>
                                                 </TextField>
                                                 <PasswordField fx:id="pswPasswordField" promptText="Password"
-                                                               styleClass="login-password-field" GridPane.rowIndex="1">
+                                                               styleClass="login-password-field" GridPane.rowIndex="3">
                                                     <opaqueInsets>
                                                         <Insets/>
                                                     </opaqueInsets>
@@ -62,33 +68,44 @@
                                                         <Insets/>
                                                     </padding>
                                                 </PasswordField>
-                                                <TextField fx:id="pswTextField" promptText="Password"
+                                                <TextField fx:id="txtPasswordField" promptText="Password"
                                                            styleClass="login-text-field" visible="false"
-                                                           GridPane.rowIndex="1">
+                                                           GridPane.rowIndex="3">
                                                     <opaqueInsets>
                                                         <Insets/>
                                                     </opaqueInsets>
                                                 </TextField>
                                                 <Hyperlink fx:id="forgetPasswordLink" text="Forget Password?"
-                                                           GridPane.rowIndex="2"/>
+                                                           GridPane.rowIndex="4"/>
                                                 <Button fx:id="loginButton" maxWidth="1.7976931348623157E308"
-                                                        mnemonicParsing="false" text="Login" GridPane.rowIndex="3"/>
-                                                <FontAwesomeIconView glyphName="USER" size="24">
+                                                        mnemonicParsing="false" text="Login" GridPane.rowIndex="6"/>
+                                                <FontAwesomeIconView glyphName="USER" size="24" translateX="10.0"
+                                                                     GridPane.rowIndex="1">
                                                     <GridPane.margin>
-                                                        <Insets left="7.0"/>
+                                                        <Insets/>
                                                     </GridPane.margin>
                                                 </FontAwesomeIconView>
-                                                <FontAwesomeIconView glyphName="LOCK" size="24" GridPane.rowIndex="1">
+                                                <FontAwesomeIconView glyphName="LOCK" size="24" translateX="10.0"
+                                                                     GridPane.rowIndex="3">
                                                     <GridPane.margin>
-                                                        <Insets left="7.0"/>
+                                                        <Insets/>
                                                     </GridPane.margin>
                                                 </FontAwesomeIconView>
-                                                <FontAwesomeIconView fx:id="eyeSlashToggleButton" glyphName="EYE_SLASH"
-                                                                     size="24" GridPane.rowIndex="1">
+                                                <FontAwesomeIconView fx:id="eyeSlashToggleButton"
+                                                                     boundsType="LOGICAL_VERTICAL_CENTER"
+                                                                     glyphName="EYE_SLASH" size="24" textOrigin="CENTER"
+                                                                     translateX="-10.0" GridPane.halignment="RIGHT"
+                                                                     GridPane.hgrow="ALWAYS" GridPane.rowIndex="3">
                                                     <GridPane.margin>
-                                                        <Insets left="220.0"/>
+                                                        <Insets/>
                                                     </GridPane.margin>
                                                 </FontAwesomeIconView>
+                                                <Label fx:id="usernameMessage"
+                                                       GridPane.halignment="RIGHT"/>
+                                                <Label fx:id="passwordMessage" GridPane.halignment="RIGHT"
+                                                       GridPane.rowIndex="2"/>
+                                                <Label fx:id="errorMessage" GridPane.halignment="RIGHT"
+                                                       GridPane.rowIndex="5"/>
                                             </children>
                                         </GridPane>
                                     </children>
@@ -105,9 +122,6 @@
                                     <image>
                                         <Image url="@../images/nub-cat-cake.gif"/>
                                     </image>
-                                    <effect>
-                                        <Blend/>
-                                    </effect>
                                 </ImageView>
                             </children>
                         </VBox>
@@ -118,5 +132,6 @@
                 <Insets bottom="50.0" left="50.0" right="50.0" top="50.0"/>
             </padding>
         </VBox>
+
     </children>
 </StackPane>

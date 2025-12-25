@@ -17,4 +17,12 @@ public class SessionManager {
     public static void setSnackBarContainer(VBox snackBarContainer) {
         SessionManager.snackBarContainer = snackBarContainer;
     }
+
+    public static Stage getStage() {
+        return primaryStage;
+    }
+
+    public static void setStage(Stage primaryStage) {
+        SessionManager.primaryStage = primaryStage;
+    }
 }
