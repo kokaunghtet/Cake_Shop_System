@@ -25,6 +25,15 @@ public class Validator {
         return null;
     }
 
+    public static String validateLoginPassword(String password) {
+        password = password.trim();
+        
+        if (password.isEmpty()) {
+            return "Password cannot be empty";
+        }
+        return null;
+    }
+
     public static String validatePassword(String password) {
         password = password.trim();
 

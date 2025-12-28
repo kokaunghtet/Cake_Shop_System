@@ -2,28 +2,29 @@ package com.cakeshopsystem.utils.dao;
 
 import com.cakeshopsystem.models.User;
 import com.cakeshopsystem.utils.AuthResult;
+import com.cakeshopsystem.utils.PasswordHasher;
 import com.cakeshopsystem.utils.databaseconnection.DB;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Objects;
 
 public class UserDAO {
     // --- Authentication ---
     public static AuthResult authenticateUser(String username, String password) throws SQLException {
-        String query = "select user_id, role_id, password_hash, email, user_name, image_path, is_active from users where user_name = ? and password_hash = ?";
+        String query = "select user_id, role_id, password_hash, email, user_name, image_path, is_active from users where user_name = ?";
         try (Connection con = DB.connect(); PreparedStatement preparedStatement = con.prepareStatement(query)) {
             preparedStatement.setString(1, username);
-            preparedStatement.setString(2, password);
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (!resultSet.next())
                     return new AuthResult(false, "Username not found!");
 
-                if (!Objects.equals(password, resultSet.getString("password_hash")))
+                String hashedPassword = resultSet.getString("password_hash");
+                if (!PasswordHasher.verify(password, hashedPassword)) {
                     return new AuthResult(false, "Password incorrect!");
+                }
 
                 if (!resultSet.getBoolean("is_active"))
                     return new AuthResult(false, "This account has been deactivated by Admin!");

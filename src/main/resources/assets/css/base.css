@@ -33,15 +33,15 @@
 }
 
 .title {
-    -fx-text-fill: -fx-text-color;
-    -fx-font-size: 32px;
-    -fx-font-weight: bold;
+    -fx-text-fill: -fx-accent-color;
+    -fx-font-size: 42;
+    -fx-font-weight: 900;
 }
 
 .text-field,
 .password-field,
 .combo-box {
-    -fx-prompt-text-fill: -fx-text-color;
+    /*-fx-prompt-text-fill: -fx-text-color;*/
     -fx-background-radius: 10;
     -fx-padding: 10 16;
     -fx-border-color: -fx-text-color;
