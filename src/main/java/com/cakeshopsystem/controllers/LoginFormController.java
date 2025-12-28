@@ -2,6 +2,7 @@ package com.cakeshopsystem.controllers;
 
 import com.cakeshopsystem.utils.AuthResult;
 import com.cakeshopsystem.utils.ChangeScene;
+import com.cakeshopsystem.utils.PasswordHasher;
 import com.cakeshopsystem.utils.components.SnackBar;
 import com.cakeshopsystem.utils.constants.SnackBarType;
 import com.cakeshopsystem.utils.dao.UserDAO;
@@ -83,7 +84,7 @@ public class LoginFormController {
 
         // --- Validate on FX thread (before background work) ---
         String usernameError = Validator.validateUsername(usernameValue);
-        String passwordError = Validator.validatePassword(passwordValue);
+        String passwordError = Validator.validateLoginPassword(passwordValue);
 
         applyValidation(usernameMessage, usernameError);
         applyValidation(passwordMessage, passwordError);
