@@ -4,7 +4,7 @@
 }
 
 .root {
-  -fx-font-family:  "Segoe UI", Arial, Helvetica, Verdana, Tahoma, sans-serif;
+  -fx-font-family:  Arial, Helvetica, Verdana, Tahoma, sans-serif;
   -fx-font-size: 14px;
   -fx-font-weight: normal;
   -fx-antialiasing: subpixel;
