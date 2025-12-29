@@ -1,40 +1,83 @@
+/* ---- SnackBar base ---- */
 .snack-bar {
-    -fx-background-radius: 10;
-    -fx-padding: 10 15;
-    -fx-background-color: -fx-primary-color;
-    -fx-effect: -fx-soft-shadow;
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
+    -fx-border-color: rgba(255,255,255,0.14);
+    -fx-border-width: 0.8;
+
+    /* glass base */
+    -fx-background-color: rgba(28, 28, 30, 0.55);
+
+    -fx-padding: 12 14;
+
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 24, 0.25, 0, 10);
 }
 
+/* Text */
 .snack-title {
-    -fx-font-weight: bold;
-    -fx-text-fill: #FFFFFF;
-    -fx-font-size: 16px;
+    -fx-font-weight: 700;
+    -fx-font-size: 14px;
+    -fx-text-fill: rgba(255,255,255,0.95);
 }
 
 .snack-message {
-    -fx-text-fill: -fx-text-color;
-    -fx-font-size: 14px;
+    -fx-font-size: 12.5px;
+    -fx-text-fill: rgba(255,255,255,0.82);
 }
 
-/* Types */
-.snack-info    { -fx-background-color: #2196F3; }
-.snack-success { -fx-background-color: #4CAF50; }
-.snack-warning { -fx-background-color: #FFC107; }
-.snack-error   { -fx-background-color: #F44336; }
-
-/* Buttons */
-.snack-action1 {
-    -fx-background-color: transparent;
-    -fx-text-fill: #BB86FC;
-    -fx-font-weight: bold;
-}
-.snack-action2 {
-    -fx-background-color: transparent;
-    -fx-text-fill: #03DAC6;
-    -fx-font-weight: bold;
-}
+/* Close button */
 .snack-close {
-    -fx-background-color: transparent;
-    -fx-text-fill: white;
-    -fx-font-weight: bold;
+    -fx-background-color: rgba(0,0,0,0.18);
+    -fx-background-radius: 999;
+
+    -fx-border-color: rgba(255,255,255,0.18);
+    -fx-border-width: 0.8;
+    -fx-border-radius: 999;
+
+    -fx-text-fill: rgba(255,255,255,0.95);
+    -fx-font-weight: 800;
+
+    -fx-padding: 4 10;
+}
+
+.snack-close:hover {
+    -fx-background-color: rgba(0,0,0,0.26);
+}
+
+.snack-close:pressed {
+    -fx-background-color: rgba(0,0,0,0.34);
+}
+
+/* ---- Type accents ---- */
+.snack-info {
+    -fx-background-color:
+        linear-gradient(
+            to bottom right,
+            rgba(90,200,250,0.50),
+            rgba(90,200,250,0.50)
+        );
+}
+.snack-success {
+    -fx-background-color:
+        linear-gradient(
+            to bottom right,
+            rgba(52,199,89,0.50),
+            rgba(52,199,89,0.50)
+        );
+}
+.snack-warning {
+    -fx-background-color:
+        linear-gradient(
+            to bottom right,
+            rgba(255,204,0,0.50),
+            rgba(255,204,0,0.50)
+        );
+}
+.snack-error {
+    -fx-background-color:
+        linear-gradient(
+            to bottom right,
+            rgba(255,69,58,0.50),
+            rgba(255,69,58,0.50)
+        );
 }

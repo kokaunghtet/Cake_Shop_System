@@ -2,7 +2,6 @@ package com.cakeshopsystem.controllers;
 
 import com.cakeshopsystem.utils.AuthResult;
 import com.cakeshopsystem.utils.ChangeScene;
-import com.cakeshopsystem.utils.PasswordHasher;
 import com.cakeshopsystem.utils.components.SnackBar;
 import com.cakeshopsystem.utils.constants.SnackBarType;
 import com.cakeshopsystem.utils.dao.UserDAO;
@@ -48,6 +47,9 @@ public class LoginFormController {
     @FXML
     private void initialize() {
         usernameTextField.requestFocus();
+
+        errorMessage.managedProperty().bind(errorMessage.visibleProperty());
+        errorMessage.visibleProperty().bind(errorMessage.textProperty().isNotEmpty());
 
         pswPasswordField.textProperty().addListener((obs, oldText, newText) -> {
             if (!isPasswordVisible) {
@@ -111,7 +113,6 @@ public class LoginFormController {
         Task<AuthResult> loginTask = new Task<>() {
             @Override
             protected AuthResult call() throws Exception {
-                // Only DB/auth work here
                 return UserDAO.authenticateUser(usernameValue, passwordValue);
             }
         };
@@ -151,7 +152,6 @@ public class LoginFormController {
     private void applyValidation(Label messageLabel, String error) {
         messageLabel.setText(error == null ? "" : error);
 
-        // remove then add to avoid duplicates + keep it accurate
         messageLabel.getStyleClass().remove("error-message");
         if (error != null) {
             messageLabel.getStyleClass().add("error-message");
