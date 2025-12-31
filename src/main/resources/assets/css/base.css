@@ -106,12 +106,12 @@ FontAwesomeIconView {
 
 .hyperlink:hover {
     -fx-background-radius: 6;
-    -fx-background-color: -fx-accent-color;
+    -fx-text-fill: derive(-fx-text-color, 100%);
 }
 
 .hyperlink.active {
     -fx-background-radius: 6;
-    -fx-background-color: -fx-accent-color;
+    -fx-text-fill: derive(-fx-text-color, 100%);
 }
 
 .hyperlink:focused {
@@ -121,5 +121,5 @@ FontAwesomeIconView {
     -fx-background-insets: 0;
     -fx-background-radius: 6;
     -fx-border-insets: 0;
-    -fx-background-color: -fx-accent-color;
+    -fx-text-fill: derive(-fx-text-color, 100%);
 }
