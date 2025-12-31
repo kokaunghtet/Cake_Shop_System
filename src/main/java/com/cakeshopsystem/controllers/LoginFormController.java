@@ -5,6 +5,7 @@ import com.cakeshopsystem.utils.ChangeScene;
 import com.cakeshopsystem.utils.components.SnackBar;
 import com.cakeshopsystem.utils.constants.SnackBarType;
 import com.cakeshopsystem.utils.dao.UserDAO;
+import com.cakeshopsystem.utils.session.SessionManager;
 import com.cakeshopsystem.utils.validators.Validator;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
@@ -169,7 +170,6 @@ public class LoginFormController {
     }
 
     private String getPasswordValue() {
-        // If password is visible, user edits txtPasswordField.
         return isPasswordVisible ? txtPasswordField.getText() : pswPasswordField.getText();
     }
 

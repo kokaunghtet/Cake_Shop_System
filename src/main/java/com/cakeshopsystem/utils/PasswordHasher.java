@@ -19,7 +19,6 @@ public final class PasswordHasher {
         try {
             return BCrypt.checkpw(rawPassword, storedHash);
         } catch (IllegalArgumentException e) {
-            // happens if storedHash is not a valid bcrypt hash
             return false;
         }
     }

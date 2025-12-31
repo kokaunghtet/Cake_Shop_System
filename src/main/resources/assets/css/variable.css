@@ -1,3 +1,4 @@
+/*
 .root {
     -fx-text-color: #040303;
     -fx-bg-color: #C6E6E3;
@@ -6,6 +7,23 @@
     -fx-accent-color: #81BFB7;
     -fx-container-bg: #C6E6E3;
     -fx-button-text-color: #C6E6E3;
+    -fx-soft-shadow: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 8, 0.2, 0, 2);
+    -fx-strong-shadow: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 16, 0.3, 0, 4);
+    -fx-error-color: #E63946;
+    -fx-success-color: #2ECC71;
+    -fx-warning-color: #F39C12;
+    -fx-info-color: #3498DB;
+}
+*/
+
+.root {
+    -fx-text-color: #5A273B;
+    -fx-bg-color: #FFF5E4;
+    -fx-primary-color: #EE6983;
+    -fx-secondary-color: #FFC4C4;
+    -fx-accent-color: #74071B;
+    -fx-container-bg: #FFF5E4;
+    -fx-button-text-color: #FFC4C4;
     -fx-soft-shadow: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 8, 0.2, 0, 2);
     -fx-strong-shadow: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 16, 0.3, 0, 4);
     -fx-error-color: #E63946;
