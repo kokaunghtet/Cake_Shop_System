@@ -1,15 +1,8 @@
-* {
-  -fx-underline: none;
-  -fx-user-select: none;
-}
-
 .root {
   -fx-font-family:  Arial, Helvetica, Verdana, Tahoma, sans-serif;
-  -fx-font-size: 14px;
+  -fx-font-size: 16;
   -fx-font-weight: normal;
-  -fx-antialiasing: subpixel;
   -fx-background-color: -fx-bg-color;
-  -fx-font-smoothing-type: gray;
 }
 
 .container {
@@ -29,7 +22,7 @@
 ***********************/
 .label {
     -fx-text-fill: -fx-text-color;
-    -fx-font-size: 14px;
+    -fx-font-size: 14;
 }
 
 .title {
@@ -38,45 +31,60 @@
     -fx-font-weight: 900;
 }
 
+/* Base inputs */
 .text-field,
-.password-field,
-.combo-box {
-    /*-fx-prompt-text-fill: -fx-text-color;*/
+.password-field {
     -fx-background-radius: 10;
-    -fx-padding: 10 16;
-    -fx-border-color: -fx-text-color;
     -fx-border-radius: 10;
+    -fx-border-color: -fx-text-color;
+    -fx-padding: 10 16;
 }
 
+.combo-box {
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: -fx-text-color;
+}
+
+/* Inputs that have a left icon overlay */
 .login-text-field,
-.login-password-field{
-    -fx-padding: 10 16 10 30;
+.login-password-field {
+    -fx-padding: 10 16 10 44; /* top right bottom left */
 }
 
-FontAwesomeIconView {
-    -fx-fill: -fx-text-color;
+/* Default icon color (inherits theme text color) */
+.ikonli-font-icon {
+    -fx-icon-color: -fx-text-color;
+}
+
+/* Only icons mark as clickable should show hand cursor */
+.icon-clickable {
     -fx-cursor: hand;
 }
 
 /***********************
   Buttons
 ***********************/
+/* Utility: text with graphic on the left */
+.graphic-left {
+    -fx-content-display: LEFT;
+}
+
 .button {
     -fx-font-weight: bold;
     -fx-background-radius: 10;
     -fx-cursor: hand;
     -fx-padding: 10 16;
     -fx-alignment: center;
-    -fx-content-display: LEFT; /* icon + text */
-    -fx-graphic-text-gap: 8;
     -fx-background-color: -fx-accent-color;
     -fx-text-fill: -fx-button-text-color;
+    -fx-graphic-text-gap: 8;
 }
 
 .button.outline{
     -fx-background-color: transparent;
     -fx-border-color: -fx-accent-color;
-    -fx-text-fill: #111;
+    -fx-text-fill: -fx-text-color;
     -fx-border-radius: 8;
     -fx-background-radius: 8;
 }
@@ -84,13 +92,13 @@ FontAwesomeIconView {
 .button:hover,
 .button:focused,
 .button:pressed{
-  -fx-background-color: derive(-fx-accent-color, -10%);
+  -fx-background-color: derive(-fx-accent-color, 50%);
 }
 
 .button.outline:hover,
 .button.outline:focused,
 .button.outline:pressed{
-    -fx-background-color: derive(-fx-accent-color, -10%);
+    -fx-background-color: derive(-fx-accent-color, 50%);
 }
 
 /***********************
@@ -99,17 +107,13 @@ FontAwesomeIconView {
 .hyperlink {
     -fx-text-fill: -fx-text-color;
     -fx-underline: false;
-    -fx-font-size: 13px;
-    -fx-content-display: LEFT; /* icon + text */
+    -fx-font-size: 13;
     -fx-graphic-text-gap: 6;
 }
 
-.hyperlink:hover {
-    -fx-background-radius: 6;
-    -fx-text-fill: derive(-fx-text-color, 100%);
-}
-
-.hyperlink.active {
+.hyperlink:hover,
+.hyperlink.active,
+.hyperlink:focused {
     -fx-background-radius: 6;
     -fx-text-fill: derive(-fx-text-color, 100%);
 }
@@ -119,7 +123,5 @@ FontAwesomeIconView {
     -fx-faint-focus-color: transparent;
     -fx-border-color: transparent;
     -fx-background-insets: 0;
-    -fx-background-radius: 6;
     -fx-border-insets: 0;
-    -fx-text-fill: derive(-fx-text-color, 100%);
 }
