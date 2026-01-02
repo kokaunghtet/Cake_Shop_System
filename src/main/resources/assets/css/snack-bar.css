@@ -53,31 +53,31 @@
     -fx-background-color:
         linear-gradient(
             to bottom right,
-            rgba(90,200,250,0.50),
-            rgba(90,200,250,0.50)
+            rgba(90,200,250,0.80),
+            rgba(90,200,250,0.80)
         );
 }
 .snack-success {
     -fx-background-color:
         linear-gradient(
             to bottom right,
-            rgba(52,199,89,0.50),
-            rgba(52,199,89,0.50)
+            rgba(52,199,89,0.80),
+            rgba(52,199,89,0.80)
         );
 }
 .snack-warning {
     -fx-background-color:
         linear-gradient(
             to bottom right,
-            rgba(255,204,0,0.50),
-            rgba(255,204,0,0.50)
+            rgba(255,204,0,0.80),
+            rgba(255,204,0,0.80)
         );
 }
 .snack-error {
     -fx-background-color:
         linear-gradient(
             to bottom right,
-            rgba(255,69,58,0.50),
-            rgba(255,69,58,0.50)
+            rgba(255,69,58,0.80),
+            rgba(255,69,58,0.80)
         );
 }

@@ -5,15 +5,17 @@ public class OrderItem {
     private int orderItemId;
     private Order order;
     private Product product;
+    private Drink drink;
     private int quantity;
     private double unitPrice;
 
     public OrderItem(){}
 
-    public OrderItem(int orderItemId, Order order, Product product, int quantity, double unitPrice) {
+    public OrderItem(int orderItemId, Order order, Product product, Drink drink, int quantity, double unitPrice) {
         this.orderItemId = orderItemId;
         this.order = order;
         this.product = product;
+        this.drink = drink;
         this.quantity = quantity;
         this.unitPrice = unitPrice;
     }
@@ -42,6 +44,14 @@ public class OrderItem {
         this.product = product;
     }
 
+    public Drink getDrink() {
+        return drink;
+    }
+
+    public void setDrink(Drink drink) {
+        this.drink = drink;
+    }
+
     public int getQuantity() {
         return quantity;
     }
@@ -64,6 +74,7 @@ public class OrderItem {
                 "orderItemId=" + orderItemId +
                 ", order=" + order +
                 ", product=" + product +
+                ", drink=" + drink +
                 ", quantity=" + quantity +
                 ", unitPrice=" + unitPrice +
                 '}';

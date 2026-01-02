@@ -28,16 +28,16 @@
             <artifactId>mysql-connector-j</artifactId>
             <version>9.3.0</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.kordamp.ikonli</groupId>-->
-<!--            <artifactId>ikonli-javafx</artifactId>-->
-<!--            <version>12.4.0</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>org.kordamp.ikonli</groupId>-->
-<!--            <artifactId>ikonli-fontawesome6-pack</artifactId>-->
-<!--            <version>12.4.0</version>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>org.kordamp.ikonli</groupId>
+            <artifactId>ikonli-javafx</artifactId>
+            <version>12.4.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kordamp.ikonli</groupId>
+            <artifactId>ikonli-fontawesome6-pack</artifactId>
+            <version>12.4.0</version>
+        </dependency>
         <dependency>
             <groupId>de.jensd</groupId>
             <artifactId>fontawesomefx-fontawesome</artifactId>
