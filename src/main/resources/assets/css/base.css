@@ -125,3 +125,34 @@
     -fx-background-insets: 0;
     -fx-border-insets: 0;
 }
+
+/***********************
+  Message
+***********************/
+
+.error-message {
+  -fx-text-fill: -fx-error-color;
+}
+
+.success-message {
+  -fx-text-fill: -fx-success-color;
+}
+
+.warning-message {
+  -fx-text-fill: -fx-warning-color;
+}
+
+.info-message {
+  -fx-text-fill: -fx-info-color;
+}
+
+/*************************
+Topbar
+*************************/
+.topbar {
+    -fx-effect: -fx-soft-shadow;
+    -fx-background-color: red;
+    -fx-margin: 40;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+}
