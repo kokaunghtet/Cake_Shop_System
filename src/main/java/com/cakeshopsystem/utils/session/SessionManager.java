@@ -2,7 +2,9 @@ package com.cakeshopsystem.utils.session;
 
 import com.cakeshopsystem.controllers.MainController;
 import com.cakeshopsystem.models.User;
+import com.cakeshopsystem.utils.ChangeScene;
 import com.cakeshopsystem.utils.cache.RoleCache;
+import com.cakeshopsystem.utils.cache.UserCache;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -53,5 +55,12 @@ public class SessionManager {
 
     public static void setStage(Stage primaryStage) {
         SessionManager.primaryStage = primaryStage;
+    }
+
+    public static void forceLogout() {
+        ChangeScene.switchScene("LoginForm.fxml", "Cake Shop System");
+        SessionManager.user = null;
+
+        UserCache.clearCache();
     }
 }
