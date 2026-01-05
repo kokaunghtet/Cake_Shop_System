@@ -7,26 +7,26 @@ public class User {
     private String password;
     private String imagePath = null;
     private boolean isActive = true;
-    private int roleId;
+    private int role;
 
     public User() {
     }
 
-    public User(int userId, String userName, String email, String password, String imagePath, boolean isActive, int roleId) {
+    public User(int userId, String userName, String email, String password, String imagePath, boolean isActive, int role) {
         this.userId = userId;
         this.userName = userName;
         this.email = email;
         this.password = password;
         this.imagePath = imagePath;
         this.isActive = isActive;
-        this.roleId = roleId;
+        this.role = role;
     }
 
-    public User(int userId, String userName, String email, int roleId) {
+    public User(int userId, String userName, String email, int role) {
         this.userId = userId;
         this.userName = userName;
         this.email = email;
-        this.roleId = roleId;
+        this.role = role;
     }
 
     public int getUserId() {
@@ -77,16 +77,16 @@ public class User {
         isActive = active;
     }
 
-    public int getRoleId() {
-        return roleId;
+    public int getRole() {
+        return role;
     }
 
-    public void setRoleId(int roleId) {
-        this.roleId = roleId;
+    public void setRole(int role) {
+        this.role = role;
     }
 
     @Override
     public String toString() {
-        return "User{" + "userId=" + userId + ", userName='" + userName + '\'' + ", email='" + email + '\'' + ", password='" + password + '\'' + ", imagePath='" + imagePath + '\'' + ", isActive=" + isActive + ", roleId=" + roleId + '}';
+        return "User{" + "userId=" + userId + ", userName='" + userName + '\'' + ", email='" + email + '\'' + ", password='" + password + '\'' + ", imagePath='" + imagePath + '\'' + ", isActive=" + isActive + ", role=" + role + '}';
     }
 }

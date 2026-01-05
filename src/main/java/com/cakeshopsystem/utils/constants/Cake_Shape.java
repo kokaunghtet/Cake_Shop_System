@@ -1,7 +1,7 @@
 package com.cakeshopsystem.utils.constants;
 
 public enum Cake_Shape {
-    ROUND("Round"),
+    CIRCLE("Circle"),
     SQUARE("Square"),
     HEART("Heart");
 

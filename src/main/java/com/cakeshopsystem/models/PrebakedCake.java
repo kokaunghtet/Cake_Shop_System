@@ -4,7 +4,7 @@ public class PrebakedCake {
 
     private int prebakedCakeId;
     private Cake cake;
-    private boolean isDiy;
+    private boolean isDiy = false;
 
     public PrebakedCake(){}
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Hyperlink?>
@@ -16,7 +16,8 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<StackPane fx:id="loginStackPane" styleClass="root" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cakeshopsystem.controllers.LoginFormController">
+<StackPane fx:id="loginStackPane" styleClass="root" xmlns="http://javafx.com/javafx/25"
+           xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cakeshopsystem.controllers.LoginFormController">
     <children>
         <!-- Main Content -->
         <VBox alignment="CENTER" fillWidth="true" maxWidth="700.0" StackPane.alignment="CENTER">
@@ -27,77 +28,94 @@
                             <children>
                                 <HBox VBox.vgrow="ALWAYS">
                                     <children>
-                                        <Label styleClass="title" text="Login Form" />
+                                        <Label styleClass="title" text="Login Form"/>
                                     </children>
                                 </HBox>
                                 <HBox minWidth="300.0" VBox.vgrow="NEVER">
                                     <children>
-                                        <GridPane alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" vgap="5.0" HBox.hgrow="ALWAYS">
+                                        <GridPane alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" vgap="5.0"
+                                                  HBox.hgrow="ALWAYS">
                                             <columnConstraints>
-                                                <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" />
+                                                <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES"
+                                                                   maxWidth="1.7976931348623157E308"/>
                                             </columnConstraints>
                                             <rowConstraints>
-                                                <RowConstraints valignment="CENTER" />
-                                                <RowConstraints vgrow="SOMETIMES" />
-                                                <RowConstraints valignment="CENTER" />
-                                                <RowConstraints vgrow="SOMETIMES" />
-                                                <RowConstraints vgrow="SOMETIMES" />
-                                                <RowConstraints valignment="CENTER" />
-                                                <RowConstraints vgrow="SOMETIMES" />
+                                                <RowConstraints valignment="CENTER"/>
+                                                <RowConstraints vgrow="SOMETIMES"/>
+                                                <RowConstraints valignment="CENTER"/>
+                                                <RowConstraints vgrow="SOMETIMES"/>
+                                                <RowConstraints vgrow="SOMETIMES"/>
+                                                <RowConstraints valignment="CENTER"/>
+                                                <RowConstraints vgrow="SOMETIMES"/>
                                             </rowConstraints>
                                             <children>
-                                                <TextField fx:id="usernameTextField" promptText="Username" styleClass="login-text-field" GridPane.rowIndex="1">
+                                                <TextField fx:id="usernameTextField" promptText="Username"
+                                                           styleClass="login-text-field" GridPane.rowIndex="1">
                                                     <padding>
-                                                        <Insets />
+                                                        <Insets/>
                                                     </padding>
                                                 </TextField>
-                                                <PasswordField fx:id="pswPasswordField" promptText="Password" styleClass="login-password-field" GridPane.rowIndex="3">
+                                                <PasswordField fx:id="pswPasswordField" promptText="Password"
+                                                               styleClass="login-password-field" GridPane.rowIndex="3">
                                                     <opaqueInsets>
-                                                        <Insets />
+                                                        <Insets/>
                                                     </opaqueInsets>
                                                     <padding>
-                                                        <Insets />
+                                                        <Insets/>
                                                     </padding>
                                                 </PasswordField>
-                                                <TextField fx:id="txtPasswordField" promptText="Password" styleClass="login-text-field" visible="false" GridPane.rowIndex="3">
+                                                <TextField fx:id="txtPasswordField" promptText="Password"
+                                                           styleClass="login-text-field" visible="false"
+                                                           GridPane.rowIndex="3">
                                                     <opaqueInsets>
-                                                        <Insets />
+                                                        <Insets/>
                                                     </opaqueInsets>
                                                 </TextField>
-                                                <Hyperlink fx:id="forgetPasswordLink" text="Forget Password?" GridPane.rowIndex="4" />
-                                                <Button fx:id="loginButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Login" GridPane.rowIndex="6" />
-                                                <FontAwesomeIconView glyphName="USER" size="24" translateX="10.0" GridPane.rowIndex="1">
+                                                <Hyperlink fx:id="forgetPasswordLink" text="Forget Password?"
+                                                           GridPane.rowIndex="4" onAction="#handleForgotPassword"/>
+                                                <Button fx:id="loginButton" maxWidth="1.7976931348623157E308"
+                                                        mnemonicParsing="false" text="Login" GridPane.rowIndex="6"/>
+                                                <FontIcon iconLiteral="fas-user" iconSize="24" translateX="10.0"
+                                                          GridPane.rowIndex="1">
                                                     <GridPane.margin>
-                                                        <Insets />
+                                                        <Insets/>
                                                     </GridPane.margin>
-                                                </FontAwesomeIconView>
-                                                <FontAwesomeIconView glyphName="LOCK" size="24" translateX="10.0" GridPane.rowIndex="3">
+                                                </FontIcon>
+                                                <FontIcon iconLiteral="fas-lock" iconSize="24" translateX="10.0"
+                                                          GridPane.rowIndex="3">
                                                     <GridPane.margin>
-                                                        <Insets />
+                                                        <Insets/>
                                                     </GridPane.margin>
-                                                </FontAwesomeIconView>
-                                                <FontAwesomeIconView fx:id="eyeSlashToggleButton" boundsType="LOGICAL_VERTICAL_CENTER" glyphName="EYE_SLASH" size="24" textOrigin="CENTER" translateX="-10.0" GridPane.halignment="RIGHT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3">
+                                                </FontIcon>
+                                                <FontIcon fx:id="eyeSlashToggleButton"
+                                                          boundsType="LOGICAL_VERTICAL_CENTER"
+                                                          iconLiteral="fas-eye-slash" iconSize="24" textOrigin="CENTER"
+                                                          translateX="-10.0" GridPane.halignment="RIGHT"
+                                                          GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" styleClass="icon-clickable">
                                                     <GridPane.margin>
-                                                        <Insets />
+                                                        <Insets/>
                                                     </GridPane.margin>
-                                                </FontAwesomeIconView>
-                                                <Label fx:id="usernameMessage" GridPane.halignment="RIGHT" />
-                                                <Label fx:id="passwordMessage" GridPane.halignment="RIGHT" GridPane.rowIndex="2" />
-                                                <Label fx:id="errorMessage" GridPane.halignment="RIGHT" GridPane.rowIndex="5" />
+                                                </FontIcon>
+                                                <Label fx:id="usernameMessage" GridPane.halignment="RIGHT"/>
+                                                <Label fx:id="passwordMessage" GridPane.halignment="RIGHT"
+                                                       GridPane.rowIndex="2"/>
+                                                <Label fx:id="errorMessage" GridPane.halignment="RIGHT"
+                                                       GridPane.rowIndex="5"/>
                                             </children>
                                         </GridPane>
                                     </children>
                                 </HBox>
                             </children>
                             <padding>
-                                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
                             </padding>
                         </VBox>
                         <VBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                             <children>
-                                <ImageView fitHeight="250.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" VBox.vgrow="ALWAYS">
+                                <ImageView fitHeight="250.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true"
+                                           VBox.vgrow="ALWAYS">
                                     <image>
-                                        <Image url="@../images/nub-cat-cake.gif" />
+                                        <Image url="@../images/nub-cat-cake.gif"/>
                                     </image>
                                 </ImageView>
                             </children>
@@ -106,7 +124,7 @@
                 </HBox>
             </children>
             <padding>
-                <Insets bottom="50.0" left="50.0" right="50.0" top="50.0" />
+                <Insets bottom="50.0" left="50.0" right="50.0" top="50.0"/>
             </padding>
         </VBox>
 

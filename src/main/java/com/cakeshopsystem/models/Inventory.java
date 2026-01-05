@@ -7,7 +7,7 @@ public class Inventory {
 
     private int inventoryId;
     private Product product;
-    private int quantity;
+    private int quantity = 0;
     private LocalDate expDate;
     private LocalDateTime lastUpdated;
 

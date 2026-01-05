@@ -5,18 +5,22 @@ public class Product {
     private int productId;
     private String productName;
     private Category category;
-    private double sellPrice;
+    private double basePrice;
     private boolean isActive = true;
+    private boolean trackInventory = true;
+    private int shelfLifeDays;
     private String imgPath = null;
 
     public Product(){}
 
-    public Product(int productId, String productName, Category category, double sellPrice, boolean isActive, String imgPath) {
+    public Product(int productId, String productName, Category category, double basePrice, boolean isActive, boolean trackInventory, int shelfLifeDays, String imgPath) {
         this.productId = productId;
         this.productName = productName;
         this.category = category;
-        this.sellPrice = sellPrice;
+        this.basePrice = basePrice;
         this.isActive = isActive;
+        this.trackInventory = trackInventory;
+        this.shelfLifeDays = shelfLifeDays;
         this.imgPath = imgPath;
     }
 
@@ -44,12 +48,12 @@ public class Product {
         this.category = category;
     }
 
-    public double getSellPrice() {
-        return sellPrice;
+    public double getBasePrice() {
+        return basePrice;
     }
 
-    public void setSellPrice(double sellPrice) {
-        this.sellPrice = sellPrice;
+    public void setBasePrice(double basePrice) {
+        this.basePrice = basePrice;
     }
 
     public boolean isActive() {
@@ -58,6 +62,22 @@ public class Product {
 
     public void setActive(boolean active) {
         isActive = active;
+    }
+
+    public boolean isTrackInventory() {
+        return trackInventory;
+    }
+
+    public void setTrackInventory(boolean trackInventory) {
+        this.trackInventory = trackInventory;
+    }
+
+    public int getShelfLifeDays() {
+        return shelfLifeDays;
+    }
+
+    public void setShelfLifeDays(int shelfLifeDays) {
+        this.shelfLifeDays = shelfLifeDays;
     }
 
     public String getImgPath() {
@@ -74,8 +94,9 @@ public class Product {
                 "productId=" + productId +
                 ", productName='" + productName + '\'' +
                 ", category=" + category +
-                ", sellPrice=" + sellPrice +
+                ", basePrice=" + basePrice +
                 ", isActive=" + isActive +
+                ", shelfLifeDays=" + shelfLifeDays +
                 ", imgPath='" + imgPath + '\'' +
                 '}';
     }

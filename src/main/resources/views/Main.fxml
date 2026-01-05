@@ -1,21 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-
-<StackPane fx:id="mainStackPane"
-           maxHeight="-Infinity" maxWidth="-Infinity"
-           minHeight="-Infinity" minWidth="-Infinity"
-           prefHeight="400.0" prefWidth="600.0"
-           xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1"
-           fx:controller="com.cakeshopsystem.controllers.MainController">
+<StackPane fx:id="mainStackPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="492.0" prefWidth="694.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cakeshopsystem.controllers.MainController">
     <children>
-        <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
-            <children>
-                <Label styleClass="title" stylesheets="@../assets/css/style.css" text="Hello"/>
-            </children>
+        <VBox alignment="CENTER" prefHeight="492.0" prefWidth="852.0">
+         <children>
+            <BorderPane fx:id="mainContent" prefHeight="494.0" prefWidth="694.0">
+               <top>
+                  <HBox fx:id="topBar" prefHeight="68.0" prefWidth="694.0" BorderPane.alignment="CENTER">
+                     <children>
+                        <HBox>
+                           <children>
+                              <ImageView fx:id="profileImageView" fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true" />
+                              <VBox alignment="CENTER">
+                                 <children>
+                                    <Label fx:id="usenameLabel" text="Label" />
+                                    <Label fx:id="roleLabel" text="Label" />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER" prefHeight="38.0" prefWidth="481.0" spacing="20.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Hyperlink fx:id="dashboardLink" text="Dashboard" />
+                              <Hyperlink fx:id="userLink" text="User" />
+                              <Hyperlink fx:id="adminProductLink" text="Product" />
+                              <Hyperlink fx:id="memberLink" text="Member" />
+                              <Hyperlink fx:id="staffProductLink" text="Product" />
+                              <Hyperlink fx:id="customerOrderLink" text="Customer Order" />
+                              <Hyperlink fx:id="bookingLink" text="Booking" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER" spacing="20.0">
+                           <children>
+                              <FontAwesomeIconView fx:id="moonIcon" glyphName="MOON_ALT" />
+                              <FontAwesomeIconView fx:id="settingIcon" glyphName="COG" />
+                           </children>
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                        </HBox>
+                     </children>
+                  </HBox>
+               </top>
+            </BorderPane>
+         </children>
         </VBox>
     </children>
 </StackPane>
