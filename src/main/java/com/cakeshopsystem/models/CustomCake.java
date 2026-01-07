@@ -3,13 +3,13 @@ package com.cakeshopsystem.models;
 public class CustomCake {
 
     private int customCakeId;
-    private Cake cake;
+    private int cakeId;
 
     public CustomCake(){}
 
-    public CustomCake(int customCakeId, Cake cake) {
+    public CustomCake(int customCakeId, int cakeId) {
         this.customCakeId = customCakeId;
-        this.cake = cake;
+        this.cakeId = cakeId;
     }
 
     public int getCustomCakeId() {
@@ -20,19 +20,19 @@ public class CustomCake {
         this.customCakeId = customCakeId;
     }
 
-    public Cake getCake() {
-        return cake;
+    public int getCakeId() {
+        return cakeId;
     }
 
-    public void setCake(Cake cake) {
-        this.cake = cake;
+    public void setCakeId(int cakeId) {
+        this.cakeId = cakeId;
     }
 
     @Override
     public String toString() {
         return "CustomCake{" +
                 "customCakeId=" + customCakeId +
-                ", cake=" + cake +
+                ", cakeId=" + cakeId +
                 '}';
     }
 }

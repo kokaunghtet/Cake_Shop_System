@@ -7,17 +7,17 @@ public class Order {
     private int orderId;
     private LocalDateTime orderDate = LocalDateTime.now();
     private double totalAmount;
-    private User user;
-    private Payment payment;
+    private int userId;
+    private int paymentId;
 
     public Order(){}
 
-    public Order(int orderId, LocalDateTime orderDate, double totalAmount, User user, Payment payment) {
+    public Order(int orderId, LocalDateTime orderDate, double totalAmount, int userId, int paymentId) {
         this.orderId = orderId;
         this.orderDate = orderDate;
         this.totalAmount = totalAmount;
-        this.user = user;
-        this.payment = payment;
+        this.userId = userId;
+        this.paymentId = paymentId;
     }
 
     public int getOrderId() {
@@ -44,20 +44,20 @@ public class Order {
         this.totalAmount = totalAmount;
     }
 
-    public User getUser() {
-        return user;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
-    public Payment getPayment() {
-        return payment;
+    public int getPaymentId() {
+        return paymentId;
     }
 
-    public void setPayment(Payment payment) {
-        this.payment = payment;
+    public void setPaymentId(int paymentId) {
+        this.paymentId = paymentId;
     }
 
     @Override
@@ -66,8 +66,8 @@ public class Order {
                 "orderId=" + orderId +
                 ", orderDate=" + orderDate +
                 ", totalAmount=" + totalAmount +
-                ", user=" + user +
-                ", payment=" + payment +
+                ", userId=" + userId +
+                ", paymentId=" + paymentId +
                 '}';
     }
 }

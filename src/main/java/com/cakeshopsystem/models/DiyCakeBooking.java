@@ -5,22 +5,23 @@ import java.time.LocalDateTime;
 public class DiyCakeBooking {
 
     private int diyCakeBookingId;
-    private Booking booking;
-    private Customer customer;
-    private PrebakedCake prebakedCake;
-    private Order order;
+    private int bookingId;
+    private int customerId;
+    private int prebakedCakeId;
+    private int orderId;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private double serviceCharges;
 
-    public DiyCakeBooking(){}
+    public DiyCakeBooking() {
+    }
 
-    public DiyCakeBooking(int diyCakeBookingId, Booking booking, Customer customer, PrebakedCake prebakedCake, Order order, LocalDateTime startTime, LocalDateTime endTime, double serviceCharges) {
+    public DiyCakeBooking(int diyCakeBookingId, int bookingId, int customerId, int prebakedCakeId, int orderId, LocalDateTime startTime, LocalDateTime endTime, double serviceCharges) {
         this.diyCakeBookingId = diyCakeBookingId;
-        this.booking = booking;
-        this.customer = customer;
-        this.prebakedCake = prebakedCake;
-        this.order = order;
+        this.bookingId = bookingId;
+        this.customerId = customerId;
+        this.prebakedCakeId = prebakedCakeId;
+        this.orderId = orderId;
         this.startTime = startTime;
         this.endTime = endTime;
         this.serviceCharges = serviceCharges;
@@ -34,36 +35,36 @@ public class DiyCakeBooking {
         this.diyCakeBookingId = diyCakeBookingId;
     }
 
-    public Booking getBooking() {
-        return booking;
+    public int getBookingId() {
+        return bookingId;
     }
 
-    public void setBooking(Booking booking) {
-        this.booking = booking;
+    public void setBookingId(int bookingId) {
+        this.bookingId = bookingId;
     }
 
-    public Customer getCustomer() {
-        return customer;
+    public int getCustomerId() {
+        return customerId;
     }
 
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
+    public void setCustomerId(int customerId) {
+        this.customerId = customerId;
     }
 
-    public PrebakedCake getPrebakedCake() {
-        return prebakedCake;
+    public int getPrebakedCakeId() {
+        return prebakedCakeId;
     }
 
-    public void setPrebakedCake(PrebakedCake prebakedCake) {
-        this.prebakedCake = prebakedCake;
+    public void setPrebakedCakeId(int prebakedCakeId) {
+        this.prebakedCakeId = prebakedCakeId;
     }
 
-    public Order getOrder() {
-        return order;
+    public int getOrderId() {
+        return orderId;
     }
 
-    public void setOrder(Order order) {
-        this.order = order;
+    public void setOrderId(int orderId) {
+        this.orderId = orderId;
     }
 
     public LocalDateTime getStartTime() {
@@ -94,10 +95,10 @@ public class DiyCakeBooking {
     public String toString() {
         return "DiyCakeBooking{" +
                 "diyCakeBookingId=" + diyCakeBookingId +
-                ", booking=" + booking +
-                ", customer=" + customer +
-                ", prebakedCake=" + prebakedCake +
-                ", order=" + order +
+                ", bookingId=" + bookingId +
+                ", customerId=" + customerId +
+                ", prebakedCakeId=" + prebakedCakeId +
+                ", orderId=" + orderId +
                 ", startTime=" + startTime +
                 ", endTime=" + endTime +
                 ", serviceCharges=" + serviceCharges +
