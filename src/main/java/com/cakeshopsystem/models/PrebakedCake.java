@@ -3,14 +3,14 @@ package com.cakeshopsystem.models;
 public class PrebakedCake {
 
     private int prebakedCakeId;
-    private Cake cake;
+    private int cakeId;
     private boolean isDiy = false;
 
     public PrebakedCake(){}
 
-    public PrebakedCake(int prebakedCakeId, Cake cake, boolean isDiy) {
+    public PrebakedCake(int prebakedCakeId, int cakeId, boolean isDiy) {
         this.prebakedCakeId = prebakedCakeId;
-        this.cake = cake;
+        this.cakeId = cakeId;
         this.isDiy = isDiy;
     }
 
@@ -22,12 +22,12 @@ public class PrebakedCake {
         this.prebakedCakeId = prebakedCakeId;
     }
 
-    public Cake getCake() {
-        return cake;
+    public int getCakeId() {
+        return cakeId;
     }
 
-    public void setCake(Cake cake) {
-        this.cake = cake;
+    public void setCakeId(int cakeId) {
+        this.cakeId = cakeId;
     }
 
     public boolean isDiy() {
@@ -42,7 +42,7 @@ public class PrebakedCake {
     public String toString() {
         return "PrebakedCake{" +
                 "prebakedCakeId=" + prebakedCakeId +
-                ", cake=" + cake +
+                ", cakeId=" + cakeId +
                 ", isDiy=" + isDiy +
                 '}';
     }

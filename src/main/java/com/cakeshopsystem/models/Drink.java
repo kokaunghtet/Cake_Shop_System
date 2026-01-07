@@ -7,16 +7,16 @@ public class Drink {
     private int drinkId;
     private Drinks_Size size;
     private boolean isCold;
-    private Product product;
+    private int productId;
     private Double sellPrice;
 
     public Drink(){}
 
-    public Drink(int drinkId, Drinks_Size size, boolean isCold, Product product, Double sellPrice) {
+    public Drink(int drinkId, Drinks_Size size, boolean isCold, int productId, Double sellPrice) {
         this.drinkId = drinkId;
         this.size = size;
         this.isCold = isCold;
-        this.product = product;
+        this.productId = productId;
         this.sellPrice = sellPrice;
     }
 
@@ -44,12 +44,12 @@ public class Drink {
         isCold = cold;
     }
 
-    public Product getProduct() {
-        return product;
+    public int getProductId() {
+        return productId;
     }
 
-    public void setProduct(Product product) {
-        this.product = product;
+    public void setProductId(int productId) {
+        this.productId = productId;
     }
 
     public Double getSellPrice() {
@@ -66,7 +66,7 @@ public class Drink {
                 "drinkId=" + drinkId +
                 ", size=" + size +
                 ", isCold=" + isCold +
-                ", product=" + product +
+                ", productId=" + productId +
                 ", sellPrice=" + sellPrice +
                 '}';
     }

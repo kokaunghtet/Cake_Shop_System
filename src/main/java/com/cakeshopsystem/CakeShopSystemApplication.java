@@ -19,7 +19,7 @@ public class CakeShopSystemApplication extends Application {
     // ----- Resource paths -----
     private static final String LOGIN_FXML_PATH = "/views/LoginForm.fxml";       // Main UI entry screen
     private static final String APP_CSS_PATH    = "/assets/css/style.css";       // Global stylesheet
-    private static final String APP_TITLE       = "Cake Shop System";            // Window title
+    private static final String APP_TITLE       = "Cake Shop System | Login Form";            // Window title
 
     @Override
     public void start(Stage primaryStage) throws IOException {

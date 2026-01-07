@@ -6,16 +6,16 @@ import java.time.LocalDateTime;
 public class Inventory {
 
     private int inventoryId;
-    private Product product;
+    private int productId;
     private int quantity = 0;
     private LocalDate expDate;
     private LocalDateTime lastUpdated;
 
     public Inventory(){}
 
-    public Inventory(int inventoryId, Product product, int quantity, LocalDate expDate, LocalDateTime lastUpdated) {
+    public Inventory(int inventoryId, int productId, int quantity, LocalDate expDate, LocalDateTime lastUpdated) {
         this.inventoryId = inventoryId;
-        this.product = product;
+        this.productId = productId;
         this.quantity = quantity;
         this.expDate = expDate;
         this.lastUpdated = lastUpdated;
@@ -29,12 +29,12 @@ public class Inventory {
         this.inventoryId = inventoryId;
     }
 
-    public Product getProduct() {
-        return product;
+    public int getProductId() {
+        return productId;
     }
 
-    public void setProduct(Product product) {
-        this.product = product;
+    public void setProductId(int productId) {
+        this.productId = productId;
     }
 
     public int getQuantity() {
@@ -65,7 +65,7 @@ public class Inventory {
     public String toString() {
         return "Inventory{" +
                 "inventoryId=" + inventoryId +
-                ", product=" + product +
+                ", productId=" + productId +
                 ", quantity=" + quantity +
                 ", expDate=" + expDate +
                 ", lastUpdated=" + lastUpdated +

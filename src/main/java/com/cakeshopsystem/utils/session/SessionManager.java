@@ -58,7 +58,7 @@ public class SessionManager {
     }
 
     public static void forceLogout() {
-        ChangeScene.switchScene("LoginForm.fxml", "Cake Shop System");
+        ChangeScene.switchScene("LoginForm.fxml", "Cake Shop System | Login Form");
         SessionManager.user = null;
 
         UserCache.clearCache();

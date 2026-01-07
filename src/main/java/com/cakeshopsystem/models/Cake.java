@@ -5,22 +5,22 @@ import com.cakeshopsystem.utils.constants.Cake_Shape;
 public class Cake {
 
     private int cakeId;
-    private Product product;
+    private int productId;
     private String flavour;
     private String filling;
-    private CakeType cakeType;
+    private int cakeTypeId;
     private int sizeInches;
     private Cake_Shape shape;
     private String decoration;
 
     public Cake(){}
 
-    public Cake(int cakeId, Product product, String flavour, String filling, CakeType cakeType, int sizeInches, Cake_Shape shape, String decoration) {
+    public Cake(int cakeId, int productId, String flavour, String filling, int cakeTypeId, int sizeInches, Cake_Shape shape, String decoration) {
         this.cakeId = cakeId;
-        this.product = product;
+        this.productId = productId;
         this.flavour = flavour;
         this.filling = filling;
-        this.cakeType = cakeType;
+        this.cakeTypeId = cakeTypeId;
         this.sizeInches = sizeInches;
         this.shape = shape;
         this.decoration = decoration;
@@ -34,12 +34,12 @@ public class Cake {
         this.cakeId = cakeId;
     }
 
-    public Product getProduct() {
-        return product;
+    public int getProductId() {
+        return productId;
     }
 
-    public void setProduct(Product product) {
-        this.product = product;
+    public void setProductId(int productId) {
+        this.productId = productId;
     }
 
     public String getFlavour() {
@@ -58,12 +58,12 @@ public class Cake {
         this.filling = filling;
     }
 
-    public CakeType getCakeType() {
-        return cakeType;
+    public int getCakeTypeId() {
+        return cakeTypeId;
     }
 
-    public void setCakeType(CakeType cakeType) {
-        this.cakeType = cakeType;
+    public void setCakeTypeId(int cakeTypeId) {
+        this.cakeTypeId = cakeTypeId;
     }
 
     public int getSizeInches() {
@@ -94,12 +94,12 @@ public class Cake {
     public String toString() {
         return "Cake{" +
                 "cakeId=" + cakeId +
-                ", product=" + product +
+                ", productId=" + productId +
                 ", flavour='" + flavour + '\'' +
                 ", filling='" + filling + '\'' +
-                ", cakeType=" + cakeType +
+                ", cakeTypeId=" + cakeTypeId +
                 ", sizeInches=" + sizeInches +
-                ", shape='" + shape + '\'' +
+                ", shape=" + shape +
                 ", decoration='" + decoration + '\'' +
                 '}';
     }

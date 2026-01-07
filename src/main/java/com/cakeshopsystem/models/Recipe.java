@@ -3,16 +3,17 @@ package com.cakeshopsystem.models;
 public class Recipe {
 
     private int recipeId;
-    private Cake cake;
-    private Ingredient ingredient;
-    private int requiredQuantity;
+    private int cakeId;
+    private int ingredientId;
+    private double requiredQuantity;
 
-    public Recipe(){}
+    public Recipe() {
+    }
 
-    public Recipe(int recipeId, Cake cake, Ingredient ingredient, int requiredQuantity) {
+    public Recipe(int recipeId, int cakeId, int ingredientId, double requiredQuantity) {
         this.recipeId = recipeId;
-        this.cake = cake;
-        this.ingredient = ingredient;
+        this.cakeId = cakeId;
+        this.ingredientId = ingredientId;
         this.requiredQuantity = requiredQuantity;
     }
 
@@ -24,27 +25,27 @@ public class Recipe {
         this.recipeId = recipeId;
     }
 
-    public Cake getCake() {
-        return cake;
+    public int getCakeId() {
+        return cakeId;
     }
 
-    public void setCake(Cake cake) {
-        this.cake = cake;
+    public void setCakeId(int cakeId) {
+        this.cakeId = cakeId;
     }
 
-    public Ingredient getIngredient() {
-        return ingredient;
+    public int getIngredientId() {
+        return ingredientId;
     }
 
-    public void setIngredient(Ingredient ingredient) {
-        this.ingredient = ingredient;
+    public void setIngredientId(int ingredientId) {
+        this.ingredientId = ingredientId;
     }
 
-    public int getRequiredQuantity() {
+    public double getRequiredQuantity() {
         return requiredQuantity;
     }
 
-    public void setRequiredQuantity(int requiredQuantity) {
+    public void setRequiredQuantity(double requiredQuantity) {
         this.requiredQuantity = requiredQuantity;
     }
 
@@ -52,8 +53,8 @@ public class Recipe {
     public String toString() {
         return "Recipe{" +
                 "recipeId=" + recipeId +
-                ", cake=" + cake +
-                ", ingredient=" + ingredient +
+                ", cakeId=" + cakeId +
+                ", ingredientId=" + ingredientId +
                 ", requiredQuantity=" + requiredQuantity +
                 '}';
     }

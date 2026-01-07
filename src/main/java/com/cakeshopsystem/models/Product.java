@@ -4,19 +4,20 @@ public class Product {
 
     private int productId;
     private String productName;
-    private Category category;
+    private int categoryId;
     private double basePrice;
     private boolean isActive = true;
     private boolean trackInventory = true;
-    private int shelfLifeDays;
+    private Integer shelfLifeDays;
     private String imgPath = null;
 
-    public Product(){}
+    public Product() {
+    }
 
-    public Product(int productId, String productName, Category category, double basePrice, boolean isActive, boolean trackInventory, int shelfLifeDays, String imgPath) {
+    public Product(int productId, String productName, int categoryId, double basePrice, boolean isActive, boolean trackInventory, Integer shelfLifeDays, String imgPath) {
         this.productId = productId;
         this.productName = productName;
-        this.category = category;
+        this.categoryId = categoryId;
         this.basePrice = basePrice;
         this.isActive = isActive;
         this.trackInventory = trackInventory;
@@ -40,12 +41,12 @@ public class Product {
         this.productName = productName;
     }
 
-    public Category getCategory() {
-        return category;
+    public int getCategoryId() {
+        return categoryId;
     }
 
-    public void setCategory(Category category) {
-        this.category = category;
+    public void setCategoryId(int categoryId) {
+        this.categoryId = categoryId;
     }
 
     public double getBasePrice() {
@@ -72,11 +73,11 @@ public class Product {
         this.trackInventory = trackInventory;
     }
 
-    public int getShelfLifeDays() {
+    public Integer getShelfLifeDays() {
         return shelfLifeDays;
     }
 
-    public void setShelfLifeDays(int shelfLifeDays) {
+    public void setShelfLifeDays(Integer shelfLifeDays) {
         this.shelfLifeDays = shelfLifeDays;
     }
 
@@ -93,9 +94,10 @@ public class Product {
         return "Product{" +
                 "productId=" + productId +
                 ", productName='" + productName + '\'' +
-                ", category=" + category +
+                ", categoryId=" + categoryId +
                 ", basePrice=" + basePrice +
                 ", isActive=" + isActive +
+                ", trackInventory=" + trackInventory +
                 ", shelfLifeDays=" + shelfLifeDays +
                 ", imgPath='" + imgPath + '\'' +
                 '}';

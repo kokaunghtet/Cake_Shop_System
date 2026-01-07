@@ -3,19 +3,19 @@ package com.cakeshopsystem.models;
 public class OrderItem {
 
     private int orderItemId;
-    private Order order;
-    private Product product;
-    private Drink drink;
+    private int orderId;
+    private int productId;
+    private int drinkId;
     private int quantity;
     private double unitPrice;
 
     public OrderItem(){}
 
-    public OrderItem(int orderItemId, Order order, Product product, Drink drink, int quantity, double unitPrice) {
+    public OrderItem(int orderItemId, int orderId, int productId, int drinkId, int quantity, double unitPrice) {
         this.orderItemId = orderItemId;
-        this.order = order;
-        this.product = product;
-        this.drink = drink;
+        this.orderId = orderId;
+        this.productId = productId;
+        this.drinkId = drinkId;
         this.quantity = quantity;
         this.unitPrice = unitPrice;
     }
@@ -28,28 +28,28 @@ public class OrderItem {
         this.orderItemId = orderItemId;
     }
 
-    public Order getOrder() {
-        return order;
+    public int getOrderId() {
+        return orderId;
     }
 
-    public void setOrder(Order order) {
-        this.order = order;
+    public void setOrderId(int orderId) {
+        this.orderId = orderId;
     }
 
-    public Product getProduct() {
-        return product;
+    public int getProductId() {
+        return productId;
     }
 
-    public void setProduct(Product product) {
-        this.product = product;
+    public void setProductId(int productId) {
+        this.productId = productId;
     }
 
-    public Drink getDrink() {
-        return drink;
+    public int getDrinkId() {
+        return drinkId;
     }
 
-    public void setDrink(Drink drink) {
-        this.drink = drink;
+    public void setDrinkId(int drinkId) {
+        this.drinkId = drinkId;
     }
 
     public int getQuantity() {
@@ -72,9 +72,9 @@ public class OrderItem {
     public String toString() {
         return "OrderItem{" +
                 "orderItemId=" + orderItemId +
-                ", order=" + order +
-                ", product=" + product +
-                ", drink=" + drink +
+                ", orderId=" + orderId +
+                ", productId=" + productId +
+                ", drinkId=" + drinkId +
                 ", quantity=" + quantity +
                 ", unitPrice=" + unitPrice +
                 '}';

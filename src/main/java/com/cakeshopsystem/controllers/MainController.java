@@ -1,12 +1,10 @@
 package com.cakeshopsystem.controllers;
 
 import com.cakeshopsystem.models.User;
-import com.cakeshopsystem.utils.ChangeScene;
 import com.cakeshopsystem.utils.cache.RoleCache;
 import com.cakeshopsystem.utils.components.SnackBar;
 import com.cakeshopsystem.utils.constants.SnackBarType;
 import com.cakeshopsystem.utils.session.SessionManager;
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.fxml.FXML;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
@@ -38,8 +36,7 @@ public class MainController {
 
     @FXML
     private StackPane mainStackPane;
-
-
+    
     @FXML
     private ImageView profileImageView;
 

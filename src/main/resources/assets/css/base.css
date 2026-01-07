@@ -8,6 +8,8 @@
 .container {
   -fx-background-color: -fx-container-bg;
   -fx-border-radius: 10;
+  -fx-border-color: -fx-container-border-color;
+  -fx-border-width: 1;
   -fx-background-radius: 10;
   -fx-effect: -fx-soft-shadow;
   -fx-padding: 14;
@@ -144,15 +146,4 @@
 
 .info-message {
   -fx-text-fill: -fx-info-color;
-}
-
-/*************************
-Topbar
-*************************/
-.topbar {
-    -fx-effect: -fx-soft-shadow;
-    -fx-background-color: red;
-    -fx-margin: 40;
-    -fx-background-radius: 10;
-    -fx-border-radius: 10;
 }
