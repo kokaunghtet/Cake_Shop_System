@@ -1,13 +1,13 @@
 package com.cakeshopsystem.utils.constants;
 
-public enum Booking_Status {
+public enum BookingStatus {
     PENDING("Pending"),
-    COMFIRMED("Confirmed"),
+    CONFIRMED("Confirmed"),
     CANCELLED("Cancelled");
 
     private final String displayName;
 
-    Booking_Status(String displayName) {
+    BookingStatus(String displayName) {
         this.displayName = displayName;
     }
 

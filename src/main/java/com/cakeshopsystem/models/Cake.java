@@ -1,29 +1,31 @@
 package com.cakeshopsystem.models;
 
-import com.cakeshopsystem.utils.constants.Cake_Shape;
+import com.cakeshopsystem.utils.constants.CakeShape;
+import com.cakeshopsystem.utils.constants.CakeType;
 
 public class Cake {
 
     private int cakeId;
     private int productId;
-    private String flavour;
-    private String filling;
-    private int cakeTypeId;
-    private int sizeInches;
-    private Cake_Shape shape;
-    private String decoration;
+    private int flavourId;
+    private int toppingId;
+    private int sizeId;
+    private CakeType cakeType;
+    private CakeShape shape;
+    private boolean isDiyAllowed = false;
 
-    public Cake(){}
+    public Cake() {
+    }
 
-    public Cake(int cakeId, int productId, String flavour, String filling, int cakeTypeId, int sizeInches, Cake_Shape shape, String decoration) {
+    public Cake(int cakeId, int productId, int flavourId, int toppingId, int sizeId, CakeType cakeType, CakeShape shape, boolean isDiyAllowed) {
         this.cakeId = cakeId;
         this.productId = productId;
-        this.flavour = flavour;
-        this.filling = filling;
-        this.cakeTypeId = cakeTypeId;
-        this.sizeInches = sizeInches;
+        this.flavourId = flavourId;
+        this.toppingId = toppingId;
+        this.sizeId = sizeId;
+        this.cakeType = cakeType;
         this.shape = shape;
-        this.decoration = decoration;
+        this.isDiyAllowed = isDiyAllowed;
     }
 
     public int getCakeId() {
@@ -42,52 +44,52 @@ public class Cake {
         this.productId = productId;
     }
 
-    public String getFlavour() {
-        return flavour;
+    public int getFlavourId() {
+        return flavourId;
     }
 
-    public void setFlavour(String flavour) {
-        this.flavour = flavour;
+    public void setFlavourId(int flavourId) {
+        this.flavourId = flavourId;
     }
 
-    public String getFilling() {
-        return filling;
+    public int getToppingId() {
+        return toppingId;
     }
 
-    public void setFilling(String filling) {
-        this.filling = filling;
+    public void setToppingId(int toppingId) {
+        this.toppingId = toppingId;
     }
 
-    public int getCakeTypeId() {
-        return cakeTypeId;
+    public int getSizeId() {
+        return sizeId;
     }
 
-    public void setCakeTypeId(int cakeTypeId) {
-        this.cakeTypeId = cakeTypeId;
+    public void setSizeId(int sizeId) {
+        this.sizeId = sizeId;
     }
 
-    public int getSizeInches() {
-        return sizeInches;
+    public CakeType getCakeType() {
+        return cakeType;
     }
 
-    public void setSizeInches(int sizeInches) {
-        this.sizeInches = sizeInches;
+    public void setCakeType(CakeType cakeType) {
+        this.cakeType = cakeType;
     }
 
-    public Cake_Shape getShape() {
+    public CakeShape getShape() {
         return shape;
     }
 
-    public void setShape(Cake_Shape shape) {
+    public void setShape(CakeShape shape) {
         this.shape = shape;
     }
 
-    public String getDecoration() {
-        return decoration;
+    public boolean isDiyAllowed() {
+        return isDiyAllowed;
     }
 
-    public void setDecoration(String decoration) {
-        this.decoration = decoration;
+    public void setDiyAllowed(boolean diyAllowed) {
+        isDiyAllowed = diyAllowed;
     }
 
     @Override
@@ -95,12 +97,12 @@ public class Cake {
         return "Cake{" +
                 "cakeId=" + cakeId +
                 ", productId=" + productId +
-                ", flavour='" + flavour + '\'' +
-                ", filling='" + filling + '\'' +
-                ", cakeTypeId=" + cakeTypeId +
-                ", sizeInches=" + sizeInches +
+                ", flavourId=" + flavourId +
+                ", toppingId=" + toppingId +
+                ", sizeId=" + sizeId +
+                ", cakeType=" + cakeType +
                 ", shape=" + shape +
-                ", decoration='" + decoration + '\'' +
+                ", isDiyAllowed=" + isDiyAllowed +
                 '}';
     }
 }

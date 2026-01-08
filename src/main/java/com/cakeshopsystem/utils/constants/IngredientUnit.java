@@ -1,6 +1,6 @@
 package com.cakeshopsystem.utils.constants;
 
-public enum Ingredient_Unit {
+public enum IngredientUnit {
     GRAM("Gram"),
     KILOGRAM("Kilogram"),
     LITER("Liter"),
@@ -11,7 +11,7 @@ public enum Ingredient_Unit {
 
     private final String displayName;
 
-    Ingredient_Unit(String displayName) {
+    IngredientUnit(String displayName) {
         this.displayName = displayName;
     }
 

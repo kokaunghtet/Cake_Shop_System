@@ -1,5 +1,7 @@
 package com.cakeshopsystem.models;
 
+import java.time.LocalDateTime;
+
 public class OrderItem {
 
     private int orderItemId;
@@ -8,16 +10,18 @@ public class OrderItem {
     private int drinkId;
     private int quantity;
     private double unitPrice;
+    private double lineTotal;
 
     public OrderItem(){}
 
-    public OrderItem(int orderItemId, int orderId, int productId, int drinkId, int quantity, double unitPrice) {
+    public OrderItem(int orderItemId, int orderId, int productId, int drinkId, int quantity, double unitPrice, double lineTotal) {
         this.orderItemId = orderItemId;
         this.orderId = orderId;
         this.productId = productId;
         this.drinkId = drinkId;
         this.quantity = quantity;
         this.unitPrice = unitPrice;
+        this.lineTotal = lineTotal;
     }
 
     public int getOrderItemId() {
@@ -68,6 +72,14 @@ public class OrderItem {
         this.unitPrice = unitPrice;
     }
 
+    public double getLineTotal() {
+        return lineTotal;
+    }
+
+    public void setLineTotal(double lineTotal) {
+        this.lineTotal = lineTotal;
+    }
+
     @Override
     public String toString() {
         return "OrderItem{" +
@@ -77,6 +89,7 @@ public class OrderItem {
                 ", drinkId=" + drinkId +
                 ", quantity=" + quantity +
                 ", unitPrice=" + unitPrice +
+                ", lineTotal=" + lineTotal +
                 '}';
     }
 }

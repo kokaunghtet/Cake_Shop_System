@@ -5,7 +5,7 @@ public class Product {
     private int productId;
     private String productName;
     private int categoryId;
-    private double basePrice;
+    private double price;
     private boolean isActive = true;
     private boolean trackInventory = true;
     private Integer shelfLifeDays;
@@ -14,11 +14,11 @@ public class Product {
     public Product() {
     }
 
-    public Product(int productId, String productName, int categoryId, double basePrice, boolean isActive, boolean trackInventory, Integer shelfLifeDays, String imgPath) {
+    public Product(int productId, String productName, int categoryId, double price, boolean isActive, boolean trackInventory, Integer shelfLifeDays, String imgPath) {
         this.productId = productId;
         this.productName = productName;
         this.categoryId = categoryId;
-        this.basePrice = basePrice;
+        this.price = price;
         this.isActive = isActive;
         this.trackInventory = trackInventory;
         this.shelfLifeDays = shelfLifeDays;
@@ -49,12 +49,12 @@ public class Product {
         this.categoryId = categoryId;
     }
 
-    public double getBasePrice() {
-        return basePrice;
+    public double getPrice() {
+        return price;
     }
 
-    public void setBasePrice(double basePrice) {
-        this.basePrice = basePrice;
+    public void setPrice(double price) {
+        this.price = price;
     }
 
     public boolean isActive() {
@@ -95,7 +95,7 @@ public class Product {
                 "productId=" + productId +
                 ", productName='" + productName + '\'' +
                 ", categoryId=" + categoryId +
-                ", basePrice=" + basePrice +
+                ", price=" + price +
                 ", isActive=" + isActive +
                 ", trackInventory=" + trackInventory +
                 ", shelfLifeDays=" + shelfLifeDays +

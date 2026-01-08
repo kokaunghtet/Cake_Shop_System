@@ -1,23 +1,19 @@
 package com.cakeshopsystem.models;
 
-import com.cakeshopsystem.utils.constants.Drinks_Size;
-
 public class Drink {
 
     private int drinkId;
-    private Drinks_Size size;
-    private boolean isCold;
     private int productId;
-    private Double sellPrice;
+    private boolean isCold;
+    private Double priceDelta;
 
     public Drink(){}
 
-    public Drink(int drinkId, Drinks_Size size, boolean isCold, int productId, Double sellPrice) {
+    public Drink(int drinkId, int productId, boolean isCold, Double priceDelta) {
         this.drinkId = drinkId;
-        this.size = size;
-        this.isCold = isCold;
         this.productId = productId;
-        this.sellPrice = sellPrice;
+        this.isCold = isCold;
+        this.priceDelta = priceDelta;
     }
 
     public int getDrinkId() {
@@ -28,12 +24,12 @@ public class Drink {
         this.drinkId = drinkId;
     }
 
-    public Drinks_Size getSize() {
-        return size;
+    public int getProductId() {
+        return productId;
     }
 
-    public void setSize(Drinks_Size size) {
-        this.size = size;
+    public void setProductId(int productId) {
+        this.productId = productId;
     }
 
     public boolean isCold() {
@@ -44,30 +40,21 @@ public class Drink {
         isCold = cold;
     }
 
-    public int getProductId() {
-        return productId;
+    public Double getPriceDelta() {
+        return priceDelta;
     }
 
-    public void setProductId(int productId) {
-        this.productId = productId;
-    }
-
-    public Double getSellPrice() {
-        return sellPrice;
-    }
-
-    public void setSellPrice(Double sellPrice) {
-        this.sellPrice = sellPrice;
+    public void setPriceDelta(Double priceDelta) {
+        this.priceDelta = priceDelta;
     }
 
     @Override
     public String toString() {
         return "Drink{" +
                 "drinkId=" + drinkId +
-                ", size=" + size +
-                ", isCold=" + isCold +
                 ", productId=" + productId +
-                ", sellPrice=" + sellPrice +
+                ", isCold=" + isCold +
+                ", priceDelta=" + priceDelta +
                 '}';
     }
 }

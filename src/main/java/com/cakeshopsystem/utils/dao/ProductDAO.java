@@ -111,7 +111,7 @@ public class ProductDAO {
 
             stmt.setString(1, product.getProductName());
             stmt.setInt(2, product.getCategoryId());
-            stmt.setDouble(3, product.getBasePrice());
+            stmt.setDouble(3, product.getPrice());
             stmt.setBoolean(4, product.isActive());
             stmt.setBoolean(5, product.isTrackInventory());
 
@@ -160,7 +160,7 @@ public class ProductDAO {
 
             stmt.setString(1, product.getProductName());
             stmt.setInt(2, product.getCategoryId());
-            stmt.setDouble(3, product.getBasePrice());
+            stmt.setDouble(3, product.getPrice());
             stmt.setBoolean(4, product.isActive());
             stmt.setBoolean(5, product.isTrackInventory());
 
@@ -205,7 +205,7 @@ public class ProductDAO {
         p.setProductId(rs.getInt("product_id"));
         p.setProductName(rs.getString("product_name"));
         p.setCategoryId(rs.getInt("category_id"));
-        p.setBasePrice(rs.getDouble("base_price"));
+        p.setPrice(rs.getDouble("base_price"));
 
         p.setActive(rs.getBoolean("is_active"));
         p.setTrackInventory(rs.getBoolean("track_inventory"));
