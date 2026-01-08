@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.layout.VBox?>
+
+
+<VBox xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cakeshopsystem.controllers.SettingBoxController">
+   <children>
+      <Hyperlink fx:id="userConfigurationLink" text="User Configuration" />
+      <Hyperlink fx:id="paymentConfigurationLink" text="Payment Configuration" />
+   </children>
+</VBox>
