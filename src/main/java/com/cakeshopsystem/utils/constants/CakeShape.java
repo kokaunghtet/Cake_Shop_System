@@ -1,13 +1,13 @@
 package com.cakeshopsystem.utils.constants;
 
-public enum Drinks_Size {
-    SMALL("Small"),
-    MEDIUM("Medium"),
-    LARGE("Large");
+public enum CakeShape {
+    CIRCLE("Circle"),
+    SQUARE("Square"),
+    HEART("Heart");
 
     private final String displayName;
 
-    Drinks_Size(String displayName){
+    CakeShape(String displayName) {
         this.displayName = displayName;
     }
 

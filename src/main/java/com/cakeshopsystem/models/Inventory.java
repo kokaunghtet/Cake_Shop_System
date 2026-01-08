@@ -9,16 +9,17 @@ public class Inventory {
     private int productId;
     private int quantity = 0;
     private LocalDate expDate;
-    private LocalDateTime lastUpdated;
+    private LocalDateTime updatedAt;
 
-    public Inventory(){}
+    public Inventory() {
+    }
 
-    public Inventory(int inventoryId, int productId, int quantity, LocalDate expDate, LocalDateTime lastUpdated) {
+    public Inventory(int inventoryId, int productId, int quantity, LocalDate expDate, LocalDateTime updatedAt) {
         this.inventoryId = inventoryId;
         this.productId = productId;
         this.quantity = quantity;
         this.expDate = expDate;
-        this.lastUpdated = lastUpdated;
+        this.updatedAt = updatedAt;
     }
 
     public int getInventoryId() {
@@ -53,12 +54,12 @@ public class Inventory {
         this.expDate = expDate;
     }
 
-    public LocalDateTime getLastUpdated() {
-        return lastUpdated;
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setLastUpdated(LocalDateTime lastUpdated) {
-        this.lastUpdated = lastUpdated;
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     @Override
@@ -68,7 +69,7 @@ public class Inventory {
                 ", productId=" + productId +
                 ", quantity=" + quantity +
                 ", expDate=" + expDate +
-                ", lastUpdated=" + lastUpdated +
+                ", updatedAt=" + updatedAt +
                 '}';
     }
 }

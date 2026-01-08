@@ -1,13 +1,12 @@
 package com.cakeshopsystem.utils.constants;
 
-public enum Cake_Shape {
-    CIRCLE("Circle"),
-    SQUARE("Square"),
-    HEART("Heart");
+public enum CakeType {
+    PREBAKED("Prebaked"),
+    CUSTOM("Custom");
 
     private final String displayName;
 
-    Cake_Shape(String displayName) {
+    CakeType(String displayName) {
         this.displayName = displayName;
     }
 

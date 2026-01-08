@@ -6,25 +6,23 @@ public class DiyCakeBooking {
 
     private int diyCakeBookingId;
     private int bookingId;
-    private int customerId;
-    private int prebakedCakeId;
+    private int memberId;
+    private int cakeId;
     private int orderId;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
-    private double serviceCharges;
 
     public DiyCakeBooking() {
     }
 
-    public DiyCakeBooking(int diyCakeBookingId, int bookingId, int customerId, int prebakedCakeId, int orderId, LocalDateTime startTime, LocalDateTime endTime, double serviceCharges) {
+    public DiyCakeBooking(int diyCakeBookingId, int bookingId, int memberId, int cakeId, int orderId, LocalDateTime startTime, LocalDateTime endTime) {
         this.diyCakeBookingId = diyCakeBookingId;
         this.bookingId = bookingId;
-        this.customerId = customerId;
-        this.prebakedCakeId = prebakedCakeId;
+        this.memberId = memberId;
+        this.cakeId = cakeId;
         this.orderId = orderId;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.serviceCharges = serviceCharges;
     }
 
     public int getDiyCakeBookingId() {
@@ -44,19 +42,19 @@ public class DiyCakeBooking {
     }
 
     public int getCustomerId() {
-        return customerId;
+        return memberId;
     }
 
-    public void setCustomerId(int customerId) {
-        this.customerId = customerId;
+    public void setCustomerId(int memberId) {
+        this.memberId = memberId;
     }
 
     public int getPrebakedCakeId() {
-        return prebakedCakeId;
+        return cakeId;
     }
 
-    public void setPrebakedCakeId(int prebakedCakeId) {
-        this.prebakedCakeId = prebakedCakeId;
+    public void setPrebakedCakeId(int cakeId) {
+        this.cakeId = cakeId;
     }
 
     public int getOrderId() {
@@ -83,25 +81,16 @@ public class DiyCakeBooking {
         this.endTime = endTime;
     }
 
-    public double getServiceCharges() {
-        return serviceCharges;
-    }
-
-    public void setServiceCharges(double serviceCharges) {
-        this.serviceCharges = serviceCharges;
-    }
-
     @Override
     public String toString() {
         return "DiyCakeBooking{" +
                 "diyCakeBookingId=" + diyCakeBookingId +
                 ", bookingId=" + bookingId +
-                ", customerId=" + customerId +
-                ", prebakedCakeId=" + prebakedCakeId +
+                ", memberId=" + memberId +
+                ", cakeId=" + cakeId +
                 ", orderId=" + orderId +
                 ", startTime=" + startTime +
                 ", endTime=" + endTime +
-                ", serviceCharges=" + serviceCharges +
                 '}';
     }
 }

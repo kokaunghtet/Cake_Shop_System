@@ -1,6 +1,6 @@
 package com.cakeshopsystem.models;
 
-import com.cakeshopsystem.utils.constants.Booking_Status;
+import com.cakeshopsystem.utils.constants.BookingStatus;
 
 import java.time.LocalDate;
 
@@ -8,11 +8,11 @@ public class Booking {
 
     private int bookingId;
     private LocalDate bookingDate;
-    private Booking_Status bookingStatus;
+    private BookingStatus bookingStatus = BookingStatus.PENDING;
 
     public Booking(){}
 
-    public Booking(int bookingId, LocalDate bookingDate, Booking_Status bookingStatus) {
+    public Booking(int bookingId, LocalDate bookingDate, BookingStatus bookingStatus) {
         this.bookingId = bookingId;
         this.bookingDate = bookingDate;
         this.bookingStatus = bookingStatus;
@@ -34,11 +34,11 @@ public class Booking {
         this.bookingDate = bookingDate;
     }
 
-    public Booking_Status getBookingStatus() {
+    public BookingStatus getBookingStatus() {
         return bookingStatus;
     }
 
-    public void setBookingStatus(Booking_Status bookingStatus) {
+    public void setBookingStatus(BookingStatus bookingStatus) {
         this.bookingStatus = bookingStatus;
     }
 
