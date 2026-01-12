@@ -2,13 +2,13 @@ package com.cakeshopsystem.models;
 
 public class Size {
     private int sizeId;
-    private String sizeInches;
+    private int sizeInches;
     private double price;
 
     public Size() {
     }
 
-    public Size(int sizeId, String sizeInches, double price) {
+    public Size(int sizeId, int sizeInches, double price) {
         this.sizeId = sizeId;
         this.sizeInches = sizeInches;
         this.price = price;
@@ -22,11 +22,11 @@ public class Size {
         this.sizeId = sizeId;
     }
 
-    public String getSizeInches() {
+    public int getSizeInches() {
         return sizeInches;
     }
 
-    public void setSizeInches(String sizeInches) {
+    public void setSizeInches(int sizeInches) {
         this.sizeInches = sizeInches;
     }
 
@@ -42,7 +42,7 @@ public class Size {
     public String toString() {
         return "Size{" +
                 "sizeId=" + sizeId +
-                ", sizeInches='" + sizeInches + '\'' +
+                ", sizeInches=" + sizeInches +
                 ", price=" + price +
                 '}';
     }

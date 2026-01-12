@@ -9,14 +9,14 @@ public class Order {
     private double subTotal;
     private double discount;
     private double grandTotal;
-    private int memberId;
+    private Integer memberId;
     private int userId;
     private int paymentId;
     private LocalDateTime updatedAt = LocalDateTime.now();
 
     public Order(){}
 
-    public Order(int orderId, LocalDateTime orderDate, double subTotal, double discount, double grandTotal, int memberId, int userId, int paymentId, LocalDateTime updatedAt) {
+    public Order(int orderId, LocalDateTime orderDate, double subTotal, double discount, double grandTotal, Integer memberId, int userId, int paymentId, LocalDateTime updatedAt) {
         this.orderId = orderId;
         this.orderDate = orderDate;
         this.subTotal = subTotal;
@@ -68,11 +68,11 @@ public class Order {
         this.grandTotal = grandTotal;
     }
 
-    public int getMemberId() {
+    public Integer getMemberId() {
         return memberId;
     }
 
-    public void setMemberId(int memberId) {
+    public void setMemberId(Integer memberId) {
         this.memberId = memberId;
     }
 

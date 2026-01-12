@@ -1,20 +1,18 @@
 package com.cakeshopsystem.models;
 
-import java.time.LocalDateTime;
-
 public class OrderItem {
 
     private int orderItemId;
     private int orderId;
-    private int productId;
-    private int drinkId;
+    private Integer productId;
+    private Integer drinkId;
     private int quantity;
     private double unitPrice;
     private double lineTotal;
 
     public OrderItem(){}
 
-    public OrderItem(int orderItemId, int orderId, int productId, int drinkId, int quantity, double unitPrice, double lineTotal) {
+    public OrderItem(int orderItemId, int orderId, Integer productId, Integer drinkId, int quantity, double unitPrice, double lineTotal) {
         this.orderItemId = orderItemId;
         this.orderId = orderId;
         this.productId = productId;
@@ -40,19 +38,19 @@ public class OrderItem {
         this.orderId = orderId;
     }
 
-    public int getProductId() {
+    public Integer getProductId() {
         return productId;
     }
 
-    public void setProductId(int productId) {
+    public void setProductId(Integer productId) {
         this.productId = productId;
     }
 
-    public int getDrinkId() {
+    public Integer getDrinkId() {
         return drinkId;
     }
 
-    public void setDrinkId(int drinkId) {
+    public void setDrinkId(Integer drinkId) {
         this.drinkId = drinkId;
     }
 
