@@ -1,10 +1,16 @@
+/* =========================
+   Root / Global Defaults
+   ========================= */
 .root {
-  -fx-font-family:  Arial, Helvetica, Verdana, Tahoma, sans-serif;
+  -fx-font-family: ".SF NS Text", "Helvetica Neue", "Segoe UI", "Ubuntu", "Noto Sans", Arial, sans-serif;
   -fx-font-size: 16;
   -fx-font-weight: normal;
   -fx-background-color: -fx-bg-color;
 }
 
+/* =========================
+   Layout Surfaces (Containers / Cards)
+   ========================= */
 .container {
   -fx-background-color: -fx-container-bg;
   -fx-border-radius: 10;
@@ -16,122 +22,163 @@
 }
 
 .container * {
-    -fx-background-color: transparent;
+  -fx-background-color: transparent;
 }
 
-/***********************
-  Base Typography
-***********************/
+/* =========================
+   Typography (Labels / Titles)
+   ========================= */
 .label {
-    -fx-text-fill: -fx-text-color;
-    -fx-font-size: 14;
+  -fx-text-fill: -fx-text-color;
+  -fx-font-size: 14;
 }
 
 .title {
-    -fx-text-fill: -fx-accent-color;
-    -fx-font-size: 42;
-    -fx-font-weight: 900;
+  -fx-text-fill: -fx-accent-color;
+  -fx-font-size: 42;
+  -fx-font-weight: 900;
 }
 
-/* Base inputs */
+/* =========================
+   Form Controls (Unified Size)
+   ========================= */
+.text-field,
+.password-field,
+.combo-box,
+.button {
+  -fx-min-height: 40;
+  -fx-pref-height: 40;
+  -fx-max-height: 40;
+
+  -fx-background-radius: 10;
+  -fx-border-radius: 10;
+
+  -fx-font-size: 14;
+}
+
+/* TextField / PasswordField */
 .text-field,
 .password-field {
-    -fx-background-radius: 10;
-    -fx-border-radius: 10;
-    -fx-border-color: -fx-text-color;
-    -fx-padding: 10 16;
+  -fx-border-color: -fx-text-color;
+  -fx-border-width: 1;
+  -fx-padding: 0 14 0 14;
 }
 
+/* ComboBox */
 .combo-box {
-    -fx-background-radius: 10;
-    -fx-border-radius: 10;
-    -fx-border-color: -fx-text-color;
+  -fx-border-color: -fx-text-color;
+  -fx-border-width: 1;
+  -fx-padding: 0;
 }
 
-/* Inputs that have a left icon overlay */
+.combo-box-base {
+  -fx-min-height: 40;
+  -fx-pref-height: 40;
+  -fx-max-height: 40;
+
+  -fx-background-radius: 10;
+  -fx-border-radius: 10;
+}
+
+.combo-box .list-cell {
+  -fx-padding: 0 14 0 14;
+  -fx-alignment: CENTER_LEFT;
+  -fx-text-fill: -fx-text-color;
+}
+
+.combo-box .arrow-button {
+  -fx-padding: 0 12 0 12;
+}
+
+.combo-box .arrow {
+  -fx-background-color: -fx-text-color;
+}
+
+/* =========================
+   Input Variants (Left Icon Padding)
+   ========================= */
 .login-text-field,
 .login-password-field {
-    -fx-padding: 10 16 10 44; /* top right bottom left */
+  -fx-padding: 0 14 0 44;
 }
 
-/* Default icon color (inherits theme text color) */
+/* =========================
+   Icons (Ikonli)
+   ========================= */
 .ikonli-font-icon {
-    -fx-icon-color: -fx-text-color;
+  -fx-icon-color: -fx-text-color;
 }
 
-/* Only icons mark as clickable should show hand cursor */
 .icon-clickable {
-    -fx-cursor: hand;
+  -fx-cursor: hand;
 }
 
-/***********************
-  Buttons
-***********************/
-/* Utility: text with graphic on the left */
+/* =========================
+   Buttons (Base / Outline / States)
+   ========================= */
 .graphic-left {
-    -fx-content-display: LEFT;
+  -fx-content-display: LEFT;
 }
 
 .button {
-    -fx-font-weight: bold;
-    -fx-background-radius: 10;
-    -fx-cursor: hand;
-    -fx-padding: 10 16;
-    -fx-alignment: center;
-    -fx-background-color: -fx-accent-color;
-    -fx-text-fill: -fx-button-text-color;
-    -fx-graphic-text-gap: 8;
+  -fx-font-weight: 700;
+  -fx-cursor: hand;
+  -fx-padding: 0 16 0 16;
+  -fx-alignment: center;
+  -fx-background-color: -fx-accent-color;
+  -fx-text-fill: -fx-button-text-color;
+  -fx-graphic-text-gap: 8;
 }
 
-.button.outline{
-    -fx-background-color: transparent;
-    -fx-border-color: -fx-accent-color;
-    -fx-text-fill: -fx-text-color;
-    -fx-border-radius: 8;
-    -fx-background-radius: 8;
+.button.outline {
+  -fx-background-color: transparent;
+  -fx-border-color: -fx-accent-color;
+  -fx-border-width: 1;
+  -fx-text-fill: -fx-text-color;
+  -fx-border-radius: 8;
+  -fx-background-radius: 8;
 }
 
 .button:hover,
 .button:focused,
-.button:pressed{
+.button:pressed {
   -fx-background-color: derive(-fx-accent-color, 50%);
 }
 
 .button.outline:hover,
 .button.outline:focused,
-.button.outline:pressed{
-    -fx-background-color: derive(-fx-accent-color, 50%);
+.button.outline:pressed {
+  -fx-background-color: derive(-fx-accent-color, 50%);
 }
 
-/***********************
-  Hyperlinks
-***********************/
+/* =========================
+   Hyperlinks
+   ========================= */
 .hyperlink {
-    -fx-text-fill: -fx-text-color;
-    -fx-underline: false;
-    -fx-font-size: 13;
-    -fx-graphic-text-gap: 6;
+  -fx-text-fill: -fx-text-color;
+  -fx-underline: false;
+  -fx-font-size: 13;
+  -fx-graphic-text-gap: 6;
 }
 
 .hyperlink:hover,
 .hyperlink.active,
 .hyperlink:focused {
-    -fx-background-radius: 6;
-    -fx-text-fill: derive(-fx-text-color, 100%);
+  -fx-background-radius: 6;
+  -fx-text-fill: derive(-fx-text-color, 100%);
 }
 
 .hyperlink:focused {
-    -fx-focus-color: transparent;
-    -fx-faint-focus-color: transparent;
-    -fx-border-color: transparent;
-    -fx-background-insets: 0;
-    -fx-border-insets: 0;
+  -fx-focus-color: transparent;
+  -fx-faint-focus-color: transparent;
+  -fx-border-color: transparent;
+  -fx-background-insets: 0;
+  -fx-border-insets: 0;
 }
 
-/***********************
-  Message
-***********************/
-
+/* =========================
+   Messages (Error / Success / Warning / Info)
+   ========================= */
 .error-message {
   -fx-text-fill: -fx-error-color;
 }

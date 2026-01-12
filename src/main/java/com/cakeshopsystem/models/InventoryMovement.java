@@ -1,27 +1,35 @@
 package com.cakeshopsystem.models;
 
+import com.cakeshopsystem.utils.constants.InventoryMovementType;
+
 import java.time.LocalDateTime;
 
 public class InventoryMovement {
     private int inventoryMovementId;
     private int inventoryId;
-    private InventoryMovement movementType;
+    private InventoryMovementType movementType;
     private int quantityChange;
     private Integer orderItemId;
     private Integer userId;
-    private LocalDateTime moveAt = LocalDateTime.now();
+    private LocalDateTime movedAt = LocalDateTime.now();
 
     public InventoryMovement() {
     }
 
-    public InventoryMovement(int inventoryMovementId, int inventoryId, InventoryMovement movementType, int quantityChange, Integer orderItemId, Integer userId, LocalDateTime moveAt) {
+    public InventoryMovement(int inventoryMovementId,
+                             int inventoryId,
+                             InventoryMovementType movementType,
+                             int quantityChange,
+                             Integer orderItemId,
+                             Integer userId,
+                             LocalDateTime movedAt) {
         this.inventoryMovementId = inventoryMovementId;
         this.inventoryId = inventoryId;
         this.movementType = movementType;
         this.quantityChange = quantityChange;
         this.orderItemId = orderItemId;
         this.userId = userId;
-        this.moveAt = moveAt;
+        this.movedAt = movedAt;
     }
 
     public int getInventoryMovementId() {
@@ -40,11 +48,11 @@ public class InventoryMovement {
         this.inventoryId = inventoryId;
     }
 
-    public InventoryMovement getMovementType() {
+    public InventoryMovementType getMovementType() {
         return movementType;
     }
 
-    public void setMovementType(InventoryMovement movementType) {
+    public void setMovementType(InventoryMovementType movementType) {
         this.movementType = movementType;
     }
 
@@ -72,12 +80,12 @@ public class InventoryMovement {
         this.userId = userId;
     }
 
-    public LocalDateTime getMoveAt() {
-        return moveAt;
+    public LocalDateTime getMovedAt() {
+        return movedAt;
     }
 
-    public void setMoveAt(LocalDateTime moveAt) {
-        this.moveAt = moveAt;
+    public void setMovedAt(LocalDateTime movedAt) {
+        this.movedAt = movedAt;
     }
 
     @Override
@@ -89,7 +97,7 @@ public class InventoryMovement {
                 ", quantityChange=" + quantityChange +
                 ", orderItemId=" + orderItemId +
                 ", userId=" + userId +
-                ", moveAt=" + moveAt +
+                ", movedAt=" + movedAt +
                 '}';
     }
 }

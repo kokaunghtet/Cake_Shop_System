@@ -10,14 +10,14 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cakeshopsystem.controllers.UserViewController">
+<AnchorPane styleClass="container" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cakeshopsystem.controllers.admin.UserViewController">
     <children>
         <VBox alignment="CENTER" layoutX="10.0" layoutY="8.0" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
                 <HBox alignment="TOP_RIGHT">
                     <children>
-                        <TextField fx:id="txtSearch" promptText="Search" />
-                        <ComboBox fx:id="btnFilter" prefWidth="150.0" promptText="Filter">
+                        <TextField fx:id="txtSearch" promptText="Search" styleClass="text-field" />
+                        <ComboBox fx:id="btnFilter" promptText="Filter">
                             <HBox.margin>
                                 <Insets left="25.0" />
                             </HBox.margin>
@@ -32,11 +32,11 @@
                         <Insets />
                     </VBox.margin>
                 </HBox>
-                <TableView>
+                <TableView fx:id="userTableView" VBox.vgrow="ALWAYS">
                     <columns>
-                        <TableColumn fx:id="colName" prefWidth="151.19997882843018" text="Name" />
-                        <TableColumn fx:id="colEmail" prefWidth="208.8000030517578" text="Email" />
-                        <TableColumn fx:id="colStatue" prefWidth="203.20001220703125" text="Statue" />
+                        <TableColumn fx:id="colName" maxWidth="1.7976931348623157E308" minWidth="200.0" prefWidth="-1.0" text="Name" />
+                        <TableColumn fx:id="colEmail" maxWidth="1.7976931348623157E308" minWidth="200.0" prefWidth="-1.0" text="Email" />
+                        <TableColumn fx:id="colStatus" maxWidth="1.7976931348623157E308" minWidth="200.0" prefWidth="-1.0" text="Status" />
                     </columns>
                 </TableView>
             </children>

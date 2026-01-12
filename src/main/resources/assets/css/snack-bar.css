@@ -1,11 +1,14 @@
-/* ---- SnackBar base ---- */
+/* =========================
+   SnackBar Component
+   ========================= */
+
+/* SnackBar Base (Container / Glass) */
 .snack-bar {
     -fx-background-radius: 18;
     -fx-border-radius: 18;
     -fx-border-color: rgba(255,255,255,0.14);
     -fx-border-width: 0.8;
 
-    /* glass base */
     -fx-background-color: rgba(28, 28, 30, 0.55);
 
     -fx-padding: 12 14;
@@ -13,7 +16,7 @@
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 24, 0.25, 0, 10);
 }
 
-/* Text */
+/* SnackBar Text */
 .snack-title {
     -fx-font-weight: 700;
     -fx-font-size: 14px;
@@ -25,19 +28,33 @@
     -fx-text-fill: rgba(255,255,255,0.82);
 }
 
-/* Close button */
+/* SnackBar Close Button */
 .snack-close {
     -fx-background-color: rgba(0,0,0,0.18);
-    -fx-background-radius: 999;
 
     -fx-border-color: rgba(255,255,255,0.18);
     -fx-border-width: 0.8;
+
+    /* force circle */
+    -fx-min-width: 28;
+    -fx-pref-width: 28;
+    -fx-max-width: 28;
+
+    -fx-min-height: 28;
+    -fx-pref-height: 28;
+    -fx-max-height: 28;
+
+    -fx-background-radius: 999;
     -fx-border-radius: 999;
 
     -fx-text-fill: rgba(255,255,255,0.95);
     -fx-font-weight: 800;
 
-    -fx-padding: 4 10;
+    /* remove padding that breaks the circle */
+    -fx-padding: 0;
+
+    /* keep content centered */
+    -fx-alignment: center;
 }
 
 .snack-close:hover {
@@ -48,7 +65,7 @@
     -fx-background-color: rgba(0,0,0,0.34);
 }
 
-/* ---- Type accents ---- */
+/* SnackBar Type Accents */
 .snack-info {
     -fx-background-color:
         linear-gradient(
@@ -57,6 +74,7 @@
             rgba(90,200,250,0.80)
         );
 }
+
 .snack-success {
     -fx-background-color:
         linear-gradient(
@@ -65,6 +83,7 @@
             rgba(52,199,89,0.80)
         );
 }
+
 .snack-warning {
     -fx-background-color:
         linear-gradient(
@@ -73,6 +92,7 @@
             rgba(255,204,0,0.80)
         );
 }
+
 .snack-error {
     -fx-background-color:
         linear-gradient(

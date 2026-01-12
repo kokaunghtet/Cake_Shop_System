@@ -7,14 +7,14 @@ public class CustomCakeBooking {
     private int customCakeBookingId;
     private int orderId;
     private int cakeId;
-    private int bookingId;
+    private Integer bookingId;
     private LocalDate pickupDate;
     private String customMessage;
 
     public CustomCakeBooking() {
     }
 
-    public CustomCakeBooking(int customCakeBookingId, int orderId, int cakeId, int bookingId, LocalDate pickupDate, String customMessage) {
+    public CustomCakeBooking(int customCakeBookingId, int orderId, int cakeId, Integer bookingId, LocalDate pickupDate, String customMessage) {
         this.customCakeBookingId = customCakeBookingId;
         this.orderId = orderId;
         this.cakeId = cakeId;
@@ -47,11 +47,11 @@ public class CustomCakeBooking {
         this.cakeId = cakeId;
     }
 
-    public int getBookingId() {
+    public Integer getBookingId() {
         return bookingId;
     }
 
-    public void setBookingId(int bookingId) {
+    public void setBookingId(Integer bookingId) {
         this.bookingId = bookingId;
     }
 

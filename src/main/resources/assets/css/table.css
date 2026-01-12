@@ -1,0 +1,128 @@
+/* =========================
+   TableView (Material Clean)
+   ========================= */
+
+/* Base surface */
+.table-view {
+    -fx-background-color: -fx-container-bg;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: -fx-container-border-color;
+    -fx-border-width: 1;
+
+    -fx-padding: 0;
+    -fx-background-insets: 0;
+
+    -fx-effect: -fx-soft-shadow;
+}
+
+/* Make inner regions blend with table background */
+.table-view .virtual-flow,
+.table-view .virtual-flow .clipped-container,
+.table-view .virtual-flow .sheet {
+    -fx-background-color: transparent;
+}
+
+/* =========================
+   Header (Material)
+   ========================= */
+.table-view .column-header-background {
+    -fx-background-color: derive(-fx-container-bg, -3%);
+    -fx-background-insets: 0;
+    -fx-background-radius: 12 12 0 0;
+
+    -fx-padding: 10 8 10 8;
+
+    -fx-border-color: transparent transparent derive(-fx-container-border-color, -10%) transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.table-view .column-header,
+.table-view .filler {
+    -fx-background-color: transparent;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: -fx-text-color;
+    -fx-font-weight: 700;
+    -fx-font-size: 13;
+}
+
+/* Optional: remove header separators */
+.table-view .column-header-background .nested-column-header,
+.table-view .column-header-background .nested-column-header .column-header {
+    -fx-border-color: transparent;
+}
+
+/* =========================
+   Rows (Flat + Dividers)
+   ========================= */
+.table-row-cell {
+    -fx-background-color: -fx-container-bg;
+    -fx-background-insets: 0;
+
+    -fx-border-color: transparent transparent derive(-fx-container-border-color, -10%) transparent;
+    -fx-border-width: 0 0 1 0;
+
+    -fx-cell-size: 46;
+}
+
+/* Hover */
+.table-row-cell:hover {
+    -fx-background-color: derive(-fx-secondary-color, 35%);
+}
+
+/* Selected */
+.table-row-cell:selected {
+    -fx-background-color: derive(-fx-primary-color, 65%);
+    -fx-border-color: transparent transparent derive(-fx-primary-color, 25%) transparent;
+}
+
+/* =========================
+   Cells (Padding + Text)
+   ========================= */
+.table-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: -fx-text-color;
+
+    -fx-padding: 10 12 10 12;
+    -fx-alignment: CENTER_LEFT;
+
+    -fx-border-color: transparent;
+}
+
+/* Ensure selected text stays readable */
+.table-row-cell:selected .table-cell {
+    -fx-text-fill: -fx-accent-color;
+}
+
+/* Remove vertical column lines for a cleaner look */
+.table-view .table-column {
+    -fx-border-color: transparent;
+}
+
+/* =========================
+   Scrollbars (Minimal)
+   ========================= */
+.table-view .scroll-bar:vertical,
+.table-view .scroll-bar:horizontal {
+    -fx-background-color: transparent;
+}
+
+.table-view .scroll-bar .track {
+    -fx-background-color: transparent;
+}
+
+.table-view .scroll-bar .thumb {
+    -fx-background-color: derive(-fx-text-color, 70%);
+    -fx-background-radius: 999;
+}
+
+.table-view .scroll-bar .thumb:hover {
+    -fx-background-color: derive(-fx-text-color, 55%);
+}
+
+/* Corner (bottom-right) */
+.table-view .corner {
+    -fx-background-color: transparent;
+}

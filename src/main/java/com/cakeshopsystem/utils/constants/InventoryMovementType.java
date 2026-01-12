@@ -1,13 +1,13 @@
 package com.cakeshopsystem.utils.constants;
 
-public enum IngredientMovement {
+public enum InventoryMovementType {
     ADD("Add"),
     SALE("Sale"),
     WASTE("Waste");
 
     private final String displayName;
 
-    IngredientMovement(String displayName) {
+    InventoryMovementType(String displayName) {
         this.displayName = displayName;
     }
 

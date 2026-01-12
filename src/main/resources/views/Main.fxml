@@ -20,9 +20,9 @@
                         <HBox>
                             <children>
                                 <ImageView fx:id="profileImageView" fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true" />
-                                <VBox alignment="CENTER" spacing="20.0">
+                                <VBox alignment="CENTER_LEFT" spacing="20.0">
                                     <children>
-                                        <Label fx:id="usenameLabel" text="Username" />
+                                        <Label fx:id="usernameLabel" text="Username" />
                                         <Label fx:id="roleLabel" text="Role" />
                                     </children>
                                 </VBox>
@@ -60,7 +60,9 @@
                 </HBox>
             </top>
             <center>
-                <AnchorPane fx:id="centerAnchorPane" BorderPane.alignment="CENTER" />
+                <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="750.0" BorderPane.alignment="CENTER">
+                    <AnchorPane fx:id="contentPane" layoutX="14.0" layoutY="62.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0" />
+                </AnchorPane>
             </center>
         </BorderPane>
     </children>

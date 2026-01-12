@@ -41,19 +41,19 @@ public class DiyCakeBooking {
         this.bookingId = bookingId;
     }
 
-    public int getCustomerId() {
+    public int getMemberId() {
         return memberId;
     }
 
-    public void setCustomerId(int memberId) {
+    public void setMemberId(int memberId) {
         this.memberId = memberId;
     }
 
-    public int getPrebakedCakeId() {
+    public int getCakeId() {
         return cakeId;
     }
 
-    public void setPrebakedCakeId(int cakeId) {
+    public void setCakeId(int cakeId) {
         this.cakeId = cakeId;
     }
 
