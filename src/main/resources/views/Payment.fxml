@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.VBox?>
+
+
+<VBox fx:id="paymentPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="310.0" prefWidth="373.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cakeshopsystem.controller.PaymentController">
+   <children>
+      <TableView fx:id="tblPayment" prefHeight="307.0" prefWidth="358.0">
+        <columns>
+          <TableColumn fx:id="colNumber" prefWidth="56.800048828125" text="No" />
+          <TableColumn fx:id="colPaymentType" minWidth="0.0" prefWidth="163.99993896484375" text="Payment Type" />
+            <TableColumn fx:id="colStatus" prefWidth="170.4000244140625" text="Status" />
+        </columns>
+      </TableView>
+   </children>
+</VBox>
