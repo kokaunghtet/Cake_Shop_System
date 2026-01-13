@@ -1,28 +1,27 @@
 package com.cakeshopsystem.models;
 
-public class Recipe {
-
-    private int recipeId;
+public class CakeRecipe {
+    private int cakeRecipeId;
     private int cakeId;
     private int ingredientId;
     private double requiredQuantity;
 
-    public Recipe() {
+    public CakeRecipe() {
     }
 
-    public Recipe(int recipeId, int cakeId, int ingredientId, double requiredQuantity) {
-        this.recipeId = recipeId;
+    public CakeRecipe(int cakeRecipeId, int cakeId, int ingredientId, double requiredQuantity) {
+        this.cakeRecipeId = cakeRecipeId;
         this.cakeId = cakeId;
         this.ingredientId = ingredientId;
         this.requiredQuantity = requiredQuantity;
     }
 
-    public int getRecipeId() {
-        return recipeId;
+    public int getCakeRecipeId() {
+        return cakeRecipeId;
     }
 
-    public void setRecipeId(int recipeId) {
-        this.recipeId = recipeId;
+    public void setCakeRecipeId(int cakeRecipeId) {
+        this.cakeRecipeId = cakeRecipeId;
     }
 
     public int getCakeId() {
@@ -51,11 +50,13 @@ public class Recipe {
 
     @Override
     public String toString() {
-        return "Recipe{" +
-                "recipeId=" + recipeId +
+        return "CakeRecipe{" +
+                "cakeRecipeId=" + cakeRecipeId +
                 ", cakeId=" + cakeId +
                 ", ingredientId=" + ingredientId +
                 ", requiredQuantity=" + requiredQuantity +
                 '}';
     }
 }
+
+

@@ -1,14 +1,29 @@
+/* =========================
+   Global Theme Variables
+   ========================= */
 .root {
+
+    /* Text */
     -fx-text-color: #5A273B;
+
+    /* Backgrounds / Surfaces */
     -fx-bg-color: #FFF5E4;
+    -fx-container-bg: derive(-fx-bg-color, 10%);
+    -fx-container-border-color: #F5E9D6;
+
+    /* Theme Colors */
     -fx-primary-color: #EE6983;
     -fx-secondary-color: #FFC4C4;
     -fx-accent-color: #74071B;
-    -fx-container-bg: derive(-fx-bg-color, 10%);
-    -fx-container-border-color: #F5E9D6;
-    -fx-button-text-color: #FFC4C4;
+
+    /* Buttons */
+    -fx-button-text-color: #FFFFFF;
+
+    /* Shadows */
     -fx-soft-shadow: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 8, 0.2, 0, 2);
     -fx-strong-shadow: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 16, 0.3, 0, 4);
+
+    /* Semantic / Status Colors */
     -fx-error-color: #E63946;
     -fx-success-color: #2ECC71;
     -fx-warning-color: #F39C12;

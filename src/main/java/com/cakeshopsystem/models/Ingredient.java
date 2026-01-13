@@ -1,16 +1,16 @@
 package com.cakeshopsystem.models;
 
-import com.cakeshopsystem.utils.constants.Ingredient_Unit;
+import com.cakeshopsystem.utils.constants.IngredientUnit;
 
 public class Ingredient {
 
     private int ingredientId;
     private String ingredientName;
-    private Ingredient_Unit unit;
+    private IngredientUnit unit;
 
     public Ingredient(){}
 
-    public Ingredient(String ingredientName, int ingredientId, Ingredient_Unit unit) {
+    public Ingredient(String ingredientName, int ingredientId, IngredientUnit unit) {
         this.ingredientName = ingredientName;
         this.ingredientId = ingredientId;
         this.unit = unit;
@@ -32,11 +32,11 @@ public class Ingredient {
         this.ingredientId = ingredientId;
     }
 
-    public Ingredient_Unit getUnit() {
+    public IngredientUnit getUnit() {
         return unit;
     }
 
-    public void setUnit(Ingredient_Unit unit) {
+    public void setUnit(IngredientUnit unit) {
         this.unit = unit;
     }
 

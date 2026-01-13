@@ -18,10 +18,8 @@
             </HBox>
             <TableView>
               <columns>
-                <TableColumn fx:id="colName" maxWidth="-1.0" minWidth="-1.0" prefWidth="-1.0" text="Name">
-                     <columns>
-                      <TableColumn fx:id="colPhnumber" maxWidth="-1.0" minWidth="-1.0" prefWidth="-1.0" text="PhoneNumber" />
-                     </columns></TableColumn>
+                <TableColumn fx:id="colName" maxWidth="-1.0" minWidth="200.0" prefWidth="-1.0" text="Name" />
+                <TableColumn fx:id="colPhoneNumber" maxWidth="-1.0" minWidth="200.0" prefWidth="-1.0" text="Phone Number" />
               </columns>
             </TableView>
          </children>
