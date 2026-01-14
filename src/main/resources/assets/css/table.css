@@ -86,7 +86,7 @@
     -fx-text-fill: -fx-text-color;
 
     -fx-padding: 10 12 10 12;
-    -fx-alignment: CENTER_LEFT;
+    -fx-alignment: CENTER;
 
     -fx-border-color: transparent;
 }

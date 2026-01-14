@@ -9,58 +9,78 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class SessionManager {
+
+    // =========================
+    // App Constants
+    // =========================
     public static final int PAGINATION_LIMIT = 10;
+
+    // =========================
+    // Primary UI References
+    // =========================
     public static Stage primaryStage;
-    public static User user;
-    public static boolean isAdmin;
-    public static boolean isDarkModeOn = false;
     public static MainController mainController;
     public static VBox snackBarContainer;
 
-    public SessionManager() {}
+    // =========================
+    // Current Session State
+    // =========================
+    public static User user;
+    public static boolean isAdmin;
+    public static boolean isDarkModeOn = false;
 
-    public SessionManager(User user) {
+    // Utility class (prevent instantiation)
+    private SessionManager() {}
+
+    // =========================
+    // Session Setup / Update
+    // =========================
+    public static void setUser(User user) {
         SessionManager.user = user;
-        if(user == null){
-            isAdmin = false;
-        } else {
-            isAdmin = RoleCache.getRolesMap().get(user.getRole()).getRoleName().equalsIgnoreCase("Admin");
-        }
+        updateAdminFlag();
     }
 
     public static User getUser() {
         return user;
     }
 
-    public static void setUser(User user) {
-        SessionManager.user = user;
-        if (user != null) {
-            isAdmin = RoleCache.getRolesMap().get(user.getRole()).getRoleName().equalsIgnoreCase("Admin");
-        } else {
+    private static void updateAdminFlag() {
+        if (user == null) {
             isAdmin = false;
+            return;
         }
+        isAdmin = RoleCache.getRolesMap()
+                .get(user.getRole())
+                .getRoleName()
+                .equalsIgnoreCase("Admin");
+    }
+
+    // =========================
+    // UI Containers / Stage
+    // =========================
+    public static Stage getStage() {
+        return primaryStage;
+    }
+
+    public static void setStage(Stage stage) {
+        SessionManager.primaryStage = stage;
     }
 
     public static VBox getSnackBarContainer() {
         return snackBarContainer;
     }
 
-    public static void setSnackBarContainer(VBox snackBarContainer) {
-        SessionManager.snackBarContainer = snackBarContainer;
+    public static void setSnackBarContainer(VBox container) {
+        SessionManager.snackBarContainer = container;
     }
 
-    public static Stage getStage() {
-        return primaryStage;
-    }
-
-    public static void setStage(Stage primaryStage) {
-        SessionManager.primaryStage = primaryStage;
-    }
-
+    // =========================
+    // Session Actions
+    // =========================
     public static void forceLogout() {
         ChangeScene.switchScene("LoginForm.fxml", "Cake Shop System | Login Form");
         SessionManager.user = null;
-
+        isAdmin = false;
         UserCache.clearCache();
     }
 }

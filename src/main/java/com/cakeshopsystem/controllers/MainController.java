@@ -2,21 +2,29 @@ package com.cakeshopsystem.controllers;
 
 import com.cakeshopsystem.models.User;
 import com.cakeshopsystem.utils.cache.RoleCache;
+import com.cakeshopsystem.utils.components.BreadcrumbBar;
+import com.cakeshopsystem.utils.components.BreadcrumbManager;
 import com.cakeshopsystem.utils.components.SnackBar;
 import com.cakeshopsystem.utils.constants.SnackBarType;
 import com.cakeshopsystem.utils.session.SessionManager;
+import javafx.animation.Interpolator;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
+import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.*;
 import javafx.util.Duration;
 import org.kordamp.ikonli.javafx.FontIcon;
 
@@ -29,69 +37,162 @@ import java.util.concurrent.Executors;
 
 public class MainController {
 
-    // ----- Icons -----
-    @FXML private FontIcon settingIcon;
-    @FXML private FontIcon signoutIcon;
-    @FXML private FontIcon moonIcon;
+    /* =========================================================
+     * Constants / State
+     * ========================================================= */
 
-    // ----- Layout containers -----
-    @FXML private AnchorPane contentPane;
-    @FXML private BorderPane mainBorderPane;
-    @FXML private StackPane mainStackPane;
-
-    // ----- Top bar -----
-    @FXML private ImageView profileImageView;
-    @FXML private Label roleLabel;
-    @FXML private HBox topBar;
-    @FXML private Label usernameLabel;
-
-    // ----- Navigation links -----
-    @FXML private Hyperlink adminDashboardLink;
-    @FXML private Hyperlink adminProductLink;
-    @FXML private Hyperlink customerOrderLink;
-    @FXML private Hyperlink memberLink;
-    @FXML private Hyperlink staffProductLink;
-    @FXML private Hyperlink staffDashboardLink;
-    @FXML private Hyperlink userLink;
-    @FXML private Hyperlink bookingLink;
+    private static final String DEFAULT_VIEW_FXML = "/views/admin/AdminDashboard.fxml";
+    private static final String DEFAULT_TITLE_PREFIX = "Cake Shop System | ";
+    private static final double POPUP_CONTENT_WIDTH = 300;
 
     // Tracks which nav link is currently active for styling
     private Hyperlink activeLink;
 
-    // Use a single background thread for FXML loading (prevents spawning many threads)
-    private final ExecutorService fxmlLoaderExecutor =
-            Executors.newSingleThreadExecutor(r -> {
-                Thread t = new Thread(r, "fxml-loader");
-                t.setDaemon(true); // Daemon so app can exit cleanly
-                return t;
-            });
+    // Popup state
+    private static boolean isPopupContentOpen = false;
 
-    private static final String DEFAULT_VIEW_FXML = "/views/admin/AdminDashboard.fxml";
-    private static final String DEFAULT_TITLE = "Cake Shop System";
+    // Use a single background thread for FXML loading (prevents spawning many threads)
+    private final ExecutorService fxmlLoaderExecutor = Executors.newSingleThreadExecutor(r -> {
+        Thread t = new Thread(r, "fxml-loader");
+        t.setDaemon(true); // Daemon so app can exit cleanly
+        return t;
+    });
+
+    /* =========================================================
+     * FXML: Icons
+     * ========================================================= */
+
+    @FXML
+    private FontIcon settingIcon;
+    @FXML
+    private FontIcon signoutIcon;
+    @FXML
+    private FontIcon moonIcon;
+
+    /* =========================================================
+     * FXML: Layout Containers
+     * ========================================================= */
+
+    @FXML
+    private AnchorPane contentPane;
+    @FXML
+    private BorderPane mainBorderPane;
+    @FXML
+    private StackPane mainStackPane;
+    @FXML
+    private AnchorPane overlayPane;
+    @FXML
+    private AnchorPane popupPane;
+
+    /* =========================================================
+     * FXML: Top Bar
+     * ========================================================= */
+
+    @FXML
+    private ImageView profileImageView;
+    @FXML
+    private Label roleLabel;
+    @FXML
+    private HBox topBar;
+    @FXML
+    private Label usernameLabel;
+
+    /* =========================================================
+     * FXML: Navigation Links
+     * ========================================================= */
+
+    @FXML
+    private Hyperlink adminDashboardLink;
+    @FXML
+    private Hyperlink adminProductLink;
+    @FXML
+    private Hyperlink customerOrderLink;
+    @FXML
+    private Hyperlink memberLink;
+    @FXML
+    private Hyperlink staffProductLink;
+    @FXML
+    private Hyperlink staffDashboardLink;
+    @FXML
+    private Hyperlink userLink;
+    @FXML
+    private Hyperlink bookingLink;
+
+    /* =========================================================
+     * FXML: Breadcrumbs
+     * ========================================================= */
+
+    @FXML
+    private BreadcrumbBar breadcrumbBar;
+
+    /* =========================================================
+     * Static References for Popup System
+     * ========================================================= */
+
+    // Loading overlay (added to mainStackPane)
+    private static StackPane loadingOverlay;
+
+    // Static references to allow popup control from other controllers
+    private static BorderPane staticBorderPane;
+    private static AnchorPane staticPopupContentPane;
+    private static AnchorPane staticOverlayPane;
+    //    private static VBox staticPopupSettingBox = new VBox(20);
+
+    /* =========================================================
+     * Lifecycle
+     * ========================================================= */
 
     @FXML
     public void initialize() {
-        // Show logged-in user info on the top bar
-        updateUserInfo();
+        // Make controller state accessible from static popup helpers
+        staticOverlayPane = overlayPane;
+        staticBorderPane = mainBorderPane;
+        staticPopupContentPane = popupPane;
 
-        // Hide nav links depending on role (Admin/Cashier rules)
+        staticOverlayPane.setVisible(false);
+        staticPopupContentPane.setTranslateX(POPUP_CONTENT_WIDTH);
+
+        updateUserInfo();
         configureRoleBasedAccess();
 
-        // Sign out action
-        signoutIcon.setOnMouseClicked(e -> handleLogout());
+        if (signoutIcon != null) {
+            signoutIcon.setOnMouseClicked(e -> handleLogout());
+        }
 
-        // Load default center view
-        loadView(DEFAULT_VIEW_FXML, DEFAULT_TITLE, adminDashboardLink);
+        // Loading overlay
+        loadingOverlay = createLoadingOverlay();
+        loadingOverlay.setVisible(false);
+        loadingOverlay.setManaged(false);
 
-        // navigation links actions
-        userLink.setOnMouseClicked(event -> loadUser());
-        memberLink.setOnMouseClicked(event -> loadMember());
-        adminProductLink.setOnMouseClicked(event -> loadProduct());
+        if (mainStackPane != null && !mainStackPane.getChildren().contains(loadingOverlay)) {
+            mainStackPane.getChildren().add(loadingOverlay);
+        }
+
+        // Breadcrumb binding
+        if (breadcrumbBar != null) {
+            breadcrumbBar.bindToGlobal();
+        }
+
+        // Default navigation
+        if (SessionManager.isAdmin) {
+            BreadcrumbManager.setBreadcrumbs();
+            navigate(DEFAULT_VIEW_FXML, adminDashboardLink, "Dashboard");
+        }
+
+        // Navigation handlers
+        if (adminDashboardLink != null) adminDashboardLink.setOnMouseClicked(e -> loadAdminDashboard());
+        if (userLink != null) userLink.setOnMouseClicked(e -> loadUser());
+        if (memberLink != null) memberLink.setOnMouseClicked(e -> loadMember());
+        if (adminProductLink != null) adminProductLink.setOnMouseClicked(e -> loadAdminProduct());
     }
+
+    /* =========================================================
+     * User / Session
+     * ========================================================= */
 
     private void handleLogout() {
         SessionManager.forceLogout(); // Clear session state
-        SnackBar.show(SnackBarType.SUCCESS, "Logout Successfully", "", Duration.seconds(3));
+        SnackBar.show(SnackBarType.SUCCESS, "Logged out successfully", "", Duration.seconds(3));
     }
 
     /**
@@ -101,85 +202,19 @@ public class MainController {
         User user = SessionManager.getUser();
         if (user == null) return;
 
-        usernameLabel.setText(user.getUserName()); // Show username
+        if (usernameLabel != null) {
+            usernameLabel.setText(user.getUserName());
+        }
 
-        if (RoleCache.getRolesMap().containsKey(user.getRole())) {
+        if (roleLabel != null && RoleCache.getRolesMap().containsKey(user.getRole())) {
             roleLabel.setText(RoleCache.getRolesMap().get(user.getRole()).getRoleName());
-        } else {
-            roleLabel.setText("Unknown Role");
         }
     }
 
-    /* =================== CENTER CONTENT LOADING =================== */
+    /* =========================================================
+     * Role-Based Access Control
+     * ========================================================= */
 
-    /**
-     * Loads an FXML into the center content pane asynchronously and updates the window title.
-     */
-    private void loadView(String fxmlPath, String title, Hyperlink buttonToActivate) {
-        // Activate nav styling immediately (fast feedback)
-        setActiveButton(buttonToActivate);
-
-        // Load content in background to avoid UI freezing
-        Task<Node> loadTask = new Task<>() {
-            @Override
-            protected Node call() throws IOException {
-                URL url = requireResource(fxmlPath);              // Validate resource exists
-                FXMLLoader loader = new FXMLLoader(url);         // Prepare loader
-                return loader.load();                            // Load UI tree
-            }
-        };
-
-        loadTask.setOnSucceeded(e -> {
-            // Swap view on FX thread
-            Node view = loadTask.getValue();
-            setCenterContent(view);
-
-            // Update window title
-            if (title != null && !title.isBlank()) {
-                Platform.runLater(() -> SessionManager.getStage().setTitle(title));
-            }
-        });
-
-        loadTask.setOnFailed(e -> {
-            // Log error
-            if (loadTask.getException() != null) {
-                loadTask.getException().printStackTrace();
-            }
-            SnackBar.show(SnackBarType.ERROR, "Load Failed", "Cannot load view: " + fxmlPath, Duration.seconds(3));
-        });
-
-        fxmlLoaderExecutor.submit(loadTask); // Run task on single executor thread
-    }
-
-    /**
-     * Replaces the center content pane with the given Node and anchors it to all sides.
-     */
-    private void setCenterContent(Node content) {
-        Platform.runLater(() -> {
-            contentPane.getChildren().setAll(content); // Replace existing content
-
-            // Anchor the loaded node so it stretches to fill the pane
-            AnchorPane.setTopAnchor(content, 0.0);
-            AnchorPane.setBottomAnchor(content, 0.0);
-            AnchorPane.setLeftAnchor(content, 0.0);
-            AnchorPane.setRightAnchor(content, 0.0);
-        });
-    }
-
-    /**
-     * Sets "active" style on selected nav link.
-     */
-    private void setActiveButton(Hyperlink btn) {
-        if (btn == null) return;
-
-        if (activeLink != null) {
-            activeLink.getStyleClass().remove("active"); // Remove old active style
-        }
-        activeLink = btn;
-        activeLink.getStyleClass().add("active");        // Add active style
-    }
-
-    /* =================== ROLE BASED ACCESS =================== */
     /**
      * Hides navigation links depending on the current user's role.
      * Uses managed=false to remove layout space as well.
@@ -187,7 +222,6 @@ public class MainController {
     private void configureRoleBasedAccess() {
         User user = SessionManager.getUser();
         if (user == null) return;
-
         if (!RoleCache.getRolesMap().containsKey(user.getRole())) return;
 
         String roleName = RoleCache.getRolesMap().get(user.getRole()).getRoleName();
@@ -199,48 +233,294 @@ public class MainController {
         }
     }
 
-    // =================== NAVIGATION ACTIONS ===================
+    /* =========================================================
+     * Navigation (Public Handlers)
+     * ========================================================= */
+
+    private void navigate(String fxmlPath, Hyperlink navLink, String pageName) {
+        loadView(fxmlPath, navLink, DEFAULT_TITLE_PREFIX + pageName, pageName);
+    }
+
     // ADMIN
-    public void loadDashboard() {
-        loadView("/views/admin/AdminDashboard.fxml", "Dashboard", adminDashboardLink);
+    public void loadAdminDashboard() {
+        navigate("/views/admin/AdminDashboard.fxml", adminDashboardLink, "Dashboard");
     }
+
     public void loadUser() {
-        loadView("/views/admin/UserView.fxml", "Users", userLink);
+        navigate("/views/admin/UserView.fxml", userLink, "Users");
     }
+
     public void loadMember() {
-        loadView("/views/admin/MemberView.fxml", "Members", memberLink);
+        navigate("/views/admin/MemberView.fxml", memberLink, "Members");
     }
-    public void loadProduct() {
-        loadView("/views/admin/AdminProduct.fxml", "Products", adminProductLink);
+
+    public void loadAdminProduct() {
+        navigate("/views/admin/AdminProduct.fxml", adminProductLink, "Products");
     }
-    // CASHIER
 
-
-    // =================== HELPERS ===================
+    /* =========================================================
+     * Breadcrumb + View Loader
+     * ========================================================= */
 
     /**
-     * Hides a list of hyperlinks.
+     * Loads an FXML into the center content pane asynchronously and updates the window title.
      */
+    private void loadView(String fxmlPath, Hyperlink navLink, String windowTitle, String breadcrumbTitle) {
+        setCenterContent(fxmlPath, windowTitle);
+        setActiveLink(navLink);
+
+        BreadcrumbManager.setBreadcrumbs(
+                new BreadcrumbBar.BreadcrumbItem(
+                        breadcrumbTitle,
+                        ev -> loadView(fxmlPath, navLink, windowTitle, breadcrumbTitle)
+                )
+        );
+    }
+
+    private void setCenterContent(String fxmlFile, String title) {
+        setCenterContent(fxmlFile);
+        if (title != null && !title.isBlank()) {
+            Platform.runLater(() -> {
+                if (SessionManager.getStage() != null) {
+                    SessionManager.getStage().setTitle(title);
+                }
+            });
+        }
+    }
+
+    private void setCenterContent(String fxmlPath) {
+        Task<Node> loadTask = new Task<>() {
+            @Override
+            protected Node call() throws IOException {
+                URL url = requireResource(fxmlPath);
+                FXMLLoader loader = new FXMLLoader(url);
+                return loader.load();
+            }
+        };
+
+        loadTask.setOnRunning(e -> showLoading(true));
+
+        loadTask.setOnSucceeded(e -> {
+            Node view = loadTask.getValue();
+            setCenterContent(view);
+            showLoading(false);
+        });
+
+        loadTask.setOnFailed(e -> {
+            showLoading(false);
+            if (loadTask.getException() != null) loadTask.getException().printStackTrace();
+            SnackBar.show(SnackBarType.ERROR, "Load failed", "Cannot load view: " + fxmlPath, Duration.seconds(3));
+        });
+
+        fxmlLoaderExecutor.submit(loadTask);
+    }
+
+    /**
+     * Replaces the center content pane with the given Node and anchors it to all sides.
+     */
+    private void setCenterContent(Node content) {
+        if (contentPane == null) return;
+
+        Platform.runLater(() -> {
+            contentPane.getChildren().setAll(content);
+
+            AnchorPane.setTopAnchor(content, 0.0);
+            AnchorPane.setBottomAnchor(content, 0.0);
+            AnchorPane.setLeftAnchor(content, 0.0);
+            AnchorPane.setRightAnchor(content, 0.0);
+        });
+    }
+
+    /**
+     * Sets "active" style on selected nav link.
+     */
+    private void setActiveLink(Hyperlink link) {
+        if (link == null) return;
+
+        if (activeLink != null) {
+            activeLink.getStyleClass().remove("active");
+        }
+        activeLink = link;
+        activeLink.getStyleClass().add("active");
+    }
+
+    /* =========================================================
+     * Popup Content (Static API)
+     * ========================================================= */
+
+    public static void togglePopupContent(String fxmlPath) {
+        try {
+            URL url = Objects.requireNonNull(MainController.class.getResource(fxmlPath), "Missing resource: " + fxmlPath);
+            Parent content = FXMLLoader.load(url);
+            togglePopupContent(content);
+        } catch (IOException e) {
+            System.err.println("Error loading popup content: " + fxmlPath);
+            e.printStackTrace();
+            SnackBar.show(SnackBarType.ERROR, "Load failed", "Cannot load popup: " + fxmlPath, Duration.seconds(3));
+        }
+    }
+
+    public static void togglePopupContent(Parent content) {
+        if (content == null) return;
+
+        if (!isPopupContentOpen) {
+            loadPopupContent(content);
+
+            Platform.runLater(() -> {
+                openPopupContentAnimation();
+                applyBlur(true);
+                isPopupContentOpen = true;
+            });
+        } else {
+            handleClosePopupContent();
+        }
+    }
+
+    private static void setPopupContent(Parent content) {
+        //        if (staticPopupContentPane == null) return;
+
+        AnchorPane container = new AnchorPane(content);
+        AnchorPane.setTopAnchor(container, 56.0);
+        AnchorPane.setRightAnchor(container, 14.0);
+        AnchorPane.setBottomAnchor(container, 14.0);
+        AnchorPane.setLeftAnchor(container, 14.0);
+
+        container.setOpacity(0);
+        Timeline fadeIn = new Timeline(
+                new KeyFrame(
+                        Duration.millis(200),
+                        new KeyValue(container.opacityProperty(), 1, Interpolator.EASE_BOTH)
+                )
+        );
+
+        // Keep close button (if exists), clear the rest, then add new content
+        Node closeBtn = staticPopupContentPane.lookup("#closeBtn");
+        staticPopupContentPane.getChildren().clear();
+        if (closeBtn != null) staticPopupContentPane.getChildren().add(closeBtn);
+        staticPopupContentPane.getChildren().add(container);
+
+        fadeIn.play();
+    }
+
+    private static void loadPopupContent(Parent content) {
+        //        if (staticPopupContentPane == null) return;
+
+        // Ensure close button exists once
+        Button existingCloseBtn = (Button) staticPopupContentPane.lookup("#closeBtn");
+        if (existingCloseBtn == null) {
+            Button closeBtn = createCloseButton();
+            staticPopupContentPane.getChildren().add(closeBtn);
+        }
+
+        setPopupContent(content);
+    }
+
+    /* =========================================================
+     * Popup UI Controls
+     * ========================================================= */
+
+    public static Button createCloseButton() {
+        Button btn = new Button("✕");
+        btn.setId("closeBtn");
+        btn.getStyleClass().add("popup-box-close-btn");
+
+        btn.setOnAction(e -> handleClosePopupContent());
+
+        AnchorPane.setRightAnchor(btn, 14.0);
+        AnchorPane.setTopAnchor(btn, 14.0);
+        return btn;
+    }
+
+    private static void openPopupContentAnimation() {
+        staticOverlayPane.setVisible(true);
+        staticOverlayPane.setTranslateX(0);
+        staticPopupContentPane.setTranslateX(POPUP_CONTENT_WIDTH);
+
+        Timeline timeline = new Timeline(
+                new KeyFrame(
+                        Duration.millis(250),
+                        new KeyValue(loadingOverlay.opacityProperty(), 1, Interpolator.EASE_BOTH),
+                        new KeyValue(staticPopupContentPane.translateXProperty(), 0, Interpolator.EASE_BOTH)
+                )
+        );
+        timeline.play();
+    }
+
+    public static void handleClosePopupContent() {
+        if (!isPopupContentOpen) return;
+
+        Timeline timeline = new Timeline(
+                new KeyFrame(
+                        Duration.millis(300),
+                        new KeyValue(loadingOverlay.opacityProperty(), 0, Interpolator.EASE_BOTH),
+                        new KeyValue(staticPopupContentPane.translateXProperty(), POPUP_CONTENT_WIDTH, Interpolator.EASE_BOTH)
+                )
+        );
+
+        timeline.setOnFinished(e -> {
+            staticOverlayPane.setVisible(false);
+            staticOverlayPane.setManaged(false);
+
+            staticPopupContentPane.getChildren().clear();
+            //            staticPopupContentPane.getStyleClass().remove("container");
+            staticPopupContentPane.setDisable(false);
+
+            isPopupContentOpen = false;
+            applyBlur(false);
+        });
+
+        timeline.play();
+    }
+
+    private static void applyBlur(boolean enable) {
+        staticBorderPane.setEffect(enable ? new GaussianBlur(10) : null);
+    }
+
+    /* =========================================================
+     * Helpers
+     * ========================================================= */
+
     private void hideLinks(Hyperlink... links) {
         Arrays.stream(links).forEach(this::hideLink);
     }
 
-    /**
-     * Hides a hyperlink safely (null-safe).
-     */
     private void hideLink(Hyperlink link) {
         if (link == null) return;
-        link.setVisible(false);  // Do not show
-        link.setManaged(false);  // Do not reserve layout space
+        link.setVisible(false);
+        link.setManaged(false);
     }
 
-    /**
-     * Loads a resource and throws a clear error if missing.
-     */
     private URL requireResource(String path) {
-        return Objects.requireNonNull(
-                getClass().getResource(path),
-                "Missing resource: " + path
-        );
+        return Objects.requireNonNull(getClass().getResource(path), "Missing resource: " + path);
+    }
+
+    private StackPane createLoadingOverlay() {
+        ProgressIndicator pi = new ProgressIndicator();
+        pi.setMaxSize(60, 60);
+
+        StackPane overlay = new StackPane(pi);
+        overlay.setPickOnBounds(true); // blocks clicks behind it
+        overlay.setStyle("""
+                -fx-background-color: rgba(0,0,0,0.25);
+                -fx-padding: 20;
+                """);
+        return overlay;
+    }
+
+    private void showLoading(boolean show) {
+        if (loadingOverlay == null) return;
+        loadingOverlay.setVisible(show);
+        loadingOverlay.setManaged(show);
+    }
+
+    /* =========================================================
+     * Overlay Click Handler
+     * ========================================================= */
+
+    @FXML
+    private void handleOverlayClick(MouseEvent e) {
+        if (staticOverlayPane != null && e.getTarget() == staticOverlayPane) {
+            handleClosePopupContent();
+        }
     }
 }

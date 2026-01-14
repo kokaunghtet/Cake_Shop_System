@@ -9,3 +9,88 @@ Topbar
     -fx-border-color: -fx-container-border-color;
     -fx-border-width: 1;
 }
+
+/************************
+Status pill
+************************/
+.status-active-pill,
+.status-inactive-pill {
+    -fx-background-color: blue;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 4px 8px;
+    -fx-background-radius: 15px;
+    -fx-border-radius: 15px;
+    -fx-min-width: 100px;
+    -fx-max-width: 150px;
+    -fx-alignment: CENTER;
+    -fx-text-fill: derive(blue, -60%);
+}
+
+.status-active-pill {
+    -fx-background-color: green;
+    -fx-text-fill: derive(green, 950%);
+}
+
+.status-inactive-pill {
+    -fx-background-color: red;
+    -fx-text-fill: derive(red, 950%);
+}
+
+/************************
+Breadcrumbs
+************************/
+.breadcrumb-container {
+    -fx-background-color: -fx-secondary-color;
+}
+
+.breadcrumb-link {
+    -fx-text-fill: gray;
+}
+
+.breadcrumb-link.breadcrumb-active {
+    -fx-text-fill: -fx-text-color;
+}
+
+.breadcrumb-link:disabled{
+    -fx-opacity : 1;
+}
+
+/************************
+Popup Close Button
+************************/
+.popup-box-close-btn {
+    -fx-background-color: rgba(116, 7, 27, 0.58);
+
+    -fx-border-color: rgba(255,255,255,0.18);
+    -fx-border-width: 0.8;
+
+    /* force circle */
+    -fx-min-width: 28;
+    -fx-pref-width: 28;
+    -fx-max-width: 28;
+
+    -fx-min-height: 28;
+    -fx-pref-height: 28;
+    -fx-max-height: 28;
+
+    -fx-background-radius: 999;
+    -fx-border-radius: 999;
+
+    -fx-text-fill: rgba(255,255,255,0.95);
+    -fx-font-weight: 800;
+
+    /* remove padding that breaks the circle */
+    -fx-padding: 0;
+
+    /* keep content centered */
+    -fx-alignment: center;
+}
+
+.popup-box-close-btn:hover {
+    -fx-background-color: rgba(116, 7, 27, 0.78);
+}
+
+.popup-box-close-btn:pressed {
+    -fx-background-color: rgba(116, 7, 27, 0.98);
+}
