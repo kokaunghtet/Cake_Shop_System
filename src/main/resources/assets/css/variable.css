@@ -9,7 +9,8 @@
     /* Backgrounds / Surfaces */
     -fx-bg-color: #FFF5E4;
     -fx-container-bg: derive(-fx-bg-color, 10%);
-    -fx-container-border-color: #F5E9D6;
+    /*-fx-container-border-color: #F5E9D6;*/
+    -fx-container-border-color: rgba(255, 245, 228, 0.90);
 
     /* Theme Colors */
     -fx-primary-color: #EE6983;
@@ -17,7 +18,7 @@
     -fx-accent-color: #74071B;
 
     /* Buttons */
-    -fx-button-text-color: #FFFFFF;
+    -fx-button-text-color: #FFF;
 
     /* Shadows */
     -fx-soft-shadow: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 8, 0.2, 0, 2);
