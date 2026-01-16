@@ -11,9 +11,10 @@
 /* =========================
    Layout Surfaces (Containers / Cards)
    ========================= */
+
 .container {
   -fx-background-color: -fx-container-bg;
-  -fx-border-radius: 10;
+  -fx-border-radius: 14;
   -fx-border-color: -fx-container-border-color;
   -fx-border-width: 1;
   -fx-background-radius: 10;
@@ -65,6 +66,7 @@
 }
 
 /* ComboBox */
+/*
 .combo-box {
   -fx-border-color: -fx-text-color;
   -fx-border-width: 1;
@@ -93,6 +95,96 @@
 .combo-box .arrow {
   -fx-background-color: -fx-text-color;
 }
+*/
+/* =========================
+   ComboBox (theme-matched)
+   ========================= */
+
+/* Closed control */
+.combo-box-base {
+    -fx-min-height: 40px;
+    -fx-pref-height: 40px;
+    -fx-max-height: 40px;
+
+    -fx-background-color: -fx-bg-color;
+    -fx-background-radius: 10px;
+
+    -fx-border-color: -fx-text-color;
+    -fx-border-width: 1px;
+    -fx-border-radius: 10px;
+
+    -fx-padding: 0;
+}
+
+/* Selected value (button cell) */
+.combo-box-base > .list-cell {
+    -fx-min-height: 40px;
+    -fx-pref-height: 40px;
+
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 0 14px 0 14px;
+
+    -fx-text-fill: -fx-text-color;
+    -fx-background-color: transparent;
+}
+
+/* Arrow button */
+.combo-box-base > .arrow-button {
+    -fx-min-height: 40px;
+    -fx-pref-height: 40px;
+
+    -fx-background-color: transparent;
+    -fx-padding: 0 12px 0 12px;
+}
+
+.combo-box-base > .arrow-button > .arrow {
+    -fx-background-color: -fx-text-color;
+}
+
+/* =========================
+   Popup List (dropdown)
+   ========================= */
+
+.combo-box-popup > .list-view {
+    -fx-fixed-cell-size: 40px;
+
+    -fx-background-color: -fx-bg-color;
+    -fx-background-radius: 10px;
+
+    -fx-border-width: 1px;
+    -fx-border-radius: 10px;
+
+    -fx-padding: 4px;
+}
+
+/* Each item */
+.combo-box-popup .list-cell {
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 0 14px 0 14px;
+
+    -fx-text-fill: -fx-text-color;
+    -fx-background-color: transparent;
+}
+
+/* Hover */
+.combo-box-popup .list-cell:hover {
+    -fx-background-color: -fx-secondary-color; /* soft pink */
+    -fx-background-radius: 8px;
+}
+
+/* Selected item in popup */
+.combo-box-popup .list-cell:selected {
+    -fx-background-color: -fx-primary-color;
+    -fx-text-fill: white;
+    -fx-background-radius: 8px;
+}
+
+/* Focus ring when control is focused */
+.combo-box-base:focused {
+    -fx-border-color: -fx-accent-color;
+    -fx-border-width: 1.2px;
+}
+
 
 /* =========================
    Input Variants (Left Icon Padding)
@@ -157,7 +249,7 @@
 .hyperlink {
   -fx-text-fill: -fx-text-color;
   -fx-underline: false;
-  -fx-font-size: 13;
+  -fx-font-size: 14;
   -fx-graphic-text-gap: 6;
 }
 
@@ -194,3 +286,9 @@
 .info-message {
   -fx-text-fill: -fx-info-color;
 }
+
+.input-error:focused {
+    -fx-border-color: -fx-error-color;
+    -fx-border-width: 1.6px;
+}
+

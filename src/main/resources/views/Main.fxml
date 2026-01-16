@@ -21,7 +21,7 @@
                 <HBox fx:id="topBar" alignment="TOP_CENTER" spacing="30.0" styleClass="topbar"
                       BorderPane.alignment="CENTER">
                     <children>
-                        <HBox>
+                        <HBox spacing="20.0">
                             <children>
                                 <ImageView fx:id="profileImageView" fitHeight="70.0" fitWidth="70.0" pickOnBounds="true"
                                            preserveRatio="true"/>
@@ -51,7 +51,7 @@
                                           styleClass="icon-clickable"/>
                                 <FontIcon fx:id="settingIcon" iconLiteral="fas-sliders-h" iconSize="20"
                                           styleClass="icon-clickable"/>
-                                <FontIcon fx:id="signoutIcon" iconLiteral="fas-sign-out-alt" iconSize="20"
+                                <FontIcon fx:id="signOutIcon" iconLiteral="fas-sign-out-alt" iconSize="20"
                                           styleClass="icon-clickable"/>
                             </children>
                             <padding>
@@ -85,7 +85,7 @@
             <AnchorPane fx:id="popupPane" prefWidth="300"
                         style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0, 0, 0);"
                         styleClass="container"
-                        AnchorPane.bottomAnchor="100.0" AnchorPane.rightAnchor="300.0" AnchorPane.leftAnchor="300.0" AnchorPane.topAnchor="100.0">
+                        AnchorPane.bottomAnchor="100.0" AnchorPane.rightAnchor="600.0" AnchorPane.leftAnchor="600.0" AnchorPane.topAnchor="100.0">
             </AnchorPane>
         </AnchorPane>
     </children>

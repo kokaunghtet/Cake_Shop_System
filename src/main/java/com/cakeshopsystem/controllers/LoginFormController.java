@@ -51,6 +51,9 @@ public class LoginFormController {
 
     @FXML
     private void initialize() {
+        usernameTextField.setText("John");
+        pswPasswordField.setText("John123!@#");
+
         usernameTextField.requestFocus();
 
         // --- Make hidden fields not take up layout space ---

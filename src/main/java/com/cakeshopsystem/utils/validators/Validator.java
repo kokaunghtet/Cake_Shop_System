@@ -3,19 +3,33 @@ package com.cakeshopsystem.utils.validators;
 import java.util.regex.Pattern;
 
 public class Validator {
+
     private static final Pattern EMAIL_PATTERN =
             Pattern.compile("^[\\w.-]+@[\\w.-]+\\.\\w{2,}$");
 
+    // =========================
+    // Normalization Helper
+    // =========================
+    private static String normalize(String s) {
+        return s == null ? "" : s.trim();
+    }
+
+    // =========================
+    // Username
+    // =========================
     public static String validateUsername(String username) {
-        username = username.trim();
+        username = normalize(username);
         if (username.isEmpty()) {
             return "Username cannot be empty";
         }
         return null;
     }
 
+    // =========================
+    // Email
+    // =========================
     public static String validateEmail(String email) {
-        email = email.trim();
+        email = normalize(email);
         if (email.isEmpty()) {
             return "Email cannot be empty";
         }
@@ -25,17 +39,22 @@ public class Validator {
         return null;
     }
 
+    // =========================
+    // Password (Login)
+    // =========================
     public static String validateLoginPassword(String password) {
-        password = password.trim();
-        
+        password = normalize(password);
         if (password.isEmpty()) {
             return "Password cannot be empty";
         }
         return null;
     }
 
+    // =========================
+    // Password (Create/Change)
+    // =========================
     public static String validatePassword(String password) {
-        password = password.trim();
+        password = normalize(password);
 
         if (password.isEmpty()) {
             return "Password cannot be empty";
@@ -56,6 +75,19 @@ public class Validator {
             return "Password must contain at least one special character";
         }
 
+        return null;
+    }
+
+    // =========================
+    // Confirm Password
+    // =========================
+    public static String matchPassword(String password, String confirmPassword) {
+        password = password == null ? "" : password;
+        confirmPassword = confirmPassword == null ? "" : confirmPassword;
+
+        if (!password.equals(confirmPassword)) { // case-sensitive
+            return "Passwords do not match";
+        }
         return null;
     }
 }
