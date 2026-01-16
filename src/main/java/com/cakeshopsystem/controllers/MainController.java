@@ -15,6 +15,8 @@ import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
@@ -22,9 +24,11 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.effect.GaussianBlur;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.stage.Popup;
 import javafx.util.Duration;
 import org.kordamp.ikonli.javafx.FontIcon;
 
@@ -43,7 +47,7 @@ public class MainController {
 
     private static final String DEFAULT_VIEW_FXML = "/views/admin/AdminDashboard.fxml";
     private static final String DEFAULT_TITLE_PREFIX = "Cake Shop System | ";
-    private static final double POPUP_CONTENT_WIDTH = 300;
+    private static final double POPUP_CONTENT_WIDTH = 600;
 
     // Tracks which nav link is currently active for styling
     private Hyperlink activeLink;
@@ -65,7 +69,7 @@ public class MainController {
     @FXML
     private FontIcon settingIcon;
     @FXML
-    private FontIcon signoutIcon;
+    private FontIcon signOutIcon;
     @FXML
     private FontIcon moonIcon;
 
@@ -136,7 +140,8 @@ public class MainController {
     private static BorderPane staticBorderPane;
     private static AnchorPane staticPopupContentPane;
     private static AnchorPane staticOverlayPane;
-    //    private static VBox staticPopupSettingBox = new VBox(20);
+
+    private Popup settingsPopup;
 
     /* =========================================================
      * Lifecycle
@@ -155,8 +160,8 @@ public class MainController {
         updateUserInfo();
         configureRoleBasedAccess();
 
-        if (signoutIcon != null) {
-            signoutIcon.setOnMouseClicked(e -> handleLogout());
+        if (signOutIcon != null) {
+            signOutIcon.setOnMouseClicked(e -> handleLogout());
         }
 
         // Loading overlay
@@ -172,6 +177,8 @@ public class MainController {
         if (breadcrumbBar != null) {
             breadcrumbBar.bindToGlobal();
         }
+
+        settingIcon.setOnMouseClicked(e->setupSettingsPopup());
 
         // Default navigation
         if (SessionManager.isAdmin) {
@@ -201,6 +208,26 @@ public class MainController {
     private void updateUserInfo() {
         User user = SessionManager.getUser();
         if (user == null) return;
+
+        String path = user.getImagePath();
+        if (path == null || path.isBlank()) return;
+        Image userProfileImage;
+        try {
+            // If it's already a URL (http/file/jar), keep it.
+            if (path.matches("^(https?|file|jar):.*")) {
+                userProfileImage = new Image(path, true);
+            } else {
+                // Treat as local filesystem path
+                userProfileImage = new Image(new java.io.File(path).toURI().toString(), true);
+            }
+
+            if (profileImageView != null) {
+                profileImageView.setImage(userProfileImage);
+            }
+        } catch (Exception e) {
+            System.out.println("Image load failed. path=" + path);
+            e.printStackTrace();
+        }
 
         if (usernameLabel != null) {
             usernameLabel.setText(user.getUserName());
@@ -361,8 +388,6 @@ public class MainController {
     }
 
     public static void togglePopupContent(Parent content) {
-        if (content == null) return;
-
         if (!isPopupContentOpen) {
             loadPopupContent(content);
 
@@ -376,35 +401,7 @@ public class MainController {
         }
     }
 
-    private static void setPopupContent(Parent content) {
-        //        if (staticPopupContentPane == null) return;
-
-        AnchorPane container = new AnchorPane(content);
-        AnchorPane.setTopAnchor(container, 56.0);
-        AnchorPane.setRightAnchor(container, 14.0);
-        AnchorPane.setBottomAnchor(container, 14.0);
-        AnchorPane.setLeftAnchor(container, 14.0);
-
-        container.setOpacity(0);
-        Timeline fadeIn = new Timeline(
-                new KeyFrame(
-                        Duration.millis(200),
-                        new KeyValue(container.opacityProperty(), 1, Interpolator.EASE_BOTH)
-                )
-        );
-
-        // Keep close button (if exists), clear the rest, then add new content
-        Node closeBtn = staticPopupContentPane.lookup("#closeBtn");
-        staticPopupContentPane.getChildren().clear();
-        if (closeBtn != null) staticPopupContentPane.getChildren().add(closeBtn);
-        staticPopupContentPane.getChildren().add(container);
-
-        fadeIn.play();
-    }
-
     private static void loadPopupContent(Parent content) {
-        //        if (staticPopupContentPane == null) return;
-
         // Ensure close button exists once
         Button existingCloseBtn = (Button) staticPopupContentPane.lookup("#closeBtn");
         if (existingCloseBtn == null) {
@@ -413,6 +410,61 @@ public class MainController {
         }
 
         setPopupContent(content);
+    }
+
+//    private static void setPopupContent(Parent content) {
+//        AnchorPane container = new AnchorPane(content);
+//        AnchorPane.setTopAnchor(container, 50.0);
+//        AnchorPane.setRightAnchor(container, 50.0);
+//        AnchorPane.setBottomAnchor(container, 50.0);
+//        AnchorPane.setLeftAnchor(container, 50.0);
+//
+//        container.setOpacity(0);
+//        Timeline fadeIn = new Timeline(
+//                new KeyFrame(
+//                        Duration.millis(200),
+//                        new KeyValue(container.opacityProperty(), 1, Interpolator.EASE_BOTH)
+//                )
+//        );
+//
+//        // Keep close button (if exists), clear the rest, then add new content
+//        Node closeBtn = staticPopupContentPane.lookup("#closeBtn");
+//        staticPopupContentPane.getChildren().clear();
+//        if (closeBtn != null) staticPopupContentPane.getChildren().add(closeBtn);
+//        staticPopupContentPane.getChildren().add(container);
+//
+//        fadeIn.play();
+//    }
+
+    private static void setPopupContent(Parent content) {
+
+        if (content instanceof Region r) {
+            r.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+        }
+
+        Button closeBtn = (Button) staticPopupContentPane.lookup("#closeBtn");
+        if (closeBtn == null) closeBtn = createCloseButton();
+
+        StackPane wrapper = new StackPane();
+        wrapper.setPadding(new Insets(30));
+
+        wrapper.getChildren().add(content);
+        wrapper.getChildren().add(closeBtn);
+
+        StackPane.setAlignment(closeBtn, Pos.TOP_RIGHT);
+        StackPane.setMargin(closeBtn, new Insets(14));
+
+        AnchorPane.setTopAnchor(wrapper, 0.0);
+        AnchorPane.setRightAnchor(wrapper, 0.0);
+        AnchorPane.setBottomAnchor(wrapper, 0.0);
+        AnchorPane.setLeftAnchor(wrapper, 0.0);
+
+        staticPopupContentPane.getChildren().setAll(wrapper);
+
+        wrapper.setOpacity(0);
+        new Timeline(new KeyFrame(Duration.millis(200),
+                new KeyValue(wrapper.opacityProperty(), 1, Interpolator.EASE_BOTH)
+        )).play();
     }
 
     /* =========================================================
@@ -438,7 +490,7 @@ public class MainController {
 
         Timeline timeline = new Timeline(
                 new KeyFrame(
-                        Duration.millis(250),
+                        Duration.millis(100),
                         new KeyValue(loadingOverlay.opacityProperty(), 1, Interpolator.EASE_BOTH),
                         new KeyValue(staticPopupContentPane.translateXProperty(), 0, Interpolator.EASE_BOTH)
                 )
@@ -451,9 +503,9 @@ public class MainController {
 
         Timeline timeline = new Timeline(
                 new KeyFrame(
-                        Duration.millis(300),
+                        Duration.millis(100),
                         new KeyValue(loadingOverlay.opacityProperty(), 0, Interpolator.EASE_BOTH),
-                        new KeyValue(staticPopupContentPane.translateXProperty(), POPUP_CONTENT_WIDTH, Interpolator.EASE_BOTH)
+                        new KeyValue(staticPopupContentPane.opacityProperty(), 0, Interpolator.EASE_BOTH)
                 )
         );
 
@@ -462,8 +514,10 @@ public class MainController {
             staticOverlayPane.setManaged(false);
 
             staticPopupContentPane.getChildren().clear();
-            //            staticPopupContentPane.getStyleClass().remove("container");
             staticPopupContentPane.setDisable(false);
+
+            staticPopupContentPane.setOpacity(1);
+            loadingOverlay.setOpacity(1);
 
             isPopupContentOpen = false;
             applyBlur(false);
@@ -477,22 +531,8 @@ public class MainController {
     }
 
     /* =========================================================
-     * Helpers
+     * Loading Overlay
      * ========================================================= */
-
-    private void hideLinks(Hyperlink... links) {
-        Arrays.stream(links).forEach(this::hideLink);
-    }
-
-    private void hideLink(Hyperlink link) {
-        if (link == null) return;
-        link.setVisible(false);
-        link.setManaged(false);
-    }
-
-    private URL requireResource(String path) {
-        return Objects.requireNonNull(getClass().getResource(path), "Missing resource: " + path);
-    }
 
     private StackPane createLoadingOverlay() {
         ProgressIndicator pi = new ProgressIndicator();
@@ -514,6 +554,24 @@ public class MainController {
     }
 
     /* =========================================================
+     * Helpers
+     * ========================================================= */
+
+    private void hideLinks(Hyperlink... links) {
+        Arrays.stream(links).forEach(this::hideLink);
+    }
+
+    private void hideLink(Hyperlink link) {
+        if (link == null) return;
+        link.setVisible(false);
+        link.setManaged(false);
+    }
+
+    private URL requireResource(String path) {
+        return Objects.requireNonNull(getClass().getResource(path), "Missing resource: " + path);
+    }
+
+    /* =========================================================
      * Overlay Click Handler
      * ========================================================= */
 
@@ -523,4 +581,35 @@ public class MainController {
             handleClosePopupContent();
         }
     }
+
+    private void setupSettingsPopup() {
+        Hyperlink link1 = new Hyperlink("User Configuration");
+
+        Hyperlink link2 = new Hyperlink("Payment Configuration");
+
+        VBox box = new VBox(10, link1, link2);
+        box.getStyleClass().add("container");
+
+        settingsPopup = new Popup();
+        settingsPopup.getContent().add(box);
+        settingsPopup.setAutoHide(true);
+
+        link1.setOnAction(e -> settingsPopup.hide());
+        link2.setOnAction(e -> settingsPopup.hide());
+
+        settingIcon.setOnMouseClicked(e -> {
+            if (settingsPopup.isShowing()) {
+                settingsPopup.hide();
+                return;
+            }
+
+            // place popup under icon (screen cords)
+            var bounds = settingIcon.localToScreen(settingIcon.getBoundsInLocal());
+            settingsPopup.show(settingIcon,
+                    bounds.getMinX(),
+                    bounds.getMaxY() + 8
+            );
+        });
+    }
+
 }

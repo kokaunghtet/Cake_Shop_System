@@ -39,7 +39,7 @@ public class UserViewController {
 
         configureTable();
 
-        btnAdd.setOnAction(e-> handleAddUser());
+        btnAdd.setOnAction(e -> handleAddUser());
     }
 
     private void configureTable() {
@@ -47,9 +47,7 @@ public class UserViewController {
 
         colName.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getUserName()));
         colEmail.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getEmail()));
-        colStatus.setCellValueFactory(d ->
-                new SimpleStringProperty(d.getValue().isActive() ? "Active" : "Inactive")
-        );
+        colStatus.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().isActive() ? "Active" : "Inactive"));
         colStatus.setCellFactory(_ -> new TableCell<User, String>() {
 
             private final Label statusLabel = new Label();
@@ -70,9 +68,7 @@ public class UserViewController {
                 }
 
                 statusLabel.setText(item); // "Active" or "Inactive"
-                statusLabel.getStyleClass().setAll(
-                        "status-" + item.replace(" ", "-").toLowerCase() + "-pill"
-                );
+                statusLabel.getStyleClass().setAll("status-" + item.replace(" ", "-").toLowerCase() + "-pill");
                 setGraphic(box);
             }
         });
