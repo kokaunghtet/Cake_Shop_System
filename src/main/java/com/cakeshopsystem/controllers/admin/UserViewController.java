@@ -2,13 +2,19 @@ package com.cakeshopsystem.controllers.admin;
 
 import com.cakeshopsystem.controllers.MainController;
 import com.cakeshopsystem.models.User;
+import com.cakeshopsystem.utils.ImageHelper;
+import com.cakeshopsystem.utils.cache.RoleCache;
 import com.cakeshopsystem.utils.cache.UserCache;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.shape.Circle;
 
 public class UserViewController {
 
@@ -31,6 +37,12 @@ public class UserViewController {
     private TableColumn<User, String> colStatus;
 
     @FXML
+    private TableColumn<User, String> colRole;
+
+    @FXML
+    private TableColumn<User, String> colAvatar;
+
+    @FXML
     private TextField txtSearch;
 
     public void initialize() {
@@ -45,8 +57,35 @@ public class UserViewController {
     private void configureTable() {
         userTableView.setFixedCellSize(50);
 
+        colAvatar.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getImagePath()));
+
+        colAvatar.setCellFactory(col -> new TableCell<>() {
+            private final ImageView avatar = new ImageView();
+
+            {
+                setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+                ImageHelper.applyCircularAvatar(avatar, 32);
+            }
+
+            @Override
+            protected void updateItem(String path, boolean empty) {
+                super.updateItem(path, empty);
+
+                if (empty || path == null || path.isBlank()) {
+                    setGraphic(null);
+                    avatar.setImage(null);
+                    avatar.setViewport(null);
+                    return;
+                }
+
+                avatar.setImage(ImageHelper.load(path));
+                ImageHelper.applyCircularAvatar(avatar, 32);
+                setGraphic(avatar);
+            }
+        });
         colName.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getUserName()));
         colEmail.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getEmail()));
+        colRole.setCellValueFactory(d-> new SimpleStringProperty(String.valueOf(RoleCache.getRoleById(d.getValue().getRole()))));
         colStatus.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().isActive() ? "Active" : "Inactive"));
         colStatus.setCellFactory(_ -> new TableCell<User, String>() {
 

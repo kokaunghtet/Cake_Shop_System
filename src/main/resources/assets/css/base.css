@@ -2,7 +2,7 @@
    Root / Global Defaults
    ========================= */
 .root {
-  -fx-font-family: "Segoe UI", "Ubuntu", Arial, sans-serif;
+  -fx-font-family: Arial, sans-serif;
   -fx-font-size: 16;
   -fx-font-weight: normal;
   -fx-background-color: -fx-bg-color;
@@ -241,6 +241,11 @@
 .button.outline:focused,
 .button.outline:pressed {
   -fx-background-color: derive(-fx-accent-color, 50%);
+}
+
+.otp-button {
+    -fx-border-radius: 0 8 8 0;
+    -fx-background-radius: 0 8 8 0;
 }
 
 /* =========================

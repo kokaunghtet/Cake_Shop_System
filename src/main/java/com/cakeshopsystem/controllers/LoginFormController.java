@@ -5,9 +5,11 @@ import com.cakeshopsystem.utils.ChangeScene;
 import com.cakeshopsystem.utils.components.SnackBar;
 import com.cakeshopsystem.utils.constants.SnackBarType;
 import com.cakeshopsystem.utils.dao.UserDAO;
+import com.cakeshopsystem.utils.otp.OTPHelper;
 import com.cakeshopsystem.utils.validators.Validator;
 import javafx.animation.PauseTransition;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
@@ -30,7 +32,7 @@ public class LoginFormController {
     private FontIcon eyeSlashToggleButton;
 
     @FXML
-    private Hyperlink forgetPasswordLink;
+    private Hyperlink forgotPasswordLink;
 
     @FXML
     private Button loginButton;
@@ -88,6 +90,8 @@ public class LoginFormController {
 
         // --- Normal click/tap behavior ---
         loginButton.setOnAction(e -> attemptLogin());       // Clicking the login button triggers login
+
+        forgotPasswordLink.setOnAction(this::handleForgotPassword);
     }
 
     private void attemptLogin() {
@@ -184,8 +188,8 @@ public class LoginFormController {
     }
 
     @FXML
-    private void handleForgotPassword() {
-//        ChangeScene("ForgotPassword.fxml", "Forgot Password");
+    private void handleForgotPassword(ActionEvent event) {
+        ChangeScene.switchScene("ForgotPassword.fxml", "Forgot Password");
     }
 
     private void applyValidation(Label messageLabel, String error) {
@@ -203,7 +207,7 @@ public class LoginFormController {
         usernameTextField.setDisable(busy);
         pswPasswordField.setDisable(busy);
         txtPasswordField.setDisable(busy);
-        forgetPasswordLink.setDisable(busy);
+        forgotPasswordLink.setDisable(busy);
     }
 
     /**
