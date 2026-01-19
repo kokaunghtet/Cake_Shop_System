@@ -37,8 +37,10 @@
                 </HBox>
                 <TableView fx:id="userTableView" VBox.vgrow="ALWAYS">
                     <columns>
+                        <TableColumn fx:id="colAvatar" minWidth="60.0" text="Avatar"/>
                         <TableColumn fx:id="colName" minWidth="200.0" text="Name"/>
                         <TableColumn fx:id="colEmail" minWidth="200.0" text="Email"/>
+                        <TableColumn fx:id="colRole" minWidth="200.0" text="Role"/>
                         <TableColumn fx:id="colStatus" minWidth="200.0" text="Status"/>
                     </columns>
                     <columnResizePolicy>

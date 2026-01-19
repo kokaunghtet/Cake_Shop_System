@@ -1,6 +1,7 @@
 package com.cakeshopsystem.controllers;
 
 import com.cakeshopsystem.models.User;
+import com.cakeshopsystem.utils.ImageHelper;
 import com.cakeshopsystem.utils.cache.RoleCache;
 import com.cakeshopsystem.utils.components.BreadcrumbBar;
 import com.cakeshopsystem.utils.components.BreadcrumbManager;
@@ -178,7 +179,7 @@ public class MainController {
             breadcrumbBar.bindToGlobal();
         }
 
-        settingIcon.setOnMouseClicked(e->setupSettingsPopup());
+        settingIcon.setOnMouseClicked(e -> setupSettingsPopup());
 
         // Default navigation
         if (SessionManager.isAdmin) {
@@ -212,22 +213,12 @@ public class MainController {
         String path = user.getImagePath();
         if (path == null || path.isBlank()) return;
         Image userProfileImage;
-        try {
-            // If it's already a URL (http/file/jar), keep it.
-            if (path.matches("^(https?|file|jar):.*")) {
-                userProfileImage = new Image(path, true);
-            } else {
-                // Treat as local filesystem path
-                userProfileImage = new Image(new java.io.File(path).toURI().toString(), true);
-            }
-
-            if (profileImageView != null) {
-                profileImageView.setImage(userProfileImage);
-            }
-        } catch (Exception e) {
-            System.out.println("Image load failed. path=" + path);
-            e.printStackTrace();
+        if (path.matches("^(https?|file|jar):.*")) {
+            userProfileImage = new Image(path, true);
+        } else {
+            userProfileImage = new Image(new java.io.File(path).toURI().toString(), true);
         }
+        ImageHelper.setCircularAvatar(profileImageView, userProfileImage, 60);
 
         if (usernameLabel != null) {
             usernameLabel.setText(user.getUserName());

@@ -7,9 +7,11 @@
     -fx-text-color: #5A273B;
 
     /* Backgrounds / Surfaces */
-    -fx-bg-color: #FFF5E4;
-    -fx-container-bg: derive(-fx-bg-color, 10%);
+    /*-fx-bg-color: #FFF5E4;*/
+    /*-fx-container-bg: derive(-fx-bg-color, 10%);*/
     /*-fx-container-border-color: #F5E9D6;*/
+    -fx-bg-color: linear-gradient(to bottom right, #FFF5E4, #FFE9D2);
+    -fx-container-bg: #FFF5E4;
     -fx-container-border-color: rgba(255, 245, 228, 0.90);
 
     /* Theme Colors */

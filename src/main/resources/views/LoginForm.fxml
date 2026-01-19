@@ -20,7 +20,7 @@
            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cakeshopsystem.controllers.LoginFormController">
     <children>
         <!-- Main Content -->
-        <VBox alignment="CENTER" fillWidth="true" maxWidth="700.0" StackPane.alignment="CENTER">
+        <VBox alignment="CENTER" maxWidth="700.0" StackPane.alignment="CENTER">
             <children>
                 <HBox prefHeight="400.0" styleClass="container">
                     <children>
@@ -71,7 +71,7 @@
                                                         <Insets/>
                                                     </opaqueInsets>
                                                 </TextField>
-                                                <Hyperlink fx:id="forgetPasswordLink" text="Forget Password?"
+                                                <Hyperlink fx:id="forgotPasswordLink" text="Forgot your password?"
                                                            GridPane.rowIndex="4" onAction="#handleForgotPassword"/>
                                                 <Button fx:id="loginButton" maxWidth="1.7976931348623157E308"
                                                         mnemonicParsing="false" text="Login" GridPane.rowIndex="6"/>
