@@ -152,7 +152,7 @@ public class AddUserController {
 
         int roleId = selectedRole.getRoleId();
 
-        String defaultProfileImg = "/home/kole/Metro/java exercises/Cake_Shop_System/src/main/resources/images/default-profile.jpg";
+        String defaultProfileImg = "images/default-profile.jpg";
 
         User user = new User();
         user.setUserName(data.username());
