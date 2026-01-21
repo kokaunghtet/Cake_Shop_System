@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<AnchorPane styleClass="container" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.cakeshopsystem.controllers.ProductViewController">
+
+    <StackPane AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0"
+               AnchorPane.topAnchor="20.0">
+
+        <!-- scrollable main content -->
+        <ScrollPane fx:id="mainScrollPane" fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="ALWAYS">
+            <!-- IMPORTANT: don't center the VBox, let it fill width -->
+            <VBox spacing="15">
+                <!-- top bar -->
+                <HBox alignment="CENTER_RIGHT">
+                    <Button fx:id="addNewProductBtn" mnemonicParsing="false" text="Add New Product"/>
+                </HBox>
+
+                <!-- horizontal scrollers -->
+                <ScrollPane fx:id="discountedItemsScrollPane" fitToHeight="true" hbarPolicy="ALWAYS" vbarPolicy="NEVER">
+                    <HBox fx:id="discountedItemsHBox" spacing="30"/>
+                </ScrollPane>
+
+                <ScrollPane fx:id="cakeScrollPane" fitToHeight="true" hbarPolicy="ALWAYS" styleClass="container"
+                            vbarPolicy="NEVER">
+                    <HBox fx:id="cakeHBox" spacing="20">
+                        <padding>
+                            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+                        </padding>
+                    </HBox>
+                </ScrollPane>
+
+                <ScrollPane fx:id="drinkScrollPane" fitToHeight="true" hbarPolicy="ALWAYS" vbarPolicy="NEVER">
+                    <HBox fx:id="drinkHBox" spacing="20"/>
+                </ScrollPane>
+
+                <ScrollPane fx:id="bakedGoodScrollPane" fitToHeight="true" hbarPolicy="ALWAYS" vbarPolicy="NEVER">
+                    <HBox fx:id="bakedGoodHBox" spacing="20"/>
+                </ScrollPane>
+
+                <ScrollPane fx:id="accessoryScrollPane" fitToHeight="true" hbarPolicy="ALWAYS" vbarPolicy="NEVER">
+                    <HBox fx:id="accessoryHBox" spacing="20"/>
+                </ScrollPane>
+            </VBox>
+        </ScrollPane>
+
+        <!-- floating overlay button (always bottom-right) -->
+        <Button fx:id="cartBtn" mnemonicParsing="false" text="Cart" StackPane.alignment="BOTTOM_RIGHT">
+            <graphic>
+                <FontIcon iconLiteral="fas-cart-plus" iconSize="15" styleClass="cart-icon"/>
+            </graphic>
+        </Button>
+
+    </StackPane>
+</AnchorPane>

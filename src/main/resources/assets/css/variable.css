@@ -13,6 +13,7 @@
     -fx-bg-color: linear-gradient(to bottom right, #FFF5E4, #FFE9D2);
     -fx-container-bg: #FFF5E4;
     -fx-container-border-color: rgba(255, 245, 228, 0.90);
+    -fx-control-inner-background: #FFE9D2;
 
     /* Theme Colors */
     -fx-primary-color: #EE6983;

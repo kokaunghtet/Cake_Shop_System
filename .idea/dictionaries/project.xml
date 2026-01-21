@@ -2,6 +2,7 @@
   <dictionary name="project">
     <words>
       <w>mysqlpsw</w>
+      <w>signout</w>
     </words>
   </dictionary>
 </component>
