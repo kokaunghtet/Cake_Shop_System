@@ -9,12 +9,20 @@ import com.cakeshopsystem.utils.components.SnackBar;
 import com.cakeshopsystem.utils.constants.SnackBarType;
 import com.cakeshopsystem.utils.dao.UserDAO;
 import com.cakeshopsystem.utils.validators.Validator;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
+import org.kordamp.ikonli.javafx.FontIcon;
+
+import java.util.Objects;
 
 public class AddUserController {
+
 
     // =========================
     // UI Messages
@@ -32,7 +40,7 @@ public class AddUserController {
     // State
     // =========================
     private boolean attemptedSubmit = false;
-
+    private boolean isPasswordVisible = false;
     // =========================
     // FXML: Inputs
     // =========================
@@ -41,11 +49,22 @@ public class AddUserController {
     @FXML
     private TextField emailTextField;
     @FXML
-    private PasswordField passwordTextField;
+    private PasswordField passwordPasswordField;
     @FXML
-    private PasswordField confirmPasswordTextField;
+    private PasswordField confirmPasswordPasswordField;
     @FXML
     private ComboBox<Role> roleComboBox;
+    @FXML
+    private TextField passwordTextField;
+    @FXML
+    private TextField confirmPasswordTextField;
+    @FXML
+    private FontIcon eyeSlashToggleButton1;
+
+    @FXML
+    private FontIcon eyeSlashToggleButton2;
+
+
 
     // =========================
     // FXML: Error Messages
@@ -73,10 +92,33 @@ public class AddUserController {
     private record FormData(String username, String email, String password, String confirmPassword, Role role) {
     }
 
+    private final StringProperty newPasswordValue     = new SimpleStringProperty("");
+    private final StringProperty confirmPasswordValue = new SimpleStringProperty("");
+
+    // Independent visibility flags
+    private final BooleanProperty newPasswordVisible     = new SimpleBooleanProperty(false);
+    private final BooleanProperty confirmPasswordVisible = new SimpleBooleanProperty(false);
+
+
     // =========================
     // Lifecycle
     // =========================
     public void initialize() {
+        setupPasswordToggle(
+                passwordPasswordField,
+                passwordTextField,
+                eyeSlashToggleButton1,
+                newPasswordValue,
+                newPasswordVisible
+        );
+
+        setupPasswordToggle(
+                confirmPasswordPasswordField,
+                confirmPasswordTextField,
+                eyeSlashToggleButton2,
+                confirmPasswordValue,
+                confirmPasswordVisible
+        );
         roleComboBox.setItems(RoleCache.getRolesList());
 
         roleComboBox.setConverter(new StringConverter<>() {
@@ -95,6 +137,7 @@ public class AddUserController {
 
         setupLiveValidation();
     }
+
 
     // =========================
     // Event Handlers
@@ -195,7 +238,7 @@ public class AddUserController {
                 ? null
                 : Validator.validatePassword(password);
 
-        applyValidation(passwordTextField, passwordErrorMessage, error);
+        applyValidation(passwordPasswordField, passwordErrorMessage, error);
         return error;
     }
 
@@ -254,4 +297,32 @@ public class AddUserController {
     private String safeTrim(String s) {
         return s == null ? "" : s.trim();
     }
+    private void setupPasswordToggle(
+            PasswordField passwordField,
+            TextField textField,
+            FontIcon icon,
+            StringProperty sharedValue,
+            BooleanProperty visibleFlag
+    ) {
+        // Hidden fields should not take layout space
+        passwordField.managedProperty().bind(passwordField.visibleProperty());
+        textField.managedProperty().bind(textField.visibleProperty());
+
+        // Bind both fields to the same value (no manual sync methods)
+        passwordField.textProperty().bindBidirectional(sharedValue);
+        textField.textProperty().bindBidirectional(sharedValue);
+
+        // Toggle visibility
+        passwordField.visibleProperty().bind(visibleFlag.not());
+        textField.visibleProperty().bind(visibleFlag);
+
+        // Icon behavior
+        icon.setIconLiteral("fas-eye-slash");
+        icon.setOnMouseClicked(ev -> visibleFlag.set(!visibleFlag.get()));
+        visibleFlag.addListener((obs, oldV, newV) ->
+                icon.setIconLiteral(newV ? "fas-eye" : "fas-eye-slash"));
+    }
+
 }
+
+
