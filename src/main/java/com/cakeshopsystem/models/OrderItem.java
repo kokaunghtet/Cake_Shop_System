@@ -6,7 +6,7 @@ public class OrderItem {
     private int orderId;
     private Integer productId;
     private Integer drinkId;
-    private int quantity;
+    private static int quantity;
     private double unitPrice;
     private double lineTotal;
 
@@ -54,12 +54,12 @@ public class OrderItem {
         this.drinkId = drinkId;
     }
 
-    public int getQuantity() {
+    public static int getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
+    public static void setQuantity(int quantity) {
+        OrderItem.quantity = quantity;
     }
 
     public double getUnitPrice() {
@@ -89,5 +89,17 @@ public class OrderItem {
                 ", unitPrice=" + unitPrice +
                 ", lineTotal=" + lineTotal +
                 '}';
+    }
+
+    public String getName() {
+        return "";
+    }
+
+    public String getPrice() {
+        return "";
+    }
+
+    public String getImageURL() {
+        return "";
     }
 }
