@@ -179,7 +179,12 @@ public class MainController {
             breadcrumbBar.bindToGlobal();
         }
 
-        settingIcon.setOnMouseClicked(e -> setupSettingsPopup());
+//        settingIcon.setOnMouseClicked(e -> setupSettingsPopup());
+        if (signOutIcon != null) signOutIcon.setOnMouseClicked(e -> handleLogout());
+
+        // Initialize the popup logic once
+        initSettingsPopup();
+        settingIcon.setOnMouseClicked(e -> showSettingsPopup());
 
         // Default navigation
         if (SessionManager.isAdmin) {
@@ -192,6 +197,51 @@ public class MainController {
         if (userLink != null) userLink.setOnMouseClicked(e -> loadUser());
         if (memberLink != null) memberLink.setOnMouseClicked(e -> loadMember());
         if (adminProductLink != null) adminProductLink.setOnMouseClicked(e -> loadAdminProduct());
+    }
+
+    /* =========================================================
+     * Settings Popup Optimization
+     * ========================================================= */
+
+    /**
+     * Build the popup once in memory.
+     */
+    private void initSettingsPopup() {
+        Hyperlink link1 = new Hyperlink("User Configuration");
+        Hyperlink link2 = new Hyperlink("Payment Configuration");
+
+        VBox box = new VBox(10, link1, link2);
+        box.getStyleClass().add("container"); // Ensure your CSS has this class or use inline style
+//        box.setStyle("-fx-background-color: white; -fx-padding: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 0);");
+
+        settingsPopup = new Popup();
+        settingsPopup.getContent().add(box);
+        settingsPopup.setAutoHide(true);
+
+        // Close popup when links are clicked
+        link1.setOnAction(e -> settingsPopup.hide());
+        link2.setOnAction(e -> settingsPopup.hide());
+    }
+
+    /**
+     * Show the pre-built popup.
+     */
+    private void showSettingsPopup() {
+        if (settingsPopup == null) return;
+
+        if (settingsPopup.isShowing()) {
+            settingsPopup.hide();
+            return;
+        }
+
+        // Calculate position relative to the icon
+        var bounds = settingIcon.localToScreen(settingIcon.getBoundsInLocal());
+        if (bounds != null) {
+            settingsPopup.show(settingIcon,
+                    bounds.getMaxX() - 140, // Adjusted X to align better
+                    bounds.getMaxY() + 20
+            );
+        }
     }
 
     /* =========================================================
@@ -273,7 +323,7 @@ public class MainController {
     }
 
     public void loadAdminProduct() {
-        navigate("/views/admin/AdminProduct.fxml", adminProductLink, "Products");
+        navigate("/views/ProductView.fxml", adminProductLink, "Products");
     }
 
     /* =========================================================
@@ -573,34 +623,34 @@ public class MainController {
         }
     }
 
-    private void setupSettingsPopup() {
-        Hyperlink link1 = new Hyperlink("User Configuration");
-
-        Hyperlink link2 = new Hyperlink("Payment Configuration");
-
-        VBox box = new VBox(10, link1, link2);
-        box.getStyleClass().add("container");
-
-        settingsPopup = new Popup();
-        settingsPopup.getContent().add(box);
-        settingsPopup.setAutoHide(true);
-
-        link1.setOnAction(e -> settingsPopup.hide());
-        link2.setOnAction(e -> settingsPopup.hide());
-
-        settingIcon.setOnMouseClicked(e -> {
-            if (settingsPopup.isShowing()) {
-                settingsPopup.hide();
-                return;
-            }
-
-            // place popup under icon (screen cords)
-            var bounds = settingIcon.localToScreen(settingIcon.getBoundsInLocal());
-            settingsPopup.show(settingIcon,
-                    bounds.getMinX(),
-                    bounds.getMaxY() + 8
-            );
-        });
-    }
+//    private void setupSettingsPopup() {
+//        Hyperlink link1 = new Hyperlink("User Configuration");
+//
+//        Hyperlink link2 = new Hyperlink("Payment Configuration");
+//
+//        VBox box = new VBox(10, link1, link2);
+//        box.getStyleClass().add("container");
+//
+//        settingsPopup = new Popup();
+//        settingsPopup.getContent().add(box);
+//        settingsPopup.setAutoHide(true);
+//
+//        link1.setOnAction(e -> settingsPopup.hide());
+//        link2.setOnAction(e -> settingsPopup.hide());
+//
+//        settingIcon.setOnMouseClicked(e -> {
+//            if (settingsPopup.isShowing()) {
+//                settingsPopup.hide();
+//                return;
+//            }
+//
+//            // place popup under icon (screen cords)
+//            var bounds = settingIcon.localToScreen(settingIcon.getBoundsInLocal());
+//            settingsPopup.show(settingIcon,
+//                    bounds.getMaxX() + 100,
+//                    bounds.getMaxY() + 20
+//            );
+//        });
+//    }
 
 }

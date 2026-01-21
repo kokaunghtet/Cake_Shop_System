@@ -106,7 +106,7 @@
     -fx-pref-height: 40px;
     -fx-max-height: 40px;
 
-    -fx-background-color: -fx-bg-color;
+    -fx-background-color: -fx-container-bg-color;
     -fx-background-radius: 10px;
 
     -fx-border-color: -fx-text-color;
@@ -258,9 +258,16 @@
   -fx-graphic-text-gap: 6;
 }
 
+/*
 .hyperlink:hover,
 .hyperlink.active,
 .hyperlink:focused {
+  -fx-background-radius: 6;
+  -fx-text-fill: derive(-fx-text-color, 100%);
+}
+*/
+.hyperlink:hover,
+.hyperlink.active{
   -fx-background-radius: 6;
   -fx-text-fill: derive(-fx-text-color, 100%);
 }

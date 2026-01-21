@@ -49,7 +49,7 @@
                             <children>
                                 <FontIcon fx:id="moonIcon" iconLiteral="fas-moon" iconSize="20"
                                           styleClass="icon-clickable"/>
-                                <FontIcon fx:id="settingIcon" iconLiteral="fas-sliders-h" iconSize="20"
+                                <FontIcon fx:id="settingIcon" iconLiteral="fas-cog" iconSize="20"
                                           styleClass="icon-clickable"/>
                                 <FontIcon fx:id="signOutIcon" iconLiteral="fas-sign-out-alt" iconSize="20"
                                           styleClass="icon-clickable"/>
