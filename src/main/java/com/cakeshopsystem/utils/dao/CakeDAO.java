@@ -69,6 +69,7 @@ public class CakeDAO {
             System.err.println("Error fetching cake by product id: " + err.getLocalizedMessage());
         }
 
+
         return null;
     }
 
