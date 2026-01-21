@@ -3,6 +3,7 @@ package com.cakeshopsystem.controllers;
 import com.cakeshopsystem.utils.AuthResult;
 import com.cakeshopsystem.utils.ChangeScene;
 import com.cakeshopsystem.utils.MailHelper;
+import com.cakeshopsystem.utils.MailResultSet;
 import com.cakeshopsystem.utils.components.SnackBar;
 import com.cakeshopsystem.utils.constants.SnackBarType;
 import com.cakeshopsystem.utils.dao.OneTimePasswordDAO;
@@ -12,223 +13,257 @@ import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Hyperlink;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import org.kordamp.ikonli.javafx.FontIcon;
 
-import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 
 public class ForgotPasswordController {
 
-    private boolean isPasswordVisible = false;
+    private static final Duration SNACK_DURATION = Duration.seconds(3);
+    private static final Duration ANIM_DURATION  = Duration.millis(300);
 
     // ============================
     // FXML: Email + OTP Form
     // ============================
-    @FXML
-    private TextField emailTextField;
-    @FXML
-    private TextField otpTextField;
-    @FXML
-    private Button sendOTPBtn;
-    @FXML
-    private Button verifyOTPBtn;
-    @FXML
-    private VBox emailForm;
+    @FXML private TextField emailTextField;
+    @FXML private TextField otpTextField;
+    @FXML private Button sendOTPBtn;
+    @FXML private Button verifyOTPBtn;
+    @FXML private VBox emailForm;
 
     // ============================
     // FXML: New Password Form
     // ============================
-    @FXML
-    private VBox passwordForm;
-    @FXML
-    private TextField newPasswordTextField;
-    @FXML
-    private TextField confirmNewPasswordTextField;
-    @FXML
-    private Button confirmBtn;
-    @FXML
-    private PasswordField confirmNewPasswordPasswordField;
-    @FXML
-    private PasswordField newPasswordPasswordField;
+    @FXML private VBox passwordForm;
+
+    @FXML private PasswordField newPasswordPasswordField;
+    @FXML private TextField newPasswordTextField;
+
+    @FXML private PasswordField confirmNewPasswordPasswordField;
+    @FXML private TextField confirmNewPasswordTextField;
+
+    @FXML private Button confirmBtn;
 
     // ============================
     // FXML: Navigation
     // ============================
-    @FXML
-    private Hyperlink backToLoginLink;
+    @FXML private Hyperlink backToLoginLink;
+
+    // ============================
+    // Icons
+    // ============================
+    @FXML private FontIcon eyeSlashToggleButton;   // for new password
+    @FXML private FontIcon eyeSlashToggleButton1;  // for confirm password
 
     // ============================
     // State: Current Reset User
     // ============================
     private Integer resetUserId = null;
 
-    @FXML
-    private FontIcon eyeSlashToggleButton;
+    // Store passwords once and bind both fields to them
+    private final StringProperty newPasswordValue     = new SimpleStringProperty("");
+    private final StringProperty confirmPasswordValue = new SimpleStringProperty("");
 
-    @FXML
-    private FontIcon eyeSlashToggleButton1;
+    // Independent visibility flags
+    private final BooleanProperty newPasswordVisible     = new SimpleBooleanProperty(false);
+    private final BooleanProperty confirmPasswordVisible = new SimpleBooleanProperty(false);
 
     // ============================
     // Controller Lifecycle
     // ============================
     public void initialize() {
+        // Start on email/otp step
         passwordForm.setVisible(false);
 
         otpTextField.setDisable(true);
         verifyOTPBtn.setDisable(true);
 
-        emailForm.setVisible(false);
-        passwordForm.setVisible(true);
+        // Setup toggles for both password fields (no manual sync needed)
+        setupPasswordToggle(
+                newPasswordPasswordField,
+                newPasswordTextField,
+                eyeSlashToggleButton,
+                newPasswordValue,
+                newPasswordVisible
+        );
 
-        // --- Make hidden fields not take up layout space ---
-        newPasswordPasswordField.managedProperty().bind(newPasswordPasswordField.visibleProperty()); // If not visible, don't reserve space
-        newPasswordTextField.managedProperty().bind(newPasswordTextField.visibleProperty()); // If not visible, don't reserve space
+        setupPasswordToggle(
+                confirmNewPasswordPasswordField,
+                confirmNewPasswordTextField,
+                eyeSlashToggleButton1,
+                confirmPasswordValue,
+                confirmPasswordVisible
+        );
 
-        // --- Ensure initial state is consistent ---
-        newPasswordPasswordField.setVisible(true);    // Start with hidden-password field visible
-        newPasswordTextField.setVisible(false);   // Start with plain-text field hidden
-
-        // --- Keep both password fields synced (single path, avoids redundant loops) ---
-        newPasswordPasswordField.textProperty().addListener((obs, oldValue, newValue) -> syncPasswordFields(newValue)); // Typing in PasswordField
-        newPasswordTextField.textProperty().addListener((obs, oldValue, newValue) -> syncPasswordFields(newValue)); // Typing in TextField
-
-        eyeSlashToggleButton.setOnMouseClicked(event -> togglePasswordVisibility());
-        eyeSlashToggleButton.setOnMouseClicked(event -> togglePasswordVisibility1());
-
-
-//        backToLoginLink.setOnAction(this::backToLogin);
-//        sendOTPBtn.setOnAction(this::handleSendOtp);
-//        verifyOTPBtn.setOnAction(this::handleVerifyOtp);
-//        confirmBtn.setOnAction(this::handleConfirmNewPassword);
+        backToLoginLink.setOnAction(this::backToLogin);
+        sendOTPBtn.setOnAction(this::handleSendOtp);
+        verifyOTPBtn.setOnAction(this::handleVerifyOtp);
+        confirmBtn.setOnAction(this::handleConfirmNewPassword);
     }
 
+    // ============================
+    // Step 1: Send OTP Email
+    // ============================
+    private void handleSendOtp(ActionEvent e) {
+        String emailInput = emailTextField.getText();
+        String emailError = Validator.validateEmail(emailInput);
+        if (emailError != null) {
+            SnackBar.show(SnackBarType.ERROR, "Email Required", emailError, SNACK_DURATION);
+            return;
+        }
 
-//
-//    // ============================
-//    // Step 1: Send OTP Email
-//    // ============================
-//    private void handleSendOtp(ActionEvent e) {
-//        String emailInput = emailTextField.getText();
-//
-//        String emailError = Validator.validateEmail(emailInput);
-//        if (emailError != null) {
-//            SnackBar.show(SnackBarType.ERROR, "Email Required", emailError, Duration.seconds(3));
-//            return;
-//        }
-//
-//        String email = emailInput.trim();
-//
-//        sendOTPBtn.setDisable(true);
-//
-//        MailHelper.sendMail(email, "Cake Shop System password reset request.")
-//                .thenAccept(result -> Platform.runLater(() -> {
-//                    sendOTPBtn.setDisable(false);
-//
-//                    SnackBar.show(
-//                            result.success() ? SnackBarType.SUCCESS : SnackBarType.ERROR,
-//                            result.message(),
-//                            "",
-//                            Duration.seconds(3)
-//                    );
-//
-//                    otpTextField.setDisable(false);
-//                    verifyOTPBtn.setDisable(false);
-//
-//                    int uid = UserDAO.isEmailExists(email);
-//                    resetUserId = uid > 0 ? uid : null;
-//                }));
-//    }
-//
-//    // ============================
-//    // Step 2: Verify OTP Code
-//    // ============================
-//    private void handleVerifyOtp(ActionEvent e) {
-//        String otpInput = otpTextField.getText();
-//        String otpError = validateOtp(otpInput);
-//
-//        if (otpError != null) {
-//            SnackBar.show(SnackBarType.ERROR, "Invalid OTP", otpError, Duration.seconds(3));
-//            return;
-//        }
-//
-//        String otp = otpInput.trim();
-//
-//        // Security: don't reveal if email exists
-//        if (resetUserId == null) {
-//            SnackBar.show(SnackBarType.ERROR, "Invalid OTP", "Invalid or expired OTP.", Duration.seconds(3));
-//            return;
-//        }
-//
-//        boolean ok = OneTimePasswordDAO.isOtpValid(resetUserId, otp);
-//        if (!ok) {
-//            SnackBar.show(SnackBarType.ERROR, "Invalid OTP", "Invalid or expired OTP.", Duration.seconds(3));
-//            return;
-//        }
-//
-//        slideAway(emailForm);
-//        slideIn(passwordForm);
-//    }
-//
-//    // ============================
-//    // Step 3: Update Password
-//    // ============================
-//    private void handleConfirmNewPassword(ActionEvent e) {
-//        if (resetUserId == null) {
-//            SnackBar.show(SnackBarType.ERROR, "Error", "Please verify OTP first.", Duration.seconds(3));
-//            return;
-//        }
-//
-//        String p1 = newPasswordTextField.getText();
-//        String p2 = confirmNewPasswordTextField.getText();
-//
-//        String passError = Validator.validatePassword(p1);
-//        if (passError != null) {
-//            SnackBar.show(SnackBarType.ERROR, "Weak Password", passError, Duration.seconds(3));
-//            return;
-//        }
-//
-//        String matchError = Validator.matchPassword(p1, p2);
-//        if (matchError != null) {
-//            SnackBar.show(SnackBarType.ERROR, "Mismatch", matchError, Duration.seconds(3));
-//            return;
-//        }
-//
-//        confirmBtn.setDisable(true);
-//
-//        AuthResult res = UserDAO.updatePassword(resetUserId, p1);
-//
-//        if (res.success()) {
-//            SnackBar.show(SnackBarType.SUCCESS, "Success", res.message(), Duration.seconds(3));
-//            ChangeScene.switchScene("LoginForm.fxml", "Cake Shop System | Login Form");
-//        } else {
-//            SnackBar.show(SnackBarType.ERROR, "Failed", res.message(), Duration.seconds(3));
-//            confirmBtn.setDisable(false);
-//        }
-//    }
-//
-//    // ============================
-//    // OTP Validation (6 digits only)
-//    // ============================
-//    private String validateOtp(String otp) {
-//        otp = otp == null ? "" : otp.trim();
-//        if (otp.isEmpty()) return "OTP cannot be empty";
-//        if (!otp.matches("\\d{6}")) return "OTP must be exactly 6 digits";
-//        return null;
-//    }
-//
-//    // ============================
-//    // Navigation
-//    // ============================
-//    private void backToLogin(ActionEvent e) {
-//        ChangeScene.switchScene("LoginForm.fxml", "Cake Shop System | Login Form");
-//    }
+        String email = emailInput.trim();
+        sendOTPBtn.setDisable(true);
+
+        // Determine user (without revealing to attacker)
+        int uid = UserDAO.isEmailExists(email);
+        resetUserId = uid > 0 ? uid : null;
+
+        // Allow OTP entry regardless (prevents easy email enumeration)
+        otpTextField.setDisable(false);
+        verifyOTPBtn.setDisable(false);
+
+        // If email not found, pretend it worked (optional but better security UX)
+        if (resetUserId == null) {
+            sendOTPBtn.setDisable(false);
+            SnackBar.show(SnackBarType.WARNING, "Check your email", "If the email is registered, an OTP was sent.", SNACK_DURATION);
+            return;
+        }
+
+        CompletableFuture<MailResultSet> task = MailHelper.sendMail(email, "Cake Shop System password reset request.");
+        task.whenComplete((result, ex) -> Platform.runLater(() -> {
+            sendOTPBtn.setDisable(false);
+
+            if (ex != null) {
+                SnackBar.show(SnackBarType.ERROR, "Failed", "Could not send OTP email.", SNACK_DURATION);
+                return;
+            }
+
+            SnackBar.show(
+                    result.success() ? SnackBarType.SUCCESS : SnackBarType.ERROR,
+                    result.success() ? "Check your email" : "Failed",
+                    result.success() ? "" : result.message(),
+                    SNACK_DURATION
+            );
+        }));
+    }
+
+    // ============================
+    // Step 2: Verify OTP Code
+    // ============================
+    private void handleVerifyOtp(ActionEvent e) {
+        String otpError = validateOtp(otpTextField.getText());
+        if (otpError != null) {
+            SnackBar.show(SnackBarType.ERROR, "Invalid OTP", otpError, SNACK_DURATION);
+            return;
+        }
+
+        // Security: don't reveal whether email exists
+        if (resetUserId == null) {
+            SnackBar.show(SnackBarType.ERROR, "Invalid OTP", "Invalid or expired OTP.", SNACK_DURATION);
+            return;
+        }
+
+        boolean ok = OneTimePasswordDAO.isOtpValid(resetUserId, otpTextField.getText().trim());
+        if (!ok) {
+            SnackBar.show(SnackBarType.ERROR, "Invalid OTP", "Invalid or expired OTP.", SNACK_DURATION);
+            return;
+        }
+
+        slideAway(emailForm);
+        slideIn(passwordForm);
+    }
+
+    // ============================
+    // Step 3: Update Password
+    // ============================
+    private void handleConfirmNewPassword(ActionEvent e) {
+        if (resetUserId == null) {
+            SnackBar.show(SnackBarType.ERROR, "Error", "Please verify OTP first.", SNACK_DURATION);
+            return;
+        }
+
+        String p1 = newPasswordValue.get();
+        String p2 = confirmPasswordValue.get();
+
+        String passError = Validator.validatePassword(p1);
+        if (passError != null) {
+            SnackBar.show(SnackBarType.ERROR, "Weak Password", passError, SNACK_DURATION);
+            return;
+        }
+
+        String matchError = Validator.matchPassword(p1, p2);
+        if (matchError != null) {
+            SnackBar.show(SnackBarType.ERROR, "Mismatch", matchError, SNACK_DURATION);
+            return;
+        }
+
+        confirmBtn.setDisable(true);
+
+        AuthResult res = UserDAO.updatePassword(resetUserId, p1);
+        if (res.success()) {
+            SnackBar.show(SnackBarType.SUCCESS, "Success", res.message(), SNACK_DURATION);
+            ChangeScene.switchScene("LoginForm.fxml", "Cake Shop System | Login Form");
+        } else {
+            SnackBar.show(SnackBarType.ERROR, "Failed", res.message(), SNACK_DURATION);
+            confirmBtn.setDisable(false);
+        }
+    }
+
+    // ============================
+    // OTP Validation (6 digits only)
+    // ============================
+    private String validateOtp(String otp) {
+        otp = otp == null ? "" : otp.trim();
+        if (otp.isEmpty()) return "OTP cannot be empty";
+        if (!otp.matches("\\d{6}")) return "OTP must be exactly 6 digits";
+        return null;
+    }
+
+    // ============================
+    // Navigation
+    // ============================
+    private void backToLogin(ActionEvent e) {
+        ChangeScene.switchScene("LoginForm.fxml", "Cake Shop System | Login Form");
+    }
+
+    // ============================
+    // Password Toggle Helper
+    // ============================
+    private void setupPasswordToggle(
+            PasswordField passwordField,
+            TextField textField,
+            FontIcon icon,
+            StringProperty sharedValue,
+            BooleanProperty visibleFlag
+    ) {
+        // Hidden fields should not take layout space
+        passwordField.managedProperty().bind(passwordField.visibleProperty());
+        textField.managedProperty().bind(textField.visibleProperty());
+
+        // Bind both fields to the same value (no manual sync methods)
+        passwordField.textProperty().bindBidirectional(sharedValue);
+        textField.textProperty().bindBidirectional(sharedValue);
+
+        // Toggle visibility
+        passwordField.visibleProperty().bind(visibleFlag.not());
+        textField.visibleProperty().bind(visibleFlag);
+
+        // Icon behavior
+        icon.setIconLiteral("fas-eye-slash");
+        icon.setOnMouseClicked(ev -> visibleFlag.set(!visibleFlag.get()));
+        visibleFlag.addListener((obs, oldV, newV) ->
+                icon.setIconLiteral(newV ? "fas-eye" : "fas-eye-slash"));
+    }
 
     // ============================
     // UI Animations
@@ -236,137 +271,28 @@ public class ForgotPasswordController {
     private void slideIn(VBox vBox) {
         vBox.setVisible(true);
 
-        FadeTransition fadeIn = new FadeTransition(Duration.millis(300), vBox);
+        FadeTransition fadeIn = new FadeTransition(ANIM_DURATION, vBox);
         fadeIn.setFromValue(0.0);
         fadeIn.setToValue(1.0);
 
-        TranslateTransition slideUp = new TranslateTransition(Duration.millis(300), vBox);
-        slideUp.setFromX(-100);
-        slideUp.setToX(0);
+        TranslateTransition slide = new TranslateTransition(ANIM_DURATION, vBox);
+        slide.setFromX(-100);
+        slide.setToX(0);
 
-        new ParallelTransition(fadeIn, slideUp).play();
+        new ParallelTransition(fadeIn, slide).play();
     }
 
     private void slideAway(VBox vBox) {
-        FadeTransition fadeOut = new FadeTransition(Duration.millis(300), vBox);
+        FadeTransition fadeOut = new FadeTransition(ANIM_DURATION, vBox);
         fadeOut.setFromValue(1.0);
         fadeOut.setToValue(0.0);
 
-        TranslateTransition slideDown = new TranslateTransition(Duration.millis(300), vBox);
-        slideDown.setFromX(0);
-        slideDown.setToX(100);
+        TranslateTransition slide = new TranslateTransition(ANIM_DURATION, vBox);
+        slide.setFromX(0);
+        slide.setToX(100);
 
-        ParallelTransition transition = new ParallelTransition(fadeOut, slideDown);
+        ParallelTransition transition = new ParallelTransition(fadeOut, slide);
         transition.setOnFinished(ev -> vBox.setVisible(false));
         transition.play();
     }
-
-
-    // ============================
-// Helper Method
-// ============================
-    @FXML
-    private void togglePasswordVisibility() {
-        // --- Capture current state before switching ---
-        final boolean currentlyVisible = isPasswordVisible; // Snapshot current visibility state
-
-        // Read current text + caret from whichever field is currently active
-        final String currentText = getPasswordValue();      // Current password string from active field
-        final int caret = currentlyVisible
-                ? newPasswordTextField.getCaretPosition()       // Caret position when plain-text is active
-                : newPasswordPasswordField.getCaretPosition();      // Caret position when password field is active
-
-        // --- Flip state ---
-        isPasswordVisible = !isPasswordVisible;             // Toggle visibility flag
-
-        // --- Apply visibility (and managed binding handles layout space) ---
-        newPasswordPasswordField.setVisible(!isPasswordVisible);    // Show PasswordField when NOT visible mode
-        newPasswordTextField.setVisible(isPasswordVisible);     // Show TextField when visible mode
-
-        // --- Sync text into the field that is becoming visible ---
-        if (isPasswordVisible) {
-            newPasswordTextField.setText(currentText);          // Ensure plain-text field matches current value
-            newPasswordTextField.requestFocus();                // Move focus so user can keep typing
-            newPasswordTextField.positionCaret(Math.min(caret, currentText.length())); // Restore caret safely
-        } else {
-            newPasswordPasswordField.setText(currentText);          // Ensure PasswordField matches current value
-            newPasswordPasswordField.requestFocus();                // Move focus so user can keep typing
-            newPasswordPasswordField.positionCaret(Math.min(caret, currentText.length())); // Restore caret safely
-        }
-
-        // Changes between eye & eye-slash icon
-        eyeSlashToggleButton.setIconLiteral(isPasswordVisible ? "fas-eye" : "fas-eye-slash");
-
-    }
-
-    private String getPasswordValue() {
-        return isPasswordVisible ? newPasswordTextField.getText() : newPasswordPasswordField.getText();
-    }
-
-    private String getPasswordValue1() {
-        return isPasswordVisible ? confirmNewPasswordTextField.getText() : confirmNewPasswordPasswordField.getText();
-    }
-
-
-    @FXML
-    private void togglePasswordVisibility1() {
-        // --- Capture current state before switching ---
-        final boolean currentlyVisible = isPasswordVisible; // Snapshot current visibility state
-
-        // Read current text + caret from whichever field is currently active
-        final String currentText = getPasswordValue1();      // Current password string from active field
-        final int caret = currentlyVisible
-                ? confirmNewPasswordTextField.getCaretPosition()       // Caret position when plain-text is active
-                : confirmNewPasswordPasswordField.getCaretPosition();      // Caret position when password field is active
-
-        // --- Flip state ---
-        isPasswordVisible = !isPasswordVisible;             // Toggle visibility flag
-
-        // --- Apply visibility (and managed binding handles layout space) ---
-        confirmNewPasswordPasswordField.setVisible(!isPasswordVisible);    // Show PasswordField when NOT visible mode
-        confirmNewPasswordTextField.setVisible(isPasswordVisible);     // Show TextField when visible mode
-
-        // --- Sync text into the field that is becoming visible ---
-        if (isPasswordVisible) {
-            confirmNewPasswordTextField.setText(currentText);          // Ensure plain-text field matches current value
-            confirmNewPasswordTextField.requestFocus();                // Move focus so user can keep typing
-            confirmNewPasswordTextField.positionCaret(Math.min(caret, currentText.length())); // Restore caret safely
-        } else {
-            confirmNewPasswordPasswordField.setText(currentText);          // Ensure PasswordField matches current value
-            confirmNewPasswordPasswordField.requestFocus();                // Move focus so user can keep typing
-            confirmNewPasswordPasswordField.positionCaret(Math.min(caret, currentText.length())); // Restore caret safely
-        }
-
-        // Changes between eye & eye-slash icon
-        eyeSlashToggleButton.setIconLiteral(isPasswordVisible ? "fas-eye" : "fas-eye-slash");
-
-    }
-
-    private void syncPasswordFields(String newValue) {
-        // Update PasswordField if needed
-        if (!Objects.equals(newPasswordPasswordField.getText(), newValue)) {
-            newPasswordPasswordField.setText(newValue); // Keep hidden field in sync
-        }
-
-        // Update TextField if needed
-        if (!Objects.equals(newPasswordTextField.getText(), newValue)) {
-            newPasswordTextField.setText(newValue); // Keep visible field in sync
-        }
-    }
-
-    private void syncPasswordFields1(String newValue) {
-        // Update PasswordField if needed
-        if (!Objects.equals(confirmNewPasswordPasswordField.getText(), newValue)) {
-            confirmNewPasswordPasswordField.setText(newValue); // Keep hidden field in sync
-        }
-
-        // Update TextField if needed
-        if (!Objects.equals(confirmNewPasswordTextField.getText(), newValue)) {
-            confirmNewPasswordTextField.setText(newValue); // Keep visible field in sync
-
-
-        }
-    }
 }
-
-
