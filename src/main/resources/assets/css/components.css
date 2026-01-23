@@ -2,11 +2,11 @@
 Topbar
 *************************/
 .topbar {
-    -fx-effect: -fx-soft-shadow;
-    -fx-background-color: -fx-container-bg;
+    -fx-effect: -app-soft-shadow;
+    -fx-background-color: -app-bg-color;
     -fx-background-radius: 10;
     -fx-border-radius: 10;
-    -fx-border-color: -fx-container-border-color;
+    -fx-border-color: -app-border-color;
     -fx-border-width: 1;
 }
 
@@ -41,15 +41,15 @@ Status pill
 Breadcrumbs
 ************************/
 .breadcrumb-container {
-    -fx-background-color: -fx-secondary-color;
+    -fx-background-color: -app-icon-color;
 }
 
 .breadcrumb-link {
-    -fx-text-fill: gray;
+    -fx-text-fill: -app-icon-color;
 }
 
 .breadcrumb-link.breadcrumb-active {
-    -fx-text-fill: -fx-text-color;
+    -fx-text-fill: -app-surface-color;
 }
 
 .breadcrumb-link:disabled{
@@ -94,3 +94,243 @@ Popup Close Button
 .popup-box-close-btn:pressed {
     -fx-background-color: rgba(116, 7, 27, 0.98);
 }
+
+/* =========================
+   Card
+   ========================= */
+
+/* Card container (StackPane) */
+.card {
+    -fx-background-color: -app-surface-color;
+    -fx-background-radius: 16;
+    -fx-border-color: -app-border-color;
+    -fx-border-radius: 16;
+    -fx-border-width: 1;
+
+    /* spacing around content */
+    -fx-padding: 14;
+
+    /* make it stand out from bg */
+    -fx-effect: -app-soft-shadow;
+}
+
+/* hover: slightly lifted + clearer border */
+.card:hover {
+    -fx-border-color: rgba(70, 130, 180, 0.35); /* steelblue tint */
+    -fx-effect: -app-strong-shadow;
+    -fx-translate-y: -1;
+}
+
+/* Inner layout */
+.card-body {
+    -fx-background-color: transparent;
+}
+
+/* Image wrap */
+.image-wrap {
+    -fx-background-color: linear-gradient(to bottom right, #FFFFFF, #F7FAFF);
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: rgba(220, 230, 242, 0.9);
+    -fx-border-width: 1;
+    -fx-padding: 10;
+    -fx-alignment: center;
+}
+
+.card-image {
+    -fx-smooth: true;
+}
+
+/* Header / Name */
+.card-header {
+    -fx-text-fill: -app-base-text-color;
+    -fx-font-size: 15px;
+    -fx-font-weight: 800;
+}
+
+/* Meta small text (Price label) */
+.meta {
+    -fx-text-fill: -app-muted-text-color;
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+}
+
+/* Price */
+.card-price {
+    -fx-text-fill: -app-secondary-color;
+    -fx-font-size: 13px;
+    -fx-font-weight: 800;
+}
+
+/* Badge (DIY availability) */
+.badge {
+    -fx-text-fill: -app-secondary-color;
+    -fx-font-size: 11px;
+    -fx-font-weight: 800;
+
+    -fx-padding: 3 10 3 10;
+    -fx-background-radius: 999;
+    -fx-border-radius: 999;
+
+    /* mint tint so it matches accent but stays readable */
+    -fx-background-color: rgba(45, 212, 191, 0.18);
+    -fx-border-color: rgba(45, 212, 191, 0.45);
+    -fx-border-width: 1;
+}
+
+/* Quantity stepper */
+.qty-stepper {
+    -fx-background-color: -app-bg-color;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: -app-border-color;
+    -fx-border-width: 1;
+    -fx-padding: 2;
+}
+
+/* Qty label */
+.qty-label {
+    -fx-text-fill: -app-base-text-color;
+    -fx-font-size: 12px;
+    -fx-font-weight: 800;
+}
+
+/* Stepper buttons */
+.card-dec-btn,
+.card-inc-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: -app-secondary-color;
+    -fx-font-size: 14px;
+    -fx-font-weight: 900;
+
+    -fx-background-radius: 10;
+    -fx-padding: 6 10 6 10;
+    -fx-cursor: hand;
+}
+
+.card-dec-btn:hover,
+.card-inc-btn:hover {
+    -fx-background-color: rgba(70, 130, 180, 0.12);
+}
+
+.card-dec-btn:pressed,
+.card-inc-btn:pressed {
+    -fx-background-color: rgba(70, 130, 180, 0.20);
+}
+
+/* Main button */
+.card-btn {
+    -fx-background-color: -app-primary-color;
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-font-weight: 800;
+
+    -fx-background-radius: 12;
+    -fx-padding: 8 14 8 14;
+    -fx-cursor: hand;
+
+    /* subtle depth */
+    -fx-effect: dropshadow(gaussian, rgba(70, 130, 180, 0.35), 10, 0.15, 0, 2);
+}
+
+.card-btn:hover {
+    -fx-background-color: -app-primary-hover-color;
+}
+
+.card-btn:pressed {
+    -fx-background-color: -app-secondary-color;
+}
+
+.card-btn:disabled,
+.card-dec-btn:disabled,
+.card-inc-btn:disabled {
+    -fx-opacity: 0.55;
+    -fx-cursor: default;
+}
+
+.card .label {
+    -fx-text-fill: -app-base-text-color;
+}
+.card .radio-button {
+    -fx-text-fill: -app-base-text-color;
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+}
+
+.card .radio-button {
+    -fx-padding: 4 10 4 10;
+    -fx-background-radius: 999;
+    -fx-border-radius: 999;
+    -fx-border-color: -app-border-color;
+    -fx-border-width: 1;
+    -fx-background-color: -app-surface-color;
+    -fx-cursor: hand;
+}
+
+.card .radio-button > .radio {
+    -fx-padding: 0;
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+.card .radio-button > .radio > .dot {
+    -fx-background-color: transparent;
+}
+
+.card .radio-button:hover {
+    -fx-border-color: rgba(70, 130, 180, 0.35); /* steelblue tint */
+    -fx-background-color: rgba(70, 130, 180, 0.08);
+}
+
+.card .radio-button:selected {
+    -fx-background-color: rgba(45, 212, 191, 0.18); /* mint tint */
+    -fx-border-color: rgba(45, 212, 191, 0.55);
+    -fx-text-fill: -app-secondary-color;
+}
+
+.card .radio-button:pressed {
+    -fx-background-color: rgba(70, 130, 180, 0.14);
+}
+
+.card .radio-button:disabled {
+    -fx-opacity: 0.6;
+    -fx-cursor: default;
+}
+
+.card .type-row {
+    -fx-padding: 2 0 0 0;
+}
+
+/* =========================
+   Card
+   ========================= */
+.scroll-pane .scroll-bar:horizontal {
+    -fx-pref-height: 12;
+    -fx-min-height: 12;
+    -fx-max-height: 12;
+}
+
+.scroll-pane .scroll-bar:horizontal .thumb {
+    -fx-pref-height: 12;
+    -fx-min-height: 12;
+    -fx-max-height: 12;
+
+    -fx-background-color: -app-icon-color;
+    -fx-background-radius: 999;
+}
+
+/*
+.scroll-pane .scroll-bar:vertical {
+    -fx-pref-width: 10;
+    -fx-min-width: 10;
+    -fx-max-width: 10;
+}
+
+.scroll-pane .scroll-bar:vertical .thumb {
+    -fx-pref-width: 10;
+    -fx-min-width: 10;
+    -fx-max-width: 10;
+
+    -fx-background-color: -app-icon-color;
+    -fx-background-radius: 999;
+}
+*/

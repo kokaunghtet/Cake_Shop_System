@@ -1,35 +1,52 @@
 /* =========================
    Global Theme Variables
    ========================= */
+   /*
 .root {
 
-    /* Text */
     -fx-text-color: #5A273B;
 
-    /* Backgrounds / Surfaces */
-    /*-fx-bg-color: #FFF5E4;*/
-    /*-fx-container-bg: derive(-fx-bg-color, 10%);*/
-    /*-fx-container-border-color: #F5E9D6;*/
     -fx-bg-color: linear-gradient(to bottom right, #FFF5E4, #FFE9D2);
     -fx-container-bg: #FFF5E4;
     -fx-container-border-color: rgba(255, 245, 228, 0.90);
     -fx-control-inner-background: #FFE9D2;
 
-    /* Theme Colors */
     -fx-primary-color: #EE6983;
     -fx-secondary-color: #FFC4C4;
     -fx-accent-color: #74071B;
 
-    /* Buttons */
     -fx-button-text-color: #FFF;
 
-    /* Shadows */
     -fx-soft-shadow: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 8, 0.2, 0, 2);
     -fx-strong-shadow: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 16, 0.3, 0, 4);
 
-    /* Semantic / Status Colors */
     -fx-error-color: #E63946;
     -fx-success-color: #2ECC71;
     -fx-warning-color: #F39C12;
     -fx-info-color: #3498DB;
+}
+*/
+.root {
+    -app-base-text-color : #0B1220;
+    -app-muted-text-color : #4B5563;
+
+    /* -app-bg-color : linear-gradient(to bottom right, #FFFFFF, #F7FAFF); */
+    -app-bg-color : #F7FAFF;
+    -app-border-color : #DCE6F2;
+    -app-surface-color : #FFFFFF;
+
+    -app-primary-color : #4682B4;
+    -app-primary-hover-color : #2F6690;
+    -app-secondary-color : #1E3A5F;
+    -app-accent-color : #2DD4BF;
+
+    -app-soft-shadow: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 8, 0.2, 0, 2);
+    -app-strong-shadow: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 16, 0.3, 0, 4);
+
+    -app-icon-color : #94A3B8;
+
+    -app-success-color : #22C55E;
+    -app-error-color : #EF4444;
+    -app-warning-color : #F59E0B;
+    -app-info-color : #38BDF8;
 }

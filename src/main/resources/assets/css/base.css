@@ -3,9 +3,9 @@
    ========================= */
 .root {
   -fx-font-family: Arial, sans-serif;
-  -fx-font-size: 16;
+  -fx-font-size: 20;
   -fx-font-weight: normal;
-  -fx-background-color: -fx-bg-color;
+  -fx-background-color: -app-bg-color;
 }
 
 /* =========================
@@ -13,12 +13,12 @@
    ========================= */
 
 .container {
-  -fx-background-color: -fx-container-bg;
+  -fx-background-color: -app-surface-color;
   -fx-border-radius: 14;
-  -fx-border-color: -fx-container-border-color;
+  -fx-border-color: -app-border-color;
   -fx-border-width: 1;
   -fx-background-radius: 10;
-  -fx-effect: -fx-soft-shadow;
+  -fx-effect: -app-soft-shadow;
   -fx-padding: 14;
 }
 
@@ -30,12 +30,12 @@
    Typography (Labels / Titles)
    ========================= */
 .label {
-  -fx-text-fill: -fx-text-color;
+  -fx-text-fill: -app-base-text-color;
   -fx-font-size: 14;
 }
 
 .title {
-  -fx-text-fill: -fx-accent-color;
+  -fx-text-fill: -app-primary-color;
   -fx-font-size: 42;
   -fx-font-weight: 900;
 }
@@ -60,42 +60,10 @@
 /* TextField / PasswordField */
 .text-field,
 .password-field {
-  -fx-border-color: -fx-text-color;
+  -fx-border-color: -app-border-color;
   -fx-border-width: 1;
   -fx-padding: 0 14 0 14;
 }
-
-/* ComboBox */
-/*
-.combo-box {
-  -fx-border-color: -fx-text-color;
-  -fx-border-width: 1;
-  -fx-padding: 0;
-}
-
-.combo-box-base {
-  -fx-min-height: 40;
-  -fx-pref-height: 40;
-  -fx-max-height: 40;
-
-  -fx-background-radius: 10;
-  -fx-border-radius: 10;
-}
-
-.combo-box .list-cell {
-  -fx-padding: 0 14 0 14;
-  -fx-alignment: CENTER_LEFT;
-  -fx-text-fill: -fx-text-color;
-}
-
-.combo-box .arrow-button {
-  -fx-padding: 0 12 0 12;
-}
-
-.combo-box .arrow {
-  -fx-background-color: -fx-text-color;
-}
-*/
 /* =========================
    ComboBox (theme-matched)
    ========================= */
@@ -106,10 +74,10 @@
     -fx-pref-height: 40px;
     -fx-max-height: 40px;
 
-    -fx-background-color: -fx-container-bg-color;
+    -fx-background-color: -app-surface-color;
     -fx-background-radius: 10px;
 
-    -fx-border-color: -fx-text-color;
+    -fx-border-color: -app-border-color;
     -fx-border-width: 1px;
     -fx-border-radius: 10px;
 
@@ -124,7 +92,7 @@
     -fx-alignment: CENTER_LEFT;
     -fx-padding: 0 14px 0 14px;
 
-    -fx-text-fill: -fx-text-color;
+    -fx-text-fill: -app-base-text-color;
     -fx-background-color: transparent;
 }
 
@@ -138,7 +106,7 @@
 }
 
 .combo-box-base > .arrow-button > .arrow {
-    -fx-background-color: -fx-text-color;
+    -fx-background-color: -app-base-text-color;
 }
 
 /* =========================
@@ -148,7 +116,7 @@
 .combo-box-popup > .list-view {
     -fx-fixed-cell-size: 40px;
 
-    -fx-background-color: -fx-bg-color;
+    -fx-background-color: -app-bg-color;
     -fx-background-radius: 10px;
 
     -fx-border-width: 1px;
@@ -162,26 +130,26 @@
     -fx-alignment: CENTER_LEFT;
     -fx-padding: 0 14px 0 14px;
 
-    -fx-text-fill: -fx-text-color;
+    -fx-text-fill: -app-base-text-color;
     -fx-background-color: transparent;
 }
 
 /* Hover */
 .combo-box-popup .list-cell:hover {
-    -fx-background-color: -fx-secondary-color; /* soft pink */
+    -fx-background-color: -app-secondary-color;
     -fx-background-radius: 8px;
 }
 
 /* Selected item in popup */
 .combo-box-popup .list-cell:selected {
-    -fx-background-color: -fx-primary-color;
+    -fx-background-color: -app-primary-color;
     -fx-text-fill: white;
     -fx-background-radius: 8px;
 }
 
 /* Focus ring when control is focused */
 .combo-box-base:focused {
-    -fx-border-color: -fx-accent-color;
+    -fx-border-color: -app-accent-color;
     -fx-border-width: 1.2px;
 }
 
@@ -198,11 +166,12 @@
    Icons (Ikonli)
    ========================= */
 .ikonli-font-icon {
-  -fx-icon-color: -fx-text-color;
+  -fx-icon-color: -app-icon-color;
 }
 
 .cart-icon {
-    -fx-icon-color: #fff;
+    -fx-font-size : 18;
+    -fx-icon-color: -app-surface-color;
 }
 
 .icon-clickable {
@@ -221,16 +190,16 @@
   -fx-cursor: hand;
   -fx-padding: 0 16 0 16;
   -fx-alignment: center;
-  -fx-background-color: -fx-accent-color;
-  -fx-text-fill: -fx-button-text-color;
+  -fx-background-color: -app-primary-color;
+  -fx-text-fill: -app-surface-color;
   -fx-graphic-text-gap: 8;
 }
 
 .button.outline {
   -fx-background-color: transparent;
-  -fx-border-color: -fx-accent-color;
+  -fx-border-color: -app-primary-hover-color;
   -fx-border-width: 1;
-  -fx-text-fill: -fx-text-color;
+  -fx-text-fill: -app-surface-color;
   -fx-border-radius: 8;
   -fx-background-radius: 8;
 }
@@ -238,13 +207,13 @@
 .button:hover,
 .button:focused,
 .button:pressed {
-  -fx-background-color: derive(-fx-accent-color, 50%);
+  -fx-background-color: -app-primary-hover-color;
 }
 
 .button.outline:hover,
 .button.outline:focused,
 .button.outline:pressed {
-  -fx-background-color: derive(-fx-accent-color, 50%);
+  -fx-background-color: -app-primary-hover-color;
 }
 
 .otp-button {
@@ -256,24 +225,16 @@
    Hyperlinks
    ========================= */
 .hyperlink {
-  -fx-text-fill: -fx-text-color;
+  -fx-text-fill: -app-base-text-color;
   -fx-underline: false;
   -fx-font-size: 14;
   -fx-graphic-text-gap: 6;
 }
 
-/*
-.hyperlink:hover,
-.hyperlink.active,
-.hyperlink:focused {
-  -fx-background-radius: 6;
-  -fx-text-fill: derive(-fx-text-color, 100%);
-}
-*/
 .hyperlink:hover,
 .hyperlink.active{
   -fx-background-radius: 6;
-  -fx-text-fill: derive(-fx-text-color, 100%);
+  -fx-text-fill: derive(-app-base-text-color, 100%);
 }
 
 .hyperlink:focused {
@@ -288,138 +249,22 @@
    Messages (Error / Success / Warning / Info)
    ========================= */
 .error-message {
-  -fx-text-fill: -fx-error-color;
+  -fx-text-fill: -app-error-color;
 }
 
 .success-message {
-  -fx-text-fill: -fx-success-color;
+  -fx-text-fill: -app-success-color;
 }
 
 .warning-message {
-  -fx-text-fill: -fx-warning-color;
+  -fx-text-fill: -app-warning-color;
 }
 
 .info-message {
-  -fx-text-fill: -fx-info-color;
+  -fx-text-fill: -app-info-color;
 }
 
 .input-error:focused {
-    -fx-border-color: -fx-error-color;
+    -fx-border-color: -app-error-color;
     -fx-border-width: 1.6px;
 }
-
-
-/************************
-Card
-************************/
-/* VBox card container */
-.card {
-    -fx-background-color: -fx-control-inner-background;
-    -fx-background-radius: 14;
-    -fx-border-color: rgba(0, 0, 0, 0.08);
-    -fx-border-radius: 14;
-
-    -fx-padding: 14;
-    -fx-spacing: 10;              /* VBox spacing */
-    -fx-alignment: TOP_LEFT;      /* VBox alignment */
-
-    -fx-effect: -fx-soft-shadow;
-}
-
-/* Hover effect */
-.card:hover {
-    -fx-border-color: rgba(0, 0, 0, 0.14);
-    -fx-effect: -fx-strong-shadow;
-}
-
-/* Header label inside card */
-.card-header {
-    -fx-font-size: 16px;
-    -fx-font-weight: 800;
-    -fx-text-fill: -fx-text-color;
-}
-
-/* Main action button (e.g. Add to cart) */
-.card-btn {
-    -fx-background-color: -fx-accent-color;
-    -fx-text-fill: white;
-    -fx-font-weight: 800;
-    -fx-background-radius: 10;
-    -fx-padding: 9 14;
-    -fx-cursor: hand;
-}
-
-.card-btn:hover { -fx-background-color: derive(-fx-accent-color, 50%) }
-.card-btn:pressed { -fx-background-color: derive(-fx-accent-color, 50%) }
-.card-btn:disabled { -fx-background-color: derive(-fx-accent-color, 50%); -fx-cursor: default; }
-/* The pill container */
-.qty-stepper {
-    -fx-background-color: #ffffff;
-    -fx-background-radius: 18;
-    -fx-border-radius: 18;
-    -fx-border-color: rgba(0,0,0,0.08);
-    -fx-padding: 0;
-    -fx-spacing: 0;
-    -fx-alignment: CENTER;
-
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.20), 18, 0, 0, 6);
-}
-
-/* Center number */
-.qty-label {
-    -fx-alignment: CENTER;
-    -fx-max-width: Infinity; /* allow grow */
-    -fx-min-height: 44;
-    -fx-pref-height: 44;
-
-    -fx-font-size: 18px;
-    -fx-font-weight: 700;
-    -fx-text-fill: #111111;
-}
-
-/* Shared button base */
-.card-inc-btn,
-.card-dec-btn {
-    -fx-min-width: 56;
-    -fx-pref-width: 56;
-    -fx-min-height: 44;
-    -fx-pref-height: 44;
-
-    -fx-background-color: #f2f2f2;
-    -fx-background-insets: 0;
-    -fx-padding: 0;
-
-    -fx-font-size: 20px;
-    -fx-font-weight: 700;
-    -fx-text-fill: #111111;
-
-    -fx-cursor: hand;
-
-    /* remove focus glow */
-    -fx-focus-color: transparent;
-    -fx-faint-focus-color: transparent;
-}
-
-/* Left and right rounded ends */
-.card-dec-btn {
-    -fx-background-radius: 18 0 0 18; /* TL TR BR BL */
-}
-.card-inc-btn {
-    -fx-background-radius: 0 18 18 0;
-}
-
-/* Hover / pressed feedback */
-.card-inc-btn:hover,
-.card-dec-btn:hover {
-    -fx-background-color: #e9e9e9;
-}
-.card-inc-btn:pressed,
-.card-dec-btn:pressed {
-    -fx-background-color: #dedede;
-}
-
-/* Optional: if your card has an ImageView at top, this helps it look clean */
-.card ImageView {
-    -fx-smooth: true;
-}
-
