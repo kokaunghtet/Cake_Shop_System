@@ -1,39 +1,74 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 
+<StackPane xmlns:fx="http://javafx.com/fxml/1"
+           xmlns="http://javafx.com/javafx/25"
+           fx:controller="com.cakeshopsystem.controllers.AccessoriesCardController"
+           styleClass="card"
+           stylesheets="@../assets/css/style.css">
 
-<AnchorPane prefHeight="325.0" prefWidth="549.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cakeshopsystem.controllers.AccessoriesCardController">
-   <children>
-      <ImageView fx:id="imgImage" fitHeight="150.0" fitWidth="200.0" layoutX="29.0" layoutY="73.0" pickOnBounds="true" preserveRatio="true" />
-      <HBox layoutX="258.0" layoutY="95.0" prefHeight="0.0" prefWidth="150.0">
-         <children>
-            <Label fx:id="lbl" text="Label" />
-            <Label fx:id="lbl" text="Label">
-               <opaqueInsets>
-                  <Insets />
-               </opaqueInsets>
-               <HBox.margin>
-                  <Insets left="50.0" />
-               </HBox.margin>
-            </Label>
-         </children>
-      </HBox>
-      <HBox layoutX="258.0" layoutY="131.0" prefHeight="100.0" prefWidth="200.0">
-         <children>
-            <Button fx:id="btnplus" mnemonicParsing="false" text="+" />
-            <Button fx:id="btnminus" mnemonicParsing="false" prefHeight="26.0" prefWidth="27.0" text="-" />
-            <Label fx:id="lbl" text="Label">
-               <HBox.margin>
-                  <Insets left="30.0" />
-               </HBox.margin>
-            </Label>
-         </children>
-      </HBox>
-   </children>
-</AnchorPane>
+    <VBox fx:id="accessoryCardVbox" spacing="10" styleClass="card-body">
+
+        <!-- Image -->
+        <StackPane styleClass="image-wrap">
+            <ImageView fx:id="accessoryImage"
+                       fitWidth="180.0"
+                       fitHeight="140.0"
+                       preserveRatio="true"
+                       pickOnBounds="true"
+                       styleClass="card-image"/>
+        </StackPane>
+
+        <!-- Name -->
+        <Label fx:id="accessoryName"
+               maxWidth="180.0"
+               wrapText="true"
+               styleClass="card-header"/>
+
+        <!-- Price -->
+        <HBox alignment="CENTER_LEFT" spacing="8">
+            <Label text="Price:" styleClass="meta"/>
+            <Label fx:id="accessoryPrice" styleClass="card-price"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <!-- Optional badge (if you want stock/availability)
+            <Label fx:id="availabilityBadge" styleClass="badge"/>
+            -->
+        </HBox>
+
+        <!-- Qty + Add -->
+        <HBox alignment="CENTER_LEFT" spacing="10">
+
+            <HBox alignment="CENTER" styleClass="qty-stepper">
+                <Button fx:id="terminus"
+                        mnemonicParsing="false"
+                        text="-"
+                        styleClass="card-dec-btn"/>
+                <Label fx:id="quantityLabel"
+                       text="0"
+                       alignment="CENTER"
+                       minWidth="28"
+                       prefWidth="28"
+                       styleClass="qty-label"/>
+                <Button fx:id="btnplus"
+                        mnemonicParsing="false"
+                        text="+"
+                        styleClass="card-inc-btn"/>
+            </HBox>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <Button fx:id="addToCartBtn"
+                    mnemonicParsing="false"
+                    text="Add to Cart"
+                    styleClass="card-btn"/>
+        </HBox>
+
+    </VBox>
+</StackPane>

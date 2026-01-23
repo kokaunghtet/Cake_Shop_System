@@ -60,6 +60,8 @@ public class CakeShopSystemApplication extends Application {
         // Configure and show the main window.
         primaryStage.setTitle(APP_TITLE);
         primaryStage.setScene(scene);
+        primaryStage.setMaximized(true);
+        primaryStage.centerOnScreen();
         primaryStage.show();
     }
 }

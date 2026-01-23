@@ -9,6 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
+<?import javafx.scene.control.Label?>
 <AnchorPane styleClass="container" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.cakeshopsystem.controllers.ProductViewController">
 
@@ -25,29 +26,64 @@
                 </HBox>
 
                 <!-- horizontal scrollers -->
-                <ScrollPane fx:id="discountedItemsScrollPane" fitToHeight="true" hbarPolicy="ALWAYS" vbarPolicy="NEVER">
-                    <HBox fx:id="discountedItemsHBox" spacing="30"/>
+                <ScrollPane fx:id="discountedItemsScrollPane"
+                            hbarPolicy="ALWAYS"
+                            vbarPolicy="NEVER"
+                            fitToHeight="true"
+                            pannable="true">
+                    <VBox spacing="10">
+                        <Label text="Discounted Items" styleClass="title"/>
+                        <HBox fx:id="discountedItemsHBox" spacing="30">
+                            <padding>
+                                <Insets top="20" right="20" bottom="20" left="20"/>
+                            </padding>
+                        </HBox>
+                    </VBox>
                 </ScrollPane>
 
-                <ScrollPane fx:id="cakeScrollPane" fitToHeight="true" hbarPolicy="ALWAYS" styleClass="container"
-                            vbarPolicy="NEVER">
-                    <HBox fx:id="cakeHBox" spacing="20">
-                        <padding>
-                            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
-                        </padding>
-                    </HBox>
+
+                <ScrollPane fx:id="cakeScrollPane" fitToHeight="true" hbarPolicy="ALWAYS" vbarPolicy="NEVER">
+                    <VBox>
+                        <Label text="Cakes" styleClass="title"/>
+                        <HBox fx:id="cakeHBox" spacing="20">
+                            <padding>
+                                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+                            </padding>
+                        </HBox>
+                    </VBox>
                 </ScrollPane>
 
                 <ScrollPane fx:id="drinkScrollPane" fitToHeight="true" hbarPolicy="ALWAYS" vbarPolicy="NEVER">
-                    <HBox fx:id="drinkHBox" spacing="20"/>
+                    <VBox>
+                        <Label text="Drinks" styleClass="title"/>
+                        <HBox fx:id="drinkHBox" spacing="20">
+                            <padding>
+                                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+                            </padding>
+                        </HBox>
+                    </VBox>
                 </ScrollPane>
 
                 <ScrollPane fx:id="bakedGoodScrollPane" fitToHeight="true" hbarPolicy="ALWAYS" vbarPolicy="NEVER">
-                    <HBox fx:id="bakedGoodHBox" spacing="20"/>
+                    <VBox>
+                        <Label text="Baked Goods" styleClass="title"/>
+                        <HBox fx:id="bakedGoodHBox" spacing="20">
+                            <padding>
+                                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+                            </padding>
+                        </HBox>
+                    </VBox>
                 </ScrollPane>
 
                 <ScrollPane fx:id="accessoryScrollPane" fitToHeight="true" hbarPolicy="ALWAYS" vbarPolicy="NEVER">
-                    <HBox fx:id="accessoryHBox" spacing="20"/>
+                    <VBox>
+                        <Label text="Accessories" styleClass="title"/>
+                        <HBox fx:id="accessoryHBox" spacing="20">
+                            <padding>
+                                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+                            </padding>
+                        </HBox>
+                    </VBox>
                 </ScrollPane>
             </VBox>
         </ScrollPane>

@@ -1,53 +1,36 @@
 package com.cakeshopsystem.controllers;
 
+import com.cakeshopsystem.models.Product;
+import com.cakeshopsystem.utils.dao.DrinkDAO;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.VBox;
 
 public class DrinkCardController {
 
-    @FXML
-    private Button btnAddtoCart;
+    public VBox drinkCardVbox;
+    public Label drinkName;
+    public RadioButton hotOption;
+    public RadioButton coldOption;
+    public Label drinkPrice;
+    public Button decreaseBtn;
+    public Label quantityLabel;
+    public Button increaseBtn;
+    public Button addToCartBtn;
+    public ImageView drinkImage;
 
-    @FXML
-    private Button btnColdDrink;
+    public void setData(Product product) {
+        var drinks = DrinkDAO.getDrinksByProductId(product.getProductId());
+        double base = product.getPrice();
+        double hot = base + drinks.getFirst().getPriceDelta();
+        double cold = base + drinks.getLast().getPriceDelta();
 
-    @FXML
-    private Button btnDecreaseDrink;
-
-    @FXML
-    private Button btnHotDrink;
-
-    @FXML
-    private Button btnIncreaseDrink;
-
-    @FXML
-    private ImageView drinkImage;
-
-    @FXML
-    void clickAddtoCartBtn(ActionEvent event) {
-
-    }
-
-    @FXML
-    void clickColdBtn(ActionEvent event) {
-
-    }
-
-    @FXML
-    void clickDecreaseBtn(ActionEvent event) {
-
-    }
-
-    @FXML
-    void clickHotBtn(ActionEvent event) {
-
-    }
-
-    @FXML
-    void clickIncreaseBtn(ActionEvent event) {
-
+        drinkName.setText(String.valueOf(product.getProductName()));
+        drinkPrice.setText(String.valueOf(base));
     }
 
 }

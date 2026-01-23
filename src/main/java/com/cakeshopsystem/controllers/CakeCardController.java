@@ -1,25 +1,16 @@
 package com.cakeshopsystem.controllers;
 
-import com.cakeshopsystem.models.Cake;
-import com.cakeshopsystem.models.OrderItem;
+import com.cakeshopsystem.models.Inventory;
 import com.cakeshopsystem.models.Product;
 import com.cakeshopsystem.utils.cache.CakeCache;
-import com.mysql.cj.log.Log;
-import javafx.event.ActionEvent;
+import com.cakeshopsystem.utils.dao.ProductDAO;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
-import javafx.scene.image.Image;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
-import java.io.InputStream;
-import java.net.URL;
-import java.util.ResourceBundle;
-
-import static com.mysql.cj.conf.PropertyKey.logger;
+import java.util.Objects;
 
 public class CakeCardController {
 
@@ -47,11 +38,21 @@ public class CakeCardController {
     public void setData(Product product) {
 //        Image cakeImg = new Image("images/yummycake.gif");
 //        cakeImage.setImage(cakeImg);
-        diyAvailable.setText(String.valueOf(CakeCache.getCakeByProductId(product.getProductId()).isDiyAllowed()));
-
-
-        cakeName.setText(String.valueOf(product.getProductName()));
+        cakeName.setText(product.getProductName());
+        if(Objects.requireNonNull(CakeCache.getCakeByProductId(product.getProductId())).isDiyAllowed()) {
+            diyAvailable.setText("DIY Available");
+        } else {
+            diyAvailable.setVisible(false);
+            diyAvailable.setManaged(false);
+        }
         cakePrice.setText(String.valueOf(product.getPrice()));
+    }
+
+    public void setData(Inventory inventory) {
+        diyAvailable.setVisible(false);
+        diyAvailable.setManaged(false);
+        cakeName.setText(String.valueOf(Objects.requireNonNull(ProductDAO.getProductById(inventory.getProductId())).getProductName()));
+        cakePrice.setText(String.valueOf(Objects.requireNonNull(ProductDAO.getProductById(inventory.getProductId())).getPrice()*0.4));
     }
 }
 

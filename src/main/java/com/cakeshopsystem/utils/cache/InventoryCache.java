@@ -37,6 +37,11 @@ public class InventoryCache {
         return InventoryDAO.getInventoryByProductId(productId);
     }
 
+    public static ObservableList<Inventory> ggetInventoryDiscountCandidates() {
+        if(inventoryMap.isEmpty()) refreshInventory();
+        return inventoryList;
+    }
+
     // ===================== Refresh =====================
 
     public static void refreshInventory() {

@@ -54,10 +54,10 @@ public class InventoryDAO {
     public static ObservableList<Inventory> getInventoryByProductId(int productId) {
         ObservableList<Inventory> list = FXCollections.observableArrayList();
         String query = """
-            SELECT * FROM inventory
-            WHERE product_id = ?
-            ORDER BY exp_date IS NULL, exp_date ASC, inventory_id ASC
-        """;
+                    SELECT * FROM inventory
+                    WHERE product_id = ?
+                    ORDER BY exp_date IS NULL, exp_date ASC, inventory_id ASC
+                """;
 
         try (Connection con = DB.connect();
              PreparedStatement stmt = con.prepareStatement(query)) {
@@ -79,10 +79,10 @@ public class InventoryDAO {
 
     public static Inventory getInventoryByProductIdAndExpDate(int productId, LocalDate expDate) {
         String query = """
-            SELECT * FROM inventory
-            WHERE product_id = ? AND exp_date <=> ?
-            LIMIT 1
-        """;
+                    SELECT * FROM inventory
+                    WHERE product_id = ? AND exp_date <=> ?
+                    LIMIT 1
+                """;
         // NOTE: <=> is MySQL NULL-safe equality (works even if exp_date is NULL)
 
         try (Connection con = DB.connect();
@@ -102,6 +102,38 @@ public class InventoryDAO {
         }
 
         return null;
+    }
+
+    public static ObservableList<Inventory> getInventoryDiscountCandidates() {
+        ObservableList<Inventory> list = FXCollections.observableArrayList();
+
+        String sql = """
+        SELECT * FROM inventory
+        WHERE quantity > 0
+          AND exp_date IN (?, ?)
+        ORDER BY exp_date ASC, inventory_id ASC
+    """;
+
+        LocalDate today = LocalDate.now();
+        LocalDate tomorrow = today.plusDays(1);
+
+        try (Connection con = DB.connect();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+
+            stmt.setDate(1, Date.valueOf(today));
+            stmt.setDate(2, Date.valueOf(tomorrow));
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapInventory(rs));
+                }
+            }
+
+        } catch (SQLException err) {
+            System.err.println("Error fetching inventory discount candidates: " + err.getLocalizedMessage());
+        }
+
+        return list;
     }
 
     // =====================================
