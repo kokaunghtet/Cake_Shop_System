@@ -81,6 +81,11 @@ public class ForgotPasswordController {
     // Controller Lifecycle
     // ============================
     public void initialize() {
+        // remove focus outline on text fields
+        emailTextField.setFocusTraversable(false);
+        newPasswordPasswordField.setFocusTraversable(false);
+        confirmNewPasswordPasswordField.setFocusTraversable(false);
+
         // Start on email/otp step
         passwordForm.setVisible(false);
 

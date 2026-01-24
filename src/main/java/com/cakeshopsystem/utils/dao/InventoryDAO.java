@@ -77,6 +77,32 @@ public class InventoryDAO {
         return list;
     }
 
+    public static int getTotalAvailableQuantityByProductId(int productId) {
+        String query = """
+        SELECT COALESCE(SUM(quantity), 0) AS total_qty
+        FROM inventory
+        WHERE product_id = ?
+          AND (exp_date IS NULL OR exp_date >= CURRENT_DATE)
+    """;
+
+        try (Connection con = DB.connect();
+             PreparedStatement stmt = con.prepareStatement(query)) {
+
+            stmt.setInt(1, productId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) return rs.getInt("total_qty");
+            }
+
+        } catch (SQLException err) {
+            System.err.println("Error summing inventory quantity: " + err.getLocalizedMessage());
+            err.printStackTrace();
+        }
+
+        return 0;
+    }
+
+
     public static Inventory getInventoryByProductIdAndExpDate(int productId, LocalDate expDate) {
         String query = """
                     SELECT * FROM inventory
