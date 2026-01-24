@@ -74,8 +74,8 @@
 
 /* Selected */
 .table-row-cell:selected {
-    -fx-background-color: derive(-app-primary-color, 65%);
-    -fx-border-color: transparent transparent derive(-app-primary-color, 25%) transparent;
+    -fx-background-color: derive(-app-bg-color, -5%);
+    -fx-text-fill: -app-surface-color;
 }
 
 /* =========================

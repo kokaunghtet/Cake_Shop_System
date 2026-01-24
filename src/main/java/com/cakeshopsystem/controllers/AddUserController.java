@@ -109,7 +109,7 @@ public class AddUserController {
 
         int roleId = selectedRole.getRoleId();
 
-        String defaultProfileImg = "images/default-profile.jpg";
+        String defaultProfileImg = "/images/default-profile.jpg";
 
         User user = new User();
         user.setUserName(data.username());

@@ -197,6 +197,8 @@ public class MainController {
         if (userLink != null) userLink.setOnMouseClicked(e -> loadUser());
         if (memberLink != null) memberLink.setOnMouseClicked(e -> loadMember());
         if (adminProductLink != null) adminProductLink.setOnMouseClicked(e -> loadAdminProduct());
+
+        if (staffProductLink != null) staffProductLink.setOnMouseClicked(e -> loadStaffProduct());
     }
 
     /* =========================================================
@@ -261,14 +263,21 @@ public class MainController {
         if (user == null) return;
 
         String path = user.getImagePath();
-        if (path == null || path.isBlank()) return;
-        Image userProfileImage;
-        if (path.matches("^(https?|file|jar):.*")) {
-            userProfileImage = new Image(path, true);
-        } else {
-            userProfileImage = new Image(new java.io.File(path).toURI().toString(), true);
+
+        if (path == null || path.isBlank()) {
+            path = "/images/default-profile.jpg";
         }
-        ImageHelper.setCircularAvatar(profileImageView, userProfileImage, 60);
+
+        Image userProfileImage = loadImageSmart(path);
+
+        // fallback if loading failed
+        if (userProfileImage == null || userProfileImage.isError()) {
+            userProfileImage = loadImageSmart("/images/default-profile.jpg");
+        }
+
+        if (userProfileImage != null && !userProfileImage.isError()) {
+            ImageHelper.setCircularAvatar(profileImageView, userProfileImage, 60);
+        }
 
         if (usernameLabel != null) {
             usernameLabel.setText(user.getUserName());
@@ -324,6 +333,11 @@ public class MainController {
 
     public void loadAdminProduct() {
         navigate("/views/ProductView.fxml", adminProductLink, "Products");
+    }
+
+    // CASHIER
+    public void loadStaffProduct() {
+        navigate("/views/ProductView.fxml", staffProductLink, "Products");
     }
 
     /* =========================================================
@@ -611,6 +625,34 @@ public class MainController {
     private URL requireResource(String path) {
         return Objects.requireNonNull(getClass().getResource(path), "Missing resource: " + path);
     }
+
+
+    private Image loadImageSmart(String path) {
+        try {
+            // 1) URL / file: / jar:
+            if (path.matches("^(https?|file|jar):.*")) {
+                return new Image(path, true);
+            }
+
+            // 2) Classpath resource (recommended for default images)
+            String resourcePath = path.startsWith("/") ? path : "/" + path;
+            var url = getClass().getResource(resourcePath);
+            if (url != null) {
+                return new Image(url.toExternalForm(), true);
+            }
+
+            // 3) File system path (absolute or relative)
+            var f = new java.io.File(path);
+            if (f.exists()) {
+                return new Image(f.toURI().toString(), true);
+            }
+
+            return null;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
 
     /* =========================================================
      * Overlay Click Handler
