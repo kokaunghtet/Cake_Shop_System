@@ -23,31 +23,48 @@ public class ProductCardController {
     /* =========================================================
        FXML Nodes
        ========================================================= */
-    @FXML public VBox productCardVBox;
-    @FXML public ImageView productImage;
-    @FXML public Label productName;
+    @FXML
+    public VBox productCardVBox;
+    @FXML
+    public ImageView productImage;
+    @FXML
+    public Label productName;
 
-    @FXML public HBox drinkOptions;
-    @FXML public RadioButton hotOption;
-    @FXML public RadioButton coldOption;
-    @FXML public ToggleGroup drinkOptionsRadioBtn;
+    @FXML
+    public HBox drinkOptions;
+    @FXML
+    public RadioButton hotOption;
+    @FXML
+    public RadioButton coldOption;
+    @FXML
+    public ToggleGroup drinkOptionsRadioBtn;
 
-    @FXML public Label productPrice;
-    @FXML public Label diyAvailability;
+    @FXML
+    public Label productPrice;
+    @FXML
+    public Label diyAvailability;
 
-    @FXML public HBox inStockItemsHBox;
-    @FXML public Label stockQuantityLabel;
-    @FXML public Label productStock;
+    @FXML
+    public HBox inStockItemsHBox;
+    @FXML
+    public Label stockQuantityLabel;
+    @FXML
+    public Label productStock;
 
-    @FXML public Button decreaseBtn;
-    @FXML public Label quantityLabel;
-    @FXML public Button increaseBtn;
-    @FXML public Button addToCartBtn;
+    @FXML
+    public Button decreaseBtn;
+    @FXML
+    public Label quantityLabel;
+    @FXML
+    public Button increaseBtn;
+    @FXML
+    public Button addToCartBtn;
 
     /* =========================================================
        State
        ========================================================= */
     private int quantity = 1;
+    private int maxQty = Integer.MAX_VALUE;
 
     /* =========================================================
        Lifecycle
@@ -86,55 +103,41 @@ public class ProductCardController {
 
         updateStockUI(product.getProductId());
         setBtnDisable(product);
+        setRadioBtnDisable(product);
     }
 
-//    public void setDrinkData(Product product) {
-//        disableDiyAvailability();
-//
-//        var drinks = DrinkDAO.getDrinksByProductId(product.getProductId());
-//        double base = product.getPrice();
-//        double hot = base + drinks.getFirst().getPriceDelta();
-//        double cold = base + drinks.getLast().getPriceDelta();
-//
-//        productName.setText(product.getProductName());
-//        productPrice.setText(String.valueOf(base));
-//
-//        inStockItemsHBox.setVisible(false);
-//        inStockItemsHBox.setManaged(false);
-//    }
-public void setDrinkData(Product product) {
-    disableDiyAvailability();
+    public void setDrinkData(Product product) {
+        disableDiyAvailability();
 
-    var drinks = DrinkDAO.getDrinksByProductId(product.getProductId());
-    double base = product.getPrice();
-    double hotPrice = base + drinks.getFirst().getPriceDelta();
-    double coldPrice = base + drinks.getLast().getPriceDelta();
+        var drinks = DrinkDAO.getDrinksByProductId(product.getProductId());
+        double base = product.getPrice();
+        double hotPrice = base + drinks.getFirst().getPriceDelta();
+        double coldPrice = base + drinks.getLast().getPriceDelta();
 
-    productName.setText(product.getProductName());
+        productName.setText(product.getProductName());
 
-    if (drinkOptionsRadioBtn == null) {
-        drinkOptionsRadioBtn = new ToggleGroup();
-    }
-    hotOption.setToggleGroup(drinkOptionsRadioBtn);
-    coldOption.setToggleGroup(drinkOptionsRadioBtn);
-
-    hotOption.setSelected(true);
-    productPrice.setText(String.valueOf(hotPrice));
-
-    drinkOptionsRadioBtn.selectedToggleProperty().addListener((obs, oldToggle, newToggle) -> {
-        if (newToggle == null) return;
-
-        if (newToggle == hotOption) {
-            productPrice.setText(String.valueOf(hotPrice));
-        } else if (newToggle == coldOption) {
-            productPrice.setText(String.valueOf(coldPrice));
+        if (drinkOptionsRadioBtn == null) {
+            drinkOptionsRadioBtn = new ToggleGroup();
         }
-    });
+        hotOption.setToggleGroup(drinkOptionsRadioBtn);
+        coldOption.setToggleGroup(drinkOptionsRadioBtn);
 
-    inStockItemsHBox.setVisible(false);
-    inStockItemsHBox.setManaged(false);
-}
+        hotOption.setSelected(true);
+        productPrice.setText(String.valueOf(hotPrice));
 
+        drinkOptionsRadioBtn.selectedToggleProperty().addListener((obs, oldToggle, newToggle) -> {
+            if (newToggle == null) return;
+
+            if (newToggle == hotOption) {
+                productPrice.setText(String.valueOf(hotPrice));
+            } else if (newToggle == coldOption) {
+                productPrice.setText(String.valueOf(coldPrice));
+            }
+        });
+
+        inStockItemsHBox.setVisible(false);
+        inStockItemsHBox.setManaged(false);
+    }
 
     public void setBakedGoodsData(Product product) {
         disableDrinkOptions();
@@ -145,6 +148,7 @@ public void setDrinkData(Product product) {
 
         updateStockUI(product.getProductId());
         setBtnDisable(product);
+        setRadioBtnDisable(product);
     }
 
     public void setAccessoryData(Product product) {
@@ -156,6 +160,7 @@ public void setDrinkData(Product product) {
 
         updateStockUI(product.getProductId());
         setBtnDisable(product);
+        setRadioBtnDisable(product);
     }
 
     /* =========================================================
@@ -164,19 +169,32 @@ public void setDrinkData(Product product) {
     private void updateStockUI(int productId) {
         int totalQty = InventoryDAO.getTotalAvailableQuantityByProductId(productId);
 
+        setMaxQtyFromStock(totalQty);
+
         if (totalQty > 0) {
             productStock.setText(String.valueOf(totalQty));
+            stockQuantityLabel.setVisible(true);
+            stockQuantityLabel.setManaged(true);
         } else {
             productStock.setText("Out of Stock");
-            productStock.getStyleClass().add("badge-danger");
-
+            if (!productStock.getStyleClass().contains("badge-danger")) {
+                productStock.getStyleClass().add("badge-danger");
+            }
             stockQuantityLabel.setVisible(false);
             stockQuantityLabel.setManaged(false);
         }
+
+        updateQtyButtonsState();
     }
 
     private void setBtnDisable(Product product) {
         addToCartBtn.setDisable(InventoryDAO.getTotalAvailableQuantityByProductId(product.getProductId()) <= 0);
+    }
+
+    private void setRadioBtnDisable(Product product) {
+        boolean outOfStock = maxQty <= 0;
+        increaseBtn.setDisable(outOfStock || quantity >= maxQty);
+        decreaseBtn.setDisable(outOfStock || quantity <= 1);
     }
 
     /* =========================================================
@@ -194,19 +212,24 @@ public void setDrinkData(Product product) {
     /* =========================================================
        Qty Stepper
        ========================================================= */
+    private void handleIncrementQuantity() {
+        if (quantity < maxQty) {
+            quantity++;
+            quantityLabel.setText(String.valueOf(quantity));
+        }
+        updateQtyButtonsState();
+    }
+
     private void handleDecrementQuantity() {
+        if (maxQty <= 0) return;
+
         if (quantity > 1) {
             quantity--;
             quantityLabel.setText(String.valueOf(quantity));
         }
+        updateQtyButtonsState();
     }
 
-    private void handleIncrementQuantity() {
-        if (quantity < 99) {
-            quantity++;
-            quantityLabel.setText(String.valueOf(quantity));
-        }
-    }
 
     /* =========================================================
        UI Helpers
@@ -219,5 +242,30 @@ public void setDrinkData(Product product) {
     public void disableDiyAvailability() {
         diyAvailability.setVisible(false);
         diyAvailability.setManaged(false);
+    }
+
+    private void setMaxQtyFromStock(int stockQty) {
+        this.maxQty = Math.max(stockQty, 0);
+
+        if (maxQty == 0) {
+            quantity = 0;
+            quantityLabel.setText("0");
+            return;
+        }
+
+        clampQuantity();
+    }
+
+    private void clampQuantity() {
+        if (quantity < 1) quantity = 1;
+        if (quantity > maxQty) quantity = maxQty;
+        quantityLabel.setText(String.valueOf(quantity));
+    }
+
+    private void updateQtyButtonsState() {
+        boolean outOfStock = maxQty <= 0;
+
+        increaseBtn.setDisable(outOfStock || quantity >= maxQty);
+        decreaseBtn.setDisable(outOfStock || quantity <= 1);
     }
 }
