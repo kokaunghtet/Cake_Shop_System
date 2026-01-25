@@ -5,7 +5,6 @@ import com.cakeshopsystem.utils.ChangeScene;
 import com.cakeshopsystem.utils.components.SnackBar;
 import com.cakeshopsystem.utils.constants.SnackBarType;
 import com.cakeshopsystem.utils.dao.UserDAO;
-import com.cakeshopsystem.utils.otp.OTPHelper;
 import com.cakeshopsystem.utils.validators.Validator;
 import javafx.animation.PauseTransition;
 import javafx.concurrent.Task;
@@ -53,9 +52,6 @@ public class LoginFormController {
 
     @FXML
     private void initialize() {
-        usernameTextField.setText("John");
-        pswPasswordField.setText("John123!@#");
-
         usernameTextField.requestFocus();
 
         // --- Make hidden fields not take up layout space ---

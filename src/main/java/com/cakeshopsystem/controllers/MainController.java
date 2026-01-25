@@ -191,7 +191,6 @@ public class MainController {
             breadcrumbBar.bindToGlobal();
         }
 
-//        settingIcon.setOnMouseClicked(e -> setupSettingsPopup());
         if (signOutIcon != null) signOutIcon.setOnMouseClicked(e -> handleLogout());
 
         // Initialize the popup logic once
@@ -227,7 +226,13 @@ public class MainController {
         Hyperlink link1 = new Hyperlink("User Configuration");
         Hyperlink link2 = new Hyperlink("Payment Configuration");
 
-        VBox box = new VBox(10, link1, link2);
+        VBox box;
+        if(SessionManager.isAdmin) {
+             box = new VBox(10, link1, link2);
+        } else {
+             box = new VBox(link1);
+        }
+
         box.getStyleClass().add("container"); // Ensure your CSS has this class or use inline style
 
         settingsPopup = new Popup();
@@ -235,8 +240,14 @@ public class MainController {
         settingsPopup.setAutoHide(true);
 
         // Close popup when links are clicked
-        link1.setOnAction(e -> settingsPopup.hide());
-        link2.setOnAction(e -> settingsPopup.hide());
+        link1.setOnAction(e -> {
+            togglePopupContent("/views/EditUserConfig.fxml");
+            settingsPopup.hide();
+        });
+        link2.setOnAction(e -> {
+            togglePopupContent("/views/EditPaymentConfig.fxml");
+            settingsPopup.hide();
+        });
     }
 
     /**
@@ -491,13 +502,13 @@ public class MainController {
         if (closeBtn == null) closeBtn = createCloseButton();
 
         StackPane wrapper = new StackPane();
-        wrapper.setPadding(new Insets(30));
+        wrapper.setPadding(new Insets(15));
 
         wrapper.getChildren().add(content);
         wrapper.getChildren().add(closeBtn);
 
         StackPane.setAlignment(closeBtn, Pos.TOP_RIGHT);
-        StackPane.setMargin(closeBtn, new Insets(14));
+//        StackPane.setMargin(closeBtn, new Insets(14));
 
         AnchorPane.setTopAnchor(wrapper, 0.0);
         AnchorPane.setRightAnchor(wrapper, 0.0);

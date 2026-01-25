@@ -1,9 +1,15 @@
 package com.cakeshopsystem.controllers;
 
+import com.cakeshopsystem.models.Cake;
 import com.cakeshopsystem.models.Inventory;
 import com.cakeshopsystem.models.Product;
 import com.cakeshopsystem.models.User;
+import com.cakeshopsystem.utils.cache.CakeCache;
+import com.cakeshopsystem.utils.cache.DrinkCache;
+import com.cakeshopsystem.utils.cache.ProductCache;
 import com.cakeshopsystem.utils.cache.RoleCache;
+import com.cakeshopsystem.utils.constants.CakeType;
+import com.cakeshopsystem.utils.dao.CakeDAO;
 import com.cakeshopsystem.utils.dao.InventoryDAO;
 import com.cakeshopsystem.utils.dao.ProductDAO;
 import com.cakeshopsystem.utils.session.SessionManager;
@@ -74,17 +80,25 @@ public class ProductViewController {
        Lifecycle
        ========================================================= */
     @FXML
-    private void initialize() throws IOException {
+    private void initialize() {
         roleName = resolveRoleName();
         configureRoleBasedAccess(roleName);
 
-        // Load all sections
-        loadDiscountedItems();
+        boolean isAdmin = "Admin".equalsIgnoreCase(roleName);
+
+        if (isAdmin) {
+            discountedItemsScrollPane.setVisible(false);
+            discountedItemsScrollPane.setManaged(false);
+        } else {
+            loadDiscountedItems();
+        }
+
         loadCakes();
         loadDrinks();
         loadBakedGoods();
         loadAccessories();
     }
+
 
     /* =========================================================
        Role-Based UI Access Control
@@ -140,6 +154,12 @@ public class ProductViewController {
         ObservableList<Product> cakeList = ProductDAO.getProductsByCategoryId(1);
 
         for (Product productCake : cakeList) {
+            Cake cake = CakeDAO.getCakeByProductId(productCake.getProductId());
+            if (cake == null) continue;
+
+            if (cake.getCakeType() != CakeType.PREBAKED) {
+                continue;
+            }
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource(PRODUCT_CARD_FXML));
                 Parent card = loader.load();

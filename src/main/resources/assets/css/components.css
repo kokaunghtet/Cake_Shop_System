@@ -271,52 +271,73 @@ Popup Close Button
 .card .label {
     -fx-text-fill: -app-base-text-color;
 }
-.card .radio-button {
+
+/* =========================
+   Radio (Pill style)
+   ========================= */
+.radio-button {
     -fx-text-fill: -app-base-text-color;
     -fx-font-size: 12px;
     -fx-font-weight: 700;
-}
 
-.card .radio-button {
-    -fx-padding: 4 10 4 10;
+    -fx-padding: 4 10;
     -fx-background-radius: 999;
     -fx-border-radius: 999;
     -fx-border-color: -app-border-color;
     -fx-border-width: 1;
     -fx-background-color: -app-surface-color;
+
     -fx-cursor: hand;
+
+    -fx-mark-color: transparent;
+    -fx-graphic-text-gap: 0;
+    -fx-label-padding: 0;
 }
 
-.card .radio-button > .radio {
+.radio-button .radio,
+.radio-button .dot {
+    -fx-opacity: 0;
     -fx-padding: 0;
-    -fx-background-color: transparent;
-    -fx-border-color: transparent;
-}
-.card .radio-button > .radio > .dot {
-    -fx-background-color: transparent;
+
+    -fx-min-width: 0;
+    -fx-pref-width: 0;
+    -fx-max-width: 0;
+
+    -fx-min-height: 0;
+    -fx-pref-height: 0;
+    -fx-max-height: 0;
 }
 
-.card .radio-button:hover {
-    -fx-border-color: rgba(70, 130, 180, 0.35); /* steelblue tint */
+.radio-button > .container {
+    -fx-spacing: 0;
+    -fx-padding: 0;
+}
+
+.radio-button > .container > .label {
+    -fx-padding: 0;
+}
+
+.radio-button:hover {
+    -fx-border-color: rgba(70, 130, 180, 0.35);
     -fx-background-color: rgba(70, 130, 180, 0.08);
 }
 
-.card .radio-button:selected {
-    -fx-background-color: rgba(45, 212, 191, 0.18); /* mint tint */
+.radio-button:selected {
+    -fx-background-color: rgba(45, 212, 191, 0.18);
     -fx-border-color: rgba(45, 212, 191, 0.55);
     -fx-text-fill: -app-secondary-color;
 }
 
-.card .radio-button:pressed {
+.radio-button:pressed {
     -fx-background-color: rgba(70, 130, 180, 0.14);
 }
 
-.card .radio-button:disabled {
+.radio-button:disabled {
     -fx-opacity: 0.6;
     -fx-cursor: default;
 }
 
-.card .type-row {
+.type-row {
     -fx-padding: 2 0 0 0;
 }
 
