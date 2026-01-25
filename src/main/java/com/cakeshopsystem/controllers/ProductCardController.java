@@ -59,12 +59,24 @@ public class ProductCardController {
     public Button increaseBtn;
     @FXML
     public Button addToCartBtn;
+    @FXML
+    public Button addStockQtyBtn;
 
     /* =========================================================
        State
        ========================================================= */
     private int quantity = 1;
     private int maxQty = Integer.MAX_VALUE;
+
+    public void applyRoleBasedBtn(String roleName) {
+        boolean isAdmin = "Admin".equalsIgnoreCase(roleName);
+
+        addStockQtyBtn.setVisible(isAdmin);
+        addStockQtyBtn.setManaged(isAdmin);
+
+        addToCartBtn.setVisible(!isAdmin);
+        addToCartBtn.setManaged(!isAdmin);
+    }
 
     /* =========================================================
        Lifecycle

@@ -32,7 +32,14 @@ import javafx.scene.layout.*;
 import javafx.stage.Popup;
 import javafx.util.Duration;
 import org.kordamp.ikonli.javafx.FontIcon;
+import javafx.event.EventHandler;
+import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
@@ -47,8 +54,8 @@ public class MainController {
      * ========================================================= */
 
     private static final String DEFAULT_VIEW_FXML = "/views/admin/AdminDashboard.fxml";
+    private static final String DEFAULT_CASHIER_VIEW_FXML = "/views/ProductView.fxml";
     private static final String DEFAULT_TITLE_PREFIX = "Cake Shop System | ";
-    private static final double POPUP_CONTENT_WIDTH = 600;
 
     // Tracks which nav link is currently active for styling
     private Hyperlink activeLink;
@@ -88,6 +95,8 @@ public class MainController {
     private AnchorPane overlayPane;
     @FXML
     private AnchorPane popupPane;
+    @FXML
+    public StackPane popupHost;
 
     /* =========================================================
      * FXML: Top Bar
@@ -117,8 +126,6 @@ public class MainController {
     @FXML
     private Hyperlink staffProductLink;
     @FXML
-    private Hyperlink staffDashboardLink;
-    @FXML
     private Hyperlink userLink;
     @FXML
     private Hyperlink bookingLink;
@@ -145,6 +152,12 @@ public class MainController {
     private Popup settingsPopup;
 
     /* =========================================================
+     * Focus Trapping for Popups
+     * ========================================================= */
+    private static EventHandler<KeyEvent> focusTrapHandler;
+    private static Parent focusTrapRoot;
+
+    /* =========================================================
      * Lifecycle
      * ========================================================= */
 
@@ -156,7 +169,6 @@ public class MainController {
         staticPopupContentPane = popupPane;
 
         staticOverlayPane.setVisible(false);
-        staticPopupContentPane.setTranslateX(POPUP_CONTENT_WIDTH);
 
         updateUserInfo();
         configureRoleBasedAccess();
@@ -190,6 +202,9 @@ public class MainController {
         if (SessionManager.isAdmin) {
             BreadcrumbManager.setBreadcrumbs();
             navigate(DEFAULT_VIEW_FXML, adminDashboardLink, "Dashboard");
+        } else {
+            BreadcrumbManager.setBreadcrumbs();
+            navigate(DEFAULT_CASHIER_VIEW_FXML, staffProductLink, "Products");
         }
 
         // Navigation handlers
@@ -214,7 +229,6 @@ public class MainController {
 
         VBox box = new VBox(10, link1, link2);
         box.getStyleClass().add("container"); // Ensure your CSS has this class or use inline style
-//        box.setStyle("-fx-background-color: white; -fx-padding: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 0);");
 
         settingsPopup = new Popup();
         settingsPopup.getContent().add(box);
@@ -304,7 +318,7 @@ public class MainController {
         String roleName = RoleCache.getRolesMap().get(user.getRole()).getRoleName();
 
         if (roleName.equalsIgnoreCase("Admin")) {
-            hideLinks(customerOrderLink, staffDashboardLink, staffProductLink, bookingLink);
+            hideLinks(customerOrderLink, staffProductLink, bookingLink);
         } else if (roleName.equalsIgnoreCase("Cashier")) {
             hideLinks(adminDashboardLink, adminProductLink, memberLink, userLink);
         }
@@ -467,30 +481,6 @@ public class MainController {
         setPopupContent(content);
     }
 
-//    private static void setPopupContent(Parent content) {
-//        AnchorPane container = new AnchorPane(content);
-//        AnchorPane.setTopAnchor(container, 50.0);
-//        AnchorPane.setRightAnchor(container, 50.0);
-//        AnchorPane.setBottomAnchor(container, 50.0);
-//        AnchorPane.setLeftAnchor(container, 50.0);
-//
-//        container.setOpacity(0);
-//        Timeline fadeIn = new Timeline(
-//                new KeyFrame(
-//                        Duration.millis(200),
-//                        new KeyValue(container.opacityProperty(), 1, Interpolator.EASE_BOTH)
-//                )
-//        );
-//
-//        // Keep close button (if exists), clear the rest, then add new content
-//        Node closeBtn = staticPopupContentPane.lookup("#closeBtn");
-//        staticPopupContentPane.getChildren().clear();
-//        if (closeBtn != null) staticPopupContentPane.getChildren().add(closeBtn);
-//        staticPopupContentPane.getChildren().add(container);
-//
-//        fadeIn.play();
-//    }
-
     private static void setPopupContent(Parent content) {
 
         if (content instanceof Region r) {
@@ -515,6 +505,7 @@ public class MainController {
         AnchorPane.setLeftAnchor(wrapper, 0.0);
 
         staticPopupContentPane.getChildren().setAll(wrapper);
+        Platform.runLater(() -> installFocusTrap(wrapper));
 
         wrapper.setOpacity(0);
         new Timeline(new KeyFrame(Duration.millis(200),
@@ -540,45 +531,49 @@ public class MainController {
 
     private static void openPopupContentAnimation() {
         staticOverlayPane.setVisible(true);
-        staticOverlayPane.setTranslateX(0);
-        staticPopupContentPane.setTranslateX(POPUP_CONTENT_WIDTH);
+        staticOverlayPane.setManaged(true);
 
-        Timeline timeline = new Timeline(
-                new KeyFrame(
-                        Duration.millis(100),
-                        new KeyValue(loadingOverlay.opacityProperty(), 1, Interpolator.EASE_BOTH),
-                        new KeyValue(staticPopupContentPane.translateXProperty(), 0, Interpolator.EASE_BOTH)
+        staticPopupContentPane.setOpacity(0);
+        staticPopupContentPane.setScaleX(0.96);
+        staticPopupContentPane.setScaleY(0.96);
+
+        Timeline tl = new Timeline(
+                new KeyFrame(Duration.millis(160),
+                        new KeyValue(staticPopupContentPane.opacityProperty(), 1, Interpolator.EASE_BOTH),
+                        new KeyValue(staticPopupContentPane.scaleXProperty(), 1, Interpolator.EASE_BOTH),
+                        new KeyValue(staticPopupContentPane.scaleYProperty(), 1, Interpolator.EASE_BOTH)
                 )
         );
-        timeline.play();
+        tl.play();
     }
 
     public static void handleClosePopupContent() {
         if (!isPopupContentOpen) return;
 
-        Timeline timeline = new Timeline(
-                new KeyFrame(
-                        Duration.millis(100),
-                        new KeyValue(loadingOverlay.opacityProperty(), 0, Interpolator.EASE_BOTH),
-                        new KeyValue(staticPopupContentPane.opacityProperty(), 0, Interpolator.EASE_BOTH)
+        Timeline tl = new Timeline(
+                new KeyFrame(Duration.millis(140),
+                        new KeyValue(staticPopupContentPane.opacityProperty(), 0, Interpolator.EASE_BOTH),
+                        new KeyValue(staticPopupContentPane.scaleXProperty(), 0.96, Interpolator.EASE_BOTH),
+                        new KeyValue(staticPopupContentPane.scaleYProperty(), 0.96, Interpolator.EASE_BOTH)
                 )
         );
 
-        timeline.setOnFinished(e -> {
+        tl.setOnFinished(e -> {
             staticOverlayPane.setVisible(false);
             staticOverlayPane.setManaged(false);
 
             staticPopupContentPane.getChildren().clear();
-            staticPopupContentPane.setDisable(false);
-
             staticPopupContentPane.setOpacity(1);
-            loadingOverlay.setOpacity(1);
+            staticPopupContentPane.setScaleX(1);
+            staticPopupContentPane.setScaleY(1);
 
             isPopupContentOpen = false;
             applyBlur(false);
+
+            uninstallFocusTrap();
         });
 
-        timeline.play();
+        tl.play();
     }
 
     private static void applyBlur(boolean enable) {
@@ -653,7 +648,6 @@ public class MainController {
         }
     }
 
-
     /* =========================================================
      * Overlay Click Handler
      * ========================================================= */
@@ -665,34 +659,97 @@ public class MainController {
         }
     }
 
-//    private void setupSettingsPopup() {
-//        Hyperlink link1 = new Hyperlink("User Configuration");
-//
-//        Hyperlink link2 = new Hyperlink("Payment Configuration");
-//
-//        VBox box = new VBox(10, link1, link2);
-//        box.getStyleClass().add("container");
-//
-//        settingsPopup = new Popup();
-//        settingsPopup.getContent().add(box);
-//        settingsPopup.setAutoHide(true);
-//
-//        link1.setOnAction(e -> settingsPopup.hide());
-//        link2.setOnAction(e -> settingsPopup.hide());
-//
-//        settingIcon.setOnMouseClicked(e -> {
-//            if (settingsPopup.isShowing()) {
-//                settingsPopup.hide();
-//                return;
-//            }
-//
-//            // place popup under icon (screen cords)
-//            var bounds = settingIcon.localToScreen(settingIcon.getBoundsInLocal());
-//            settingsPopup.show(settingIcon,
-//                    bounds.getMaxX() + 100,
-//                    bounds.getMaxY() + 20
-//            );
-//        });
-//    }
+    /* =========================================================
+     * Focus Trap Helpers
+     * ========================================================= */
+    private static void installFocusTrap(Parent trapRoot) {
+        if (staticOverlayPane == null) return;
+
+        Scene scene = staticOverlayPane.getScene();
+        if (scene == null) return;
+
+        uninstallFocusTrap();
+
+        focusTrapRoot = trapRoot;
+
+        // Block background focus/clicks
+        if (staticBorderPane != null) staticBorderPane.setDisable(true);
+
+        focusTrapHandler = e -> {
+            // (Don’t rely on isPopupContentOpen; overlay visibility is enough)
+            if (staticOverlayPane == null || !staticOverlayPane.isVisible()) return;
+
+            if (e.getCode() != KeyCode.TAB) return;
+            if (focusTrapRoot == null) return;
+
+            List<Node> focusables = getFocusableNodes(focusTrapRoot);
+            if (focusables.isEmpty()) return;
+
+            Node owner = scene.getFocusOwner();
+            int idx = focusables.indexOf(owner);
+
+            boolean backward = e.isShiftDown();
+            int nextIdx;
+
+            if (idx < 0) {
+                nextIdx = backward ? focusables.size() - 1 : 0;
+            } else {
+                nextIdx = backward
+                        ? (idx - 1 + focusables.size()) % focusables.size()
+                        : (idx + 1) % focusables.size();
+            }
+
+            focusables.get(nextIdx).requestFocus();
+            e.consume(); // ✅ critical
+        };
+
+        scene.addEventFilter(KeyEvent.KEY_PRESSED, focusTrapHandler);
+
+        // focus first item in popup
+        List<Node> focusables = getFocusableNodes(focusTrapRoot);
+        if (!focusables.isEmpty()) focusables.get(0).requestFocus();
+    }
+
+    private static void uninstallFocusTrap() {
+        if (staticOverlayPane == null) return;
+
+        Scene scene = staticOverlayPane.getScene();
+        if (scene != null && focusTrapHandler != null) {
+            scene.removeEventFilter(KeyEvent.KEY_PRESSED, focusTrapHandler);
+        }
+        focusTrapHandler = null;
+        focusTrapRoot = null;
+
+        if (staticBorderPane != null) staticBorderPane.setDisable(false);
+    }
+
+    private static List<Node> getFocusableNodes(Parent root) {
+        List<Node> nodes = new ArrayList<>();
+        collectFocusable(root, nodes);
+
+        // stable order: top-to-bottom, left-to-right
+        nodes.sort(Comparator
+                .comparingDouble((Node n) -> n.localToScene(0, 0).getY())
+                .thenComparingDouble(n -> n.localToScene(0, 0).getX()));
+
+        return nodes;
+    }
+
+    private static void collectFocusable(Node node, List<Node> out) {
+        if (node == null) return;
+
+        if (node.isVisible()
+                && node.isManaged()
+                && !node.isDisabled()
+                && node.isFocusTraversable()) {
+            out.add(node);
+        }
+
+        if (node instanceof Parent p) {
+            for (Node child : p.getChildrenUnmodifiable()) {
+                collectFocusable(child, out);
+            }
+        }
+    }
 
 }
