@@ -26,7 +26,7 @@
                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
                 </padding>
                 <HBox spacing="20.0">
-                    <ImageView fx:id="profileImageView" fitHeight="70.0" fitWidth="70.0" pickOnBounds="true"
+                    <ImageView fx:id="profileImageView" fitHeight="80.0" fitWidth="80.0" pickOnBounds="true"
                                preserveRatio="true"/>
                     <VBox alignment="CENTER_LEFT" spacing="20.0">
                         <Label fx:id="usernameLabel" text="Username"/>
@@ -35,7 +35,6 @@
                 </HBox>
                 <HBox alignment="CENTER" prefHeight="38.0" prefWidth="481.0" spacing="20.0" HBox.hgrow="ALWAYS">
                     <Hyperlink fx:id="adminDashboardLink" minWidth="-Infinity" text="Dashboard"/>
-                    <Hyperlink fx:id="staffDashboardLink" minWidth="-Infinity" text="Dashboard"/>
                     <Hyperlink fx:id="userLink" minWidth="-Infinity" text="User"/>
                     <Hyperlink fx:id="adminProductLink" minWidth="-Infinity" text="Product"/>
                     <Hyperlink fx:id="memberLink" minWidth="-Infinity" text="Member"/>
@@ -69,14 +68,29 @@
             </AnchorPane>
         </center>
     </BorderPane>
-    <AnchorPane fx:id="overlayPane" onMouseClicked="#handleOverlayClick"
+
+    <!-- OVERLAY POPUP -->
+    <AnchorPane fx:id="overlayPane"
+                onMouseClicked="#handleOverlayClick"
                 style="-fx-background-color: rgba(0,0,0,0.4);"
-                visible="false">
-        <AnchorPane fx:id="popupPane" prefWidth="300"
-                    style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0, 0, 0);"
-                    styleClass="container"
-                    AnchorPane.bottomAnchor="100.0" AnchorPane.rightAnchor="600.0" AnchorPane.leftAnchor="600.0"
-                    AnchorPane.topAnchor="100.0">
-        </AnchorPane>
+                visible="false"
+                managed="false">
+
+        <!-- Host that fills overlay and centers popup -->
+        <StackPane fx:id="popupHost"
+                   AnchorPane.topAnchor="0.0"
+                   AnchorPane.rightAnchor="0.0"
+                   AnchorPane.bottomAnchor="0.0"
+                   AnchorPane.leftAnchor="0.0">
+
+            <!-- This will now size to its content -->
+            <AnchorPane fx:id="popupPane"
+                        styleClass="container"
+                        style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0, 0, 0);"
+                        maxWidth="600.0"
+                        maxHeight="650.0"/>
+        </StackPane>
+
     </AnchorPane>
+
 </StackPane>

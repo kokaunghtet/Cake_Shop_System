@@ -40,6 +40,12 @@
   -fx-font-weight: 900;
 }
 
+.sub-title {
+  -fx-text-fill: -app-primary-color;
+  -fx-font-size: 18;
+  -fx-font-weight: 700;
+}
+
 /* =========================
    Form Controls (Unified Size)
    ========================= */

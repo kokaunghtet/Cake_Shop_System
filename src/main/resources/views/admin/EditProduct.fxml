@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/25"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.cakeshopsystem.controllers.admin.EditProductController">
+
+    <VBox alignment="TOP_CENTER"
+          maxWidth="560"
+          spacing="16"
+          AnchorPane.topAnchor="0" AnchorPane.rightAnchor="0"
+          AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0">
+
+        <Label text="Edit Product" styleClass="title"/>
+
+        <!-- ================= Product Info ================= -->
+        <GridPane hgap="12" vgap="8" styleClass="form-grid">
+            <columnConstraints>
+                <ColumnConstraints minWidth="140" halignment="LEFT"/>
+                <ColumnConstraints hgrow="ALWAYS"/>
+            </columnConstraints>
+
+            <!-- Image -->
+            <Label text="Image" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+            <HBox alignment="CENTER_LEFT" spacing="15" GridPane.rowIndex="0" GridPane.columnIndex="1">
+                <ImageView fx:id="previewImageView" fitHeight="90" fitWidth="90" preserveRatio="true"/>
+                <Button fx:id="btnEditImage" text="Edit" mnemonicParsing="false"/>
+            </HBox>
+
+            <!-- Name -->
+            <Label text="Name" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+            <TextField fx:id="txtName" promptText="Product name"
+                       GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+            <!-- Price -->
+            <Label text="Price" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+            <TextField fx:id="txtPrice" promptText="e.g. 3500"
+                       GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+            <!-- DIY -->
+            <Label fx:id="diyLabel" text="DIY" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+            <HBox fx:id="diyHBox" spacing="10" GridPane.rowIndex="3" GridPane.columnIndex="1">
+                <RadioButton fx:id="rbDiyYes" text="Available" contentDisplay="TEXT_ONLY" graphicTextGap="0">
+                    <toggleGroup>
+                        <ToggleGroup fx:id="tgDiy"/>
+                    </toggleGroup>
+                </RadioButton>
+                <RadioButton fx:id="rbDiyNo" text="Not Available" toggleGroup="$tgDiy"
+                             contentDisplay="TEXT_ONLY" graphicTextGap="0"/>
+            </HBox>
+
+            <!-- Availability -->
+            <Label text="Availability" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+            <HBox fx:id="availabilityHBox" spacing="28" GridPane.rowIndex="4" GridPane.columnIndex="1">
+                <RadioButton fx:id="rbActive" text="Active" contentDisplay="TEXT_ONLY" mnemonicParsing="false">
+                    <toggleGroup>
+                        <ToggleGroup fx:id="tgAvailability"/>
+                    </toggleGroup>
+                </RadioButton>
+                <RadioButton fx:id="rbInactive" text="Inactive" toggleGroup="$tgAvailability"
+                             contentDisplay="TEXT_ONLY" mnemonicParsing="false"/>
+            </HBox>
+        </GridPane>
+
+        <Separator/>
+
+        <!-- ================= Stock Section ================= -->
+        <VBox fx:id="stockBox" spacing="10">
+            <Label text="Add Stock" styleClass="sub-title"/>
+
+            <GridPane hgap="12" vgap="8">
+                <columnConstraints>
+                    <ColumnConstraints minWidth="140" halignment="LEFT"/>
+                    <ColumnConstraints hgrow="ALWAYS"/>
+                </columnConstraints>
+
+                <!-- Current stock -->
+                <Label text="Current Stock" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                <HBox alignment="CENTER_LEFT" spacing="10" GridPane.rowIndex="0" GridPane.columnIndex="1">
+                    <Label text="Current Stock :"/>
+                    <Label fx:id="lblCurrentStock"/>
+                </HBox>
+
+                <!-- Quantity -->
+                <Label text="Quantity" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                <TextField fx:id="txtStockQty" promptText="e.g. 10"
+                           GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                <!-- Shelf life -->
+                <Label fx:id="lblShelfLifeDays" text="Last for (days)" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                <TextField fx:id="txtShelfLifeDays" promptText="e.g. 3"
+                           GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                <!-- Expire preview -->
+                <Label fx:id="lblExpireDate" text="Expire Date" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                <HBox fx:id="expireDateHBox" alignment="CENTER_LEFT" spacing="10"
+                      GridPane.rowIndex="3" GridPane.columnIndex="1">
+                    <Label text="Expire Date :" styleClass="meta"/>
+                    <Label fx:id="lblExpireDateText"/>
+                </HBox>
+
+                <!-- Add button -->
+                <HBox alignment="CENTER_RIGHT" spacing="10" GridPane.rowIndex="4" GridPane.columnIndex="1">
+                    <Button fx:id="btnAddStock" text="Add Stock" mnemonicParsing="false"/>
+                </HBox>
+            </GridPane>
+        </VBox>
+
+        <!-- ================= Actions ================= -->
+        <HBox alignment="CENTER_RIGHT" spacing="10">
+            <Button fx:id="btnCancel" text="Cancel" mnemonicParsing="false"/>
+            <Button fx:id="btnSave" text="Save Changes" styleClass="primary-btn" mnemonicParsing="false"/>
+        </HBox>
+
+    </VBox>
+</AnchorPane>

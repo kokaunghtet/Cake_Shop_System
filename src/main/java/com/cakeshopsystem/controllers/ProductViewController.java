@@ -1,9 +1,15 @@
 package com.cakeshopsystem.controllers;
 
+import com.cakeshopsystem.models.Cake;
 import com.cakeshopsystem.models.Inventory;
 import com.cakeshopsystem.models.Product;
 import com.cakeshopsystem.models.User;
+import com.cakeshopsystem.utils.cache.CakeCache;
+import com.cakeshopsystem.utils.cache.DrinkCache;
+import com.cakeshopsystem.utils.cache.ProductCache;
 import com.cakeshopsystem.utils.cache.RoleCache;
+import com.cakeshopsystem.utils.constants.CakeType;
+import com.cakeshopsystem.utils.dao.CakeDAO;
 import com.cakeshopsystem.utils.dao.InventoryDAO;
 import com.cakeshopsystem.utils.dao.ProductDAO;
 import com.cakeshopsystem.utils.session.SessionManager;
@@ -14,6 +20,8 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
+
+import java.io.IOException;
 
 public class ProductViewController {
 
@@ -66,35 +74,47 @@ public class ProductViewController {
        Constants
        ========================================================= */
     private static final String PRODUCT_CARD_FXML = "/views/ProductCard.fxml";
+    private String roleName = "";
 
     /* =========================================================
        Lifecycle
        ========================================================= */
     @FXML
     private void initialize() {
-        configureRoleBasedAccess();
+        roleName = resolveRoleName();
+        configureRoleBasedAccess(roleName);
 
-        // Load all sections
-        loadDiscountedItems();
+        boolean isAdmin = "Admin".equalsIgnoreCase(roleName);
+
+        if (isAdmin) {
+            discountedItemsScrollPane.setVisible(false);
+            discountedItemsScrollPane.setManaged(false);
+        } else {
+            loadDiscountedItems();
+        }
+
         loadCakes();
         loadDrinks();
         loadBakedGoods();
         loadAccessories();
     }
 
+
     /* =========================================================
        Role-Based UI Access Control
        ========================================================= */
-    private void configureRoleBasedAccess() {
+    private String resolveRoleName() {
         User user = SessionManager.getUser();
-        if (user == null) return;
+        if (user == null) return "";
 
         var rolesMap = RoleCache.getRolesMap();
-        if (rolesMap == null || !rolesMap.containsKey(user.getRole())) return;
+        if (rolesMap == null || !rolesMap.containsKey(user.getRole())) return "";
 
-        String roleName = rolesMap.get(user.getRole()).getRoleName();
-        if (roleName == null) return;
+        String rn = rolesMap.get(user.getRole()).getRoleName();
+        return rn == null ? "" : rn;
+    }
 
+    private void configureRoleBasedAccess(String roleName) {
         if (roleName.equalsIgnoreCase("Admin")) {
             cartBtn.setVisible(false);
             cartBtn.setManaged(false);
@@ -117,10 +137,11 @@ public class ProductViewController {
 
                 ProductCardController controller = loader.getController();
                 controller.setDiscountedItemsData(inventoryRow);
+                controller.applyRoleBasedBtn(roleName);
 
                 discountedItemsHBox.getChildren().add(card);
             } catch (Exception err) {
-                System.out.println("Error loading discounted item card: " + err.getLocalizedMessage());
+                System.out.println("Error loading discounted item card: ");
                 err.printStackTrace();
             }
         }
@@ -133,16 +154,24 @@ public class ProductViewController {
         ObservableList<Product> cakeList = ProductDAO.getProductsByCategoryId(1);
 
         for (Product productCake : cakeList) {
+            Cake cake = CakeDAO.getCakeByProductId(productCake.getProductId());
+            if (cake == null) continue;
+
+            if (cake.getCakeType() != CakeType.PREBAKED) {
+                continue;
+            }
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource(PRODUCT_CARD_FXML));
                 Parent card = loader.load();
 
                 ProductCardController controller = loader.getController();
                 controller.setCakeData(productCake);
+                controller.applyRoleBasedBtn(roleName);
 
                 cakeHBox.getChildren().add(card);
             } catch (Exception err) {
-                System.out.println("Error loading cake card: " + err.getLocalizedMessage());
+                System.out.println("Error loading cake card: ");
+                err.printStackTrace();
             }
         }
     }
@@ -160,10 +189,12 @@ public class ProductViewController {
 
                 ProductCardController controller = loader.getController();
                 controller.setDrinkData(productDrink);
+                controller.applyRoleBasedBtn(roleName);
 
                 drinkHBox.getChildren().add(card);
             } catch (Exception err) {
-                System.out.println("Error loading drink card: " + err.getLocalizedMessage());
+                System.out.println("Error loading drink card: ");
+                err.printStackTrace();
             }
         }
     }
@@ -181,10 +212,12 @@ public class ProductViewController {
 
                 ProductCardController controller = loader.getController();
                 controller.setBakedGoodsData(productBakedGood);
+                controller.applyRoleBasedBtn(roleName);
 
                 bakedGoodHBox.getChildren().add(card);
             } catch (Exception err) {
-                System.out.println("Error loading baked good card: " + err.getLocalizedMessage());
+                System.out.println("Error loading baked good card: ");
+                err.printStackTrace();
             }
         }
     }
@@ -202,10 +235,12 @@ public class ProductViewController {
 
                 ProductCardController controller = loader.getController();
                 controller.setAccessoryData(productAccessory);
+                controller.applyRoleBasedBtn(roleName);
 
                 accessoryHBox.getChildren().add(card);
             } catch (Exception err) {
-                System.out.println("Error loading accessory card: " + err.getLocalizedMessage());
+                System.out.println("Error loading accessory card: ");
+                err.printStackTrace();
             }
         }
     }

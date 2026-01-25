@@ -21,21 +21,23 @@
         </StackPane>
 
         <!-- Name -->
-        <Label fx:id="productName" maxWidth="180.0" styleClass="card-header" wrapText="true" />
+        <Label fx:id="productName" styleClass="card-header" wrapText="true" />
 
         <!-- Hot / Cold -->
         <HBox fx:id="drinkOptions" alignment="CENTER_LEFT" spacing="10">
-            <RadioButton fx:id="hotOption" selected="true" text="Hot">
-            <toggleGroup>
-               <ToggleGroup fx:id="drinkOptionsRadioBtn" />
-            </toggleGroup>
-            <cursor>
-               <Cursor fx:constant="HAND" />
-            </cursor></RadioButton>
-            <RadioButton fx:id="coldOption" text="Cold" toggleGroup="$drinkOptionsRadioBtn">
-            <cursor>
-               <Cursor fx:constant="HAND" />
-            </cursor></RadioButton>
+            <RadioButton fx:id="hotOption" contentDisplay="TEXT_ONLY" selected="true" text="Hot">
+                <toggleGroup>
+                    <ToggleGroup fx:id="drinkOptionsRadioBtn" />
+                </toggleGroup>
+                <cursor>
+                    <Cursor fx:constant="HAND" />
+                </cursor>
+            </RadioButton>
+            <RadioButton fx:id="coldOption" contentDisplay="TEXT_ONLY" text="Cold" toggleGroup="$drinkOptionsRadioBtn">
+                <cursor>
+                    <Cursor fx:constant="HAND" />
+                </cursor>
+            </RadioButton>
         </HBox>
 
         <!-- Price + DIY availability -->
@@ -57,7 +59,10 @@
 
             <Region HBox.hgrow="ALWAYS" />
 
-            <Button fx:id="addToCartBtn" mnemonicParsing="false" styleClass="card-btn" text="Add to Cart" />
+            <StackPane>
+                <Button fx:id="addToCartBtn" mnemonicParsing="false" styleClass="card-btn" text="Add to Cart" />
+                <Button fx:id="addStockQtyBtn" mnemonicParsing="false" styleClass="card-btn" text="Edit Product" visible="false" />
+            </StackPane>
         </HBox>
 
         <!-- Quantity -->

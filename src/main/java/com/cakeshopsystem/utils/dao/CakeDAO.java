@@ -295,4 +295,30 @@ public class CakeDAO {
         }
         return null;
     }
+
+    // CakeDAO.java
+    public static boolean updateDiyAllowedIfPrebaked(int productId, boolean isDiyAllowed) {
+        String sql = """
+                    UPDATE cakes
+                    SET is_diy_allowed = ?
+                    WHERE product_id = ?
+                      AND cake_type = 'Prebaked'
+                """;
+
+        try (var con = DB.connect();
+             var ps = con.prepareStatement(sql)) {
+
+            ps.setBoolean(1, isDiyAllowed);
+            ps.setInt(2, productId);
+
+            // returns true even if 0 rows updated (means it was Custom)
+            ps.executeUpdate();
+            return true;
+
+        } catch (Exception e) {
+            System.err.println("updateDiyAllowedIfPrebaked error: " + e.getMessage());
+            return false;
+        }
+    }
+
 }
