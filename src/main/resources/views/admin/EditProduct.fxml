@@ -98,8 +98,7 @@
                 <Label fx:id="lblExpireDate" text="Expire Date" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
                 <HBox fx:id="expireDateHBox" alignment="CENTER_LEFT" spacing="10"
                       GridPane.rowIndex="3" GridPane.columnIndex="1">
-                    <Label text="Expire Date :" styleClass="meta"/>
-                    <Label fx:id="lblExpireDateText"/>
+                    <Label fx:id="lblExpireDateText" styleClass="meta"/>
                 </HBox>
 
                 <!-- Add button -->

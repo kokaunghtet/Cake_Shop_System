@@ -1,12 +1,9 @@
 package com.cakeshopsystem.controllers;
 
 import com.cakeshopsystem.controllers.admin.EditProductController;
-import com.cakeshopsystem.models.Cake;
 import com.cakeshopsystem.models.Inventory;
 import com.cakeshopsystem.models.Product;
 import com.cakeshopsystem.utils.cache.CakeCache;
-import com.cakeshopsystem.utils.constants.CakeType;
-import com.cakeshopsystem.utils.dao.CakeDAO;
 import com.cakeshopsystem.utils.dao.DrinkDAO;
 import com.cakeshopsystem.utils.dao.InventoryDAO;
 import com.cakeshopsystem.utils.dao.ProductDAO;
@@ -21,6 +18,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.beans.value.ChangeListener;
+import javafx.scene.control.Toggle;
 
 import java.util.Objects;
 
@@ -59,6 +58,10 @@ public class ProductCardController {
     private int maxQty = Integer.MAX_VALUE;
 
     private Product currentProduct;
+
+    private double drinkHotPrice;
+    private double drinkColdPrice;
+    private ChangeListener<Toggle> drinkToggleListener;
 
     /* =========================================================
        Lifecycle
@@ -125,6 +128,38 @@ public class ProductCardController {
         setAddToCartDisable(product.getProductId());
     }
 
+//    public void setDrinkData(Product product) {
+//        this.currentProduct = product;
+//
+//        disableDiyAvailability();
+//        showStockSection(false);
+//
+//        loadProductImage(product.getImgPath());
+//        productName.setText(product.getProductName());
+//
+//        var drinks = DrinkDAO.getDrinksByProductId(product.getProductId());
+//        double base = product.getPrice();
+//        double hotPrice = base + drinks.getFirst().getPriceDelta();
+//        double coldPrice = base + drinks.getLast().getPriceDelta();
+//
+//        ensureDrinkToggleGroup();
+//
+//        hotOption.setSelected(true);
+//        productPrice.setText(String.valueOf(hotPrice));
+//
+//        drinkOptionsRadioBtn.selectedToggleProperty().addListener((obs, oldToggle, newToggle) -> {
+//            if (newToggle == null) return;
+//            if (newToggle == hotOption) productPrice.setText(String.valueOf(hotPrice));
+//            if (newToggle == coldOption) productPrice.setText(String.valueOf(coldPrice));
+//        });
+//
+//        // Drinks are made on order -> unlimited qty concept
+//        maxQty = Integer.MAX_VALUE;
+//        if (quantity < 1) quantity = 1;
+//        quantityLabel.setText(String.valueOf(quantity));
+//        updateQtyButtonsState();
+//    }
+
     public void setDrinkData(Product product) {
         this.currentProduct = product;
 
@@ -136,26 +171,23 @@ public class ProductCardController {
 
         var drinks = DrinkDAO.getDrinksByProductId(product.getProductId());
         double base = product.getPrice();
-        double hotPrice = base + drinks.getFirst().getPriceDelta();
-        double coldPrice = base + drinks.getLast().getPriceDelta();
+
+        drinkHotPrice = base + drinks.getFirst().getPriceDelta();
+        drinkColdPrice = base + drinks.getLast().getPriceDelta();
 
         ensureDrinkToggleGroup();
+        installDrinkPriceListenerIfNeeded();
 
         hotOption.setSelected(true);
-        productPrice.setText(String.valueOf(hotPrice));
+        productPrice.setText(String.valueOf(drinkHotPrice));
 
-        drinkOptionsRadioBtn.selectedToggleProperty().addListener((obs, oldToggle, newToggle) -> {
-            if (newToggle == null) return;
-            if (newToggle == hotOption) productPrice.setText(String.valueOf(hotPrice));
-            if (newToggle == coldOption) productPrice.setText(String.valueOf(coldPrice));
-        });
-
-        // Drinks are made on order -> unlimited qty concept
+        // Drinks: no stock limit
         maxQty = Integer.MAX_VALUE;
         if (quantity < 1) quantity = 1;
         quantityLabel.setText(String.valueOf(quantity));
         updateQtyButtonsState();
     }
+
 
     public void setBakedGoodsData(Product product) {
         this.currentProduct = product;
@@ -199,6 +231,7 @@ public class ProductCardController {
 
             EditProductController controller = loader.getController();
             controller.setData(currentProduct);
+            controller.setOnSaved(this::refreshThisCard);
 
             MainController.togglePopupContent(root);
         } catch (Exception ex) {
@@ -358,5 +391,40 @@ public class ProductCardController {
     private void showStockSection(boolean show) {
         inStockItemsHBox.setVisible(show);
         inStockItemsHBox.setManaged(show);
+    }
+
+    private void installDrinkPriceListenerIfNeeded() {
+        if (drinkToggleListener != null) return;
+
+        drinkToggleListener = (obs, oldToggle, newToggle) -> {
+            if (newToggle == null) return;
+
+            if (newToggle == hotOption) {
+                productPrice.setText(String.valueOf(drinkHotPrice));
+            } else if (newToggle == coldOption) {
+                productPrice.setText(String.valueOf(drinkColdPrice));
+            }
+        };
+
+        drinkOptionsRadioBtn.selectedToggleProperty().addListener(drinkToggleListener);
+    }
+
+    /* =========================================================
+       Refresh
+       ========================================================= */
+    private void refreshThisCard() {
+        if (currentProduct == null) return;
+
+        Product fresh = ProductDAO.getProductById(currentProduct.getProductId());
+        if (fresh == null) return;
+
+        currentProduct = fresh;
+
+        switch (fresh.getCategoryId()) {
+            case 1 -> setCakeData(fresh);
+            case 2 -> setDrinkData(fresh);
+            case 3 -> setBakedGoodsData(fresh);
+            case 4 -> setAccessoryData(fresh);
+        }
     }
 }
