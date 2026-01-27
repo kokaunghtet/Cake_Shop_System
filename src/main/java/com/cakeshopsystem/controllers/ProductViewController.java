@@ -19,6 +19,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.layout.HBox;
 
 import java.io.IOException;
@@ -151,15 +152,25 @@ public class ProductViewController {
        Data Loading - Cakes
        ========================================================= */
     private void loadCakes() {
+
         ObservableList<Product> cakeList = ProductDAO.getProductsByCategoryId(1);
 
+        boolean isAdmin = "Admin".equalsIgnoreCase(roleName);
+
         for (Product productCake : cakeList) {
+
+            // ✅ ADD THIS (FILTER)
+            if (!isAdmin && !productCake.isActive()) {
+                continue;
+            }
+
             Cake cake = CakeDAO.getCakeByProductId(productCake.getProductId());
             if (cake == null) continue;
 
             if (cake.getCakeType() != CakeType.PREBAKED) {
                 continue;
             }
+
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource(PRODUCT_CARD_FXML));
                 Parent card = loader.load();
@@ -170,19 +181,28 @@ public class ProductViewController {
 
                 cakeHBox.getChildren().add(card);
             } catch (Exception err) {
-                System.out.println("Error loading cake card: ");
                 err.printStackTrace();
             }
         }
     }
 
+
     /* =========================================================
        Data Loading - Drinks
        ========================================================= */
     private void loadDrinks() {
+
         ObservableList<Product> drinkList = ProductDAO.getProductsByCategoryId(2);
 
+        boolean isAdmin = "Admin".equalsIgnoreCase(roleName);
+
         for (Product productDrink : drinkList) {
+
+            // ✅ ADD THIS
+            if (!isAdmin && !productDrink.isActive()) {
+                continue;
+            }
+
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource(PRODUCT_CARD_FXML));
                 Parent card = loader.load();
@@ -193,19 +213,28 @@ public class ProductViewController {
 
                 drinkHBox.getChildren().add(card);
             } catch (Exception err) {
-                System.out.println("Error loading drink card: ");
                 err.printStackTrace();
             }
         }
     }
 
+
     /* =========================================================
        Data Loading - Baked Goods
        ========================================================= */
     private void loadBakedGoods() {
+
         ObservableList<Product> bakedGoodList = ProductDAO.getProductsByCategoryId(3);
 
+        boolean isAdmin = "Admin".equalsIgnoreCase(roleName);
+
         for (Product productBakedGood : bakedGoodList) {
+
+            // ✅ ADD THIS
+            if (!isAdmin && !productBakedGood.isActive()) {
+                continue;
+            }
+
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource(PRODUCT_CARD_FXML));
                 Parent card = loader.load();
@@ -216,19 +245,28 @@ public class ProductViewController {
 
                 bakedGoodHBox.getChildren().add(card);
             } catch (Exception err) {
-                System.out.println("Error loading baked good card: ");
                 err.printStackTrace();
             }
         }
     }
 
+
     /* =========================================================
        Data Loading - Accessories
        ========================================================= */
     private void loadAccessories() {
+
         ObservableList<Product> accessoryList = ProductDAO.getProductsByCategoryId(4);
 
+        boolean isAdmin = "Admin".equalsIgnoreCase(roleName);
+
         for (Product productAccessory : accessoryList) {
+
+            // ✅ ADD THIS
+            if (!isAdmin && !productAccessory.isActive()) {
+                continue;
+            }
+
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource(PRODUCT_CARD_FXML));
                 Parent card = loader.load();
@@ -239,9 +277,9 @@ public class ProductViewController {
 
                 accessoryHBox.getChildren().add(card);
             } catch (Exception err) {
-                System.out.println("Error loading accessory card: ");
                 err.printStackTrace();
             }
         }
     }
 }
+
