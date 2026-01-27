@@ -4,9 +4,6 @@ import com.cakeshopsystem.models.Cake;
 import com.cakeshopsystem.models.Inventory;
 import com.cakeshopsystem.models.Product;
 import com.cakeshopsystem.models.User;
-import com.cakeshopsystem.utils.cache.CakeCache;
-import com.cakeshopsystem.utils.cache.DrinkCache;
-import com.cakeshopsystem.utils.cache.ProductCache;
 import com.cakeshopsystem.utils.cache.RoleCache;
 import com.cakeshopsystem.utils.constants.CakeType;
 import com.cakeshopsystem.utils.dao.CakeDAO;
@@ -152,7 +149,6 @@ public class ProductViewController {
        Data Loading - Cakes
        ========================================================= */
     private void loadCakes() {
-
         ObservableList<Product> cakeList = ProductDAO.getProductsByCategoryId(1);
 
         boolean isAdmin = "Admin".equalsIgnoreCase(roleName);
