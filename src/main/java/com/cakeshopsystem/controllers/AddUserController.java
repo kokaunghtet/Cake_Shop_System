@@ -19,10 +19,7 @@ import javafx.util.Duration;
 import javafx.util.StringConverter;
 import org.kordamp.ikonli.javafx.FontIcon;
 
-import java.util.Objects;
-
 public class AddUserController {
-
 
     // =========================
     // UI Messages
@@ -41,6 +38,7 @@ public class AddUserController {
     // =========================
     private boolean attemptedSubmit = false;
     private boolean isPasswordVisible = false;
+
     // =========================
     // FXML: Inputs
     // =========================
@@ -60,11 +58,8 @@ public class AddUserController {
     private TextField confirmPasswordTextField;
     @FXML
     private FontIcon eyeSlashToggleButton1;
-
     @FXML
     private FontIcon eyeSlashToggleButton2;
-
-
 
     // =========================
     // FXML: Error Messages

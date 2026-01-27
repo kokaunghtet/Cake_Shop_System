@@ -218,4 +218,35 @@ public class ProductDAO {
 
         return p;
     }
+
+    public static boolean updateProductEditFields(int productId,
+                                                  String name,
+                                                  double price,
+                                                  boolean isActive,
+                                                  String imgPath) {
+        String sql = """
+                    UPDATE products
+                    SET product_name = ?,
+                        price = ?,
+                        is_active = ?,
+                        img_path = ?
+                    WHERE product_id = ?
+                """;
+
+        try (var con = DB.connect();
+             var ps = con.prepareStatement(sql)) {
+
+            ps.setString(1, name);
+            ps.setDouble(2, price);
+            ps.setBoolean(3, isActive);
+            ps.setString(4, imgPath);
+            ps.setInt(5, productId);
+
+            return ps.executeUpdate() == 1;
+        } catch (Exception e) {
+            System.err.println("updateProductEditFields error: " + e.getMessage());
+            return false;
+        }
+    }
+
 }
