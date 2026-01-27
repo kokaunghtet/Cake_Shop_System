@@ -9,16 +9,18 @@ public class Inventory {
     private int productId;
     private int quantity = 0;
     private LocalDate expDate;
+    private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
     public Inventory() {
     }
 
-    public Inventory(int inventoryId, int productId, int quantity, LocalDate expDate, LocalDateTime updatedAt) {
+    public Inventory(int inventoryId, int productId, int quantity, LocalDate expDate, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.inventoryId = inventoryId;
         this.productId = productId;
         this.quantity = quantity;
         this.expDate = expDate;
+        this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
 
@@ -54,22 +56,19 @@ public class Inventory {
         this.expDate = expDate;
     }
 
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
-    }
-
-    @Override
-    public String toString() {
-        return "Inventory{" +
-                "inventoryId=" + inventoryId +
-                ", productId=" + productId +
-                ", quantity=" + quantity +
-                ", expDate=" + expDate +
-                ", updatedAt=" + updatedAt +
-                '}';
     }
 }

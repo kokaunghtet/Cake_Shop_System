@@ -79,11 +79,11 @@ public class InventoryDAO {
 
     public static int getTotalAvailableQuantityByProductId(int productId) {
         String query = """
-        SELECT COALESCE(SUM(quantity), 0) AS total_qty
-        FROM inventory
-        WHERE product_id = ?
-          AND (exp_date IS NULL OR exp_date >= CURRENT_DATE)
-    """;
+                    SELECT COALESCE(SUM(quantity), 0) AS total_qty
+                    FROM inventory
+                    WHERE product_id = ?
+                      AND (exp_date IS NULL OR exp_date >= CURRENT_DATE)
+                """;
 
         try (Connection con = DB.connect();
              PreparedStatement stmt = con.prepareStatement(query)) {
@@ -134,20 +134,19 @@ public class InventoryDAO {
         ObservableList<Inventory> list = FXCollections.observableArrayList();
 
         String sql = """
-        SELECT * FROM inventory
-        WHERE quantity > 0
-          AND exp_date IN (?, ?)
-        ORDER BY exp_date ASC, inventory_id ASC
-    """;
+                    SELECT * FROM inventory
+                    WHERE quantity > 0
+                      AND exp_date IN (?)
+                      AND DATE(created_at) < CURDATE()
+                    ORDER BY exp_date ASC, inventory_id ASC
+                """;
 
         LocalDate today = LocalDate.now();
-        LocalDate tomorrow = today.plusDays(1);
 
         try (Connection con = DB.connect();
              PreparedStatement stmt = con.prepareStatement(sql)) {
 
             stmt.setDate(1, Date.valueOf(today));
-            stmt.setDate(2, Date.valueOf(tomorrow));
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
@@ -233,21 +232,96 @@ public class InventoryDAO {
         }
     }
 
-    // =====================================
-    // ========== Helper Methods ===========
-    // =====================================
+    public static boolean addStockBatch(int productId,
+                                        int qty,
+                                        LocalDate expDate,
+                                        Integer userId) {
+
+        String insertInventory = """
+                    INSERT INTO inventory (product_id, quantity, exp_date)
+                    VALUES (?, ?, ?)
+                """;
+
+        String insertMovement = """
+                    INSERT INTO inventory_movements (inventory_id, movement_type, qty_change, order_item_id, user_id)
+                    VALUES (?, 'Add', ?, NULL, ?)
+                """;
+
+        try (Connection con = DB.connect()) {
+            con.setAutoCommit(false);
+
+            int inventoryId;
+
+            // 1) create a new inventory batch row
+            try (PreparedStatement ps = con.prepareStatement(insertInventory, Statement.RETURN_GENERATED_KEYS)) {
+                ps.setInt(1, productId);
+                ps.setInt(2, qty);
+
+                if (expDate == null) ps.setNull(3, Types.DATE);
+                else ps.setDate(3, Date.valueOf(expDate));
+
+                int affected = ps.executeUpdate();
+                if (affected != 1) {
+                    con.rollback();
+                    return false;
+                }
+
+                try (ResultSet keys = ps.getGeneratedKeys()) {
+                    if (!keys.next()) {
+                        con.rollback();
+                        return false;
+                    }
+                    inventoryId = keys.getInt(1);
+                }
+            }
+
+            // 2) log the movement
+            try (PreparedStatement ps2 = con.prepareStatement(insertMovement)) {
+                ps2.setInt(1, inventoryId);
+                ps2.setInt(2, qty); // positive for 'Add'
+
+                if (userId == null) ps2.setNull(3, Types.INTEGER);
+                else ps2.setInt(3, userId);
+
+                int affected2 = ps2.executeUpdate();
+                if (affected2 != 1) {
+                    con.rollback();
+                    return false;
+                }
+            }
+
+            con.commit();
+            return true;
+
+        } catch (SQLException e) {
+            System.err.println("addStockBatch error: " + e.getMessage());
+            return false;
+        }
+    }
+
+
+// =====================================
+// ========== Helper Methods ===========
+// =====================================
 
     private static Inventory mapInventory(ResultSet rs) throws SQLException {
         int inventoryId = rs.getInt("inventory_id");
         int productId = rs.getInt("product_id");
         int quantity = rs.getInt("quantity");
 
-        Date exp = rs.getDate("exp_date");
-        LocalDate expDate = (exp != null) ? exp.toLocalDate() : null;
+        LocalDate expDate = toLocalDate(rs.getDate("exp_date"));
+        LocalDateTime createdAt = toLocalDateTime(rs.getTimestamp("created_at"));
+        LocalDateTime updatedAt = toLocalDateTime(rs.getTimestamp("updated_at"));
 
-        Timestamp ts = rs.getTimestamp("updated_at");
-        LocalDateTime updatedAt = (ts != null) ? ts.toLocalDateTime() : null;
-
-        return new Inventory(inventoryId, productId, quantity, expDate, updatedAt);
+        return new Inventory(inventoryId, productId, quantity, expDate, createdAt, updatedAt);
     }
+
+    private static LocalDate toLocalDate(Date date) {
+        return date == null ? null : date.toLocalDate();
+    }
+
+    private static LocalDateTime toLocalDateTime(Timestamp ts) {
+        return ts == null ? null : ts.toLocalDateTime();
+    }
+
 }

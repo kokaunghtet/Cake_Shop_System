@@ -2,11 +2,15 @@ package com.cakeshopsystem.controllers.admin;
 
 import com.cakeshopsystem.controllers.MainController;
 import com.cakeshopsystem.models.Product;
+import com.cakeshopsystem.utils.cache.CakeCache;
+import com.cakeshopsystem.utils.cache.DrinkCache;
+import com.cakeshopsystem.utils.cache.ProductCache;
 import com.cakeshopsystem.utils.components.SnackBar;
 import com.cakeshopsystem.utils.constants.SnackBarType;
 import com.cakeshopsystem.utils.dao.CakeDAO;
 import com.cakeshopsystem.utils.dao.InventoryDAO;
 import com.cakeshopsystem.utils.dao.ProductDAO;
+import com.cakeshopsystem.utils.session.SessionManager;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -21,7 +25,11 @@ import javafx.stage.FileChooser;
 import javafx.stage.Window;
 import javafx.util.Duration;
 
+
 import java.io.File;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 public class EditProductController {
 
@@ -76,6 +84,8 @@ public class EditProductController {
     private TextField txtStockQty;
     @FXML
     private Button btnAddStock;
+    @FXML
+    private Label lblExpireDateText;
 
     /* =========================================================
        FXML: Actions
@@ -92,6 +102,14 @@ public class EditProductController {
     private String selectedImagePath;
 
     private static final String DEFAULT_PRODUCT_IMAGE = "/images/default-product.png";
+    private static final DateTimeFormatter DATE_FMT =
+            DateTimeFormatter.ofPattern("MMM d uuuu", Locale.ENGLISH);
+
+    private Runnable onSaved;
+
+    public void setOnSaved(Runnable onSaved) {
+        this.onSaved = onSaved;
+    }
 
     /* =========================================================
        Lifecycle
@@ -101,6 +119,9 @@ public class EditProductController {
         btnEditImage.setOnAction(e -> chooseAndPreviewImage());
         btnCancel.setOnAction(e -> MainController.handleClosePopupContent());
         btnSave.setOnAction(e -> handleSaveChanges());
+
+        btnAddStock.setOnAction(e -> handleAddStock());
+        setupShelfLifePreview();
     }
 
     /* =========================================================
@@ -278,8 +299,86 @@ public class EditProductController {
         }
 
         SnackBar.show(SnackBarType.SUCCESS, "", "Saved successfully.", Duration.seconds(2));
+
+        ProductCache.refreshProducts();
+        CakeCache.refreshCake();
+        DrinkCache.refreshDrinks();
+
+        if (onSaved != null) {
+            onSaved.run();
+        }
+
         MainController.handleClosePopupContent();
     }
+
+    /* =========================================================
+       Adding Stock
+       ========================================================= */
+    private void handleAddStock() {
+        if (currentProduct == null) return;
+
+        if (isDrink(currentProduct)) return;
+
+        // 1) Quantity
+        int qty;
+        try {
+            qty = Integer.parseInt(safeTrim(txtStockQty.getText()));
+            if (txtStockQty.getText().isEmpty()) {
+                showError("Quantity is required.");
+                return;
+            }
+            if (qty <= 0) {
+                showError("Quantity must be greater than 0.");
+                return;
+            }
+        } catch (NumberFormatException ex) {
+            showError("Quantity must be a valid integer.");
+            return;
+        }
+
+        // 2) shelfLifeDays
+        Integer shelfLifeDays = null;
+
+        if (!isAccessory(currentProduct)) {
+            String daysText = safeTrim(txtShelfLifeDays.getText());
+
+            if (!daysText.isEmpty()) {
+                try {
+                    shelfLifeDays = Integer.parseInt(daysText);
+                    if (shelfLifeDays < 0) {
+                        showError("Shelf life days cannot be negative.");
+                        return;
+                    }
+                } catch (NumberFormatException ex) {
+                    showError("Shelf life days must be a valid integer.");
+                    return;
+                }
+            } else {
+                showError("Shelf life days is required.");
+                return;
+            }
+        }
+
+        // 3) Compute expiry date
+        LocalDate expDate = computeLastGoodDate(shelfLifeDays);
+
+        // 4) Save
+        Integer userId = SessionManager.getUser() != null ? SessionManager.getUser().getUserId() : null;
+
+        boolean ok = InventoryDAO.addStockBatch(currentProduct.getProductId(), qty, expDate, userId);
+        if (!ok) {
+            showError("Failed to add stock.");
+            return;
+        }
+
+        // 5) Refresh UI
+        int totalStock = InventoryDAO.getTotalAvailableQuantityByProductId(currentProduct.getProductId());
+        lblCurrentStock.setText(String.valueOf(totalStock));
+
+        txtStockQty.clear();
+        SnackBar.show(SnackBarType.SUCCESS, "", "Stock added.", Duration.seconds(2));
+    }
+
 
     /* =========================================================
        Small helpers
@@ -299,4 +398,54 @@ public class EditProductController {
             node.setManaged(false);
         }
     }
+
+    private LocalDate computeLastGoodDate(Integer shelfLifeDays) {
+        if (shelfLifeDays == null) return null;
+
+        if (shelfLifeDays < 1) return null;
+
+        return LocalDate.now().plusDays(shelfLifeDays - 1);
+    }
+
+    private void setupShelfLifePreview() {
+        if (txtShelfLifeDays == null || lblExpireDateText == null) return;
+
+        updateExpirePreview(txtShelfLifeDays.getText());
+        txtShelfLifeDays.textProperty().addListener((obs, oldVal, newVal) -> updateExpirePreview(newVal));
+    }
+
+    private void updateExpirePreview(String daysTextRaw) {
+        // Accessories: no expiry concept
+        if (currentProduct != null && isAccessory(currentProduct)) {
+            lblExpireDateText.setText("-");
+            return;
+        }
+
+        String text = safeTrim(daysTextRaw);
+
+        // Required
+        if (text.isEmpty()) {
+            lblExpireDateText.setText("Required");
+            return;
+        }
+
+        // Must be an integer
+        final int days;
+        try {
+            days = Integer.parseInt(text);
+        } catch (NumberFormatException ex) {
+            lblExpireDateText.setText("Invalid");
+            return;
+        }
+
+        // Must be >= 1
+        LocalDate lastGood = computeLastGoodDate(days);
+        if (lastGood == null) {
+            lblExpireDateText.setText("Invalid");
+            return;
+        }
+
+        lblExpireDateText.setText(lastGood.format(DATE_FMT));
+    }
+
 }
