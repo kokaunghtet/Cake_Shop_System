@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="salesProductPane" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cakeshopsystem.controllers.admin.SalesProductController">
+<BorderPane fx:id="salesProductPane" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cakeshopsystem.controllers.admin.SalesProductController">
    <top>
       <VBox BorderPane.alignment="CENTER">
          <children>
@@ -32,10 +32,10 @@
                <children>
                   <BarChart fx:id="productBarChart">
                     <xAxis>
-                      <CategoryAxis side="BOTTOM" />
+                      <CategoryAxis label="Products" side="BOTTOM" />
                     </xAxis>
                     <yAxis>
-                      <NumberAxis side="LEFT" />
+                      <NumberAxis label="Sales Count" side="LEFT" />
                     </yAxis>
                   </BarChart>
                   <PieChart fx:id="productPieChart" />

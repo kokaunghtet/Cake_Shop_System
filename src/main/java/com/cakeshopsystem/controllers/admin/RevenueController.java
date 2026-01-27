@@ -7,7 +7,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 
 public class RevenueController {
 
@@ -46,9 +45,6 @@ public class RevenueController {
 
     @FXML
     private Button refreshBtn;
-
-    @FXML
-    private VBox revenueRoot;
 
     @FXML
     private HBox totalCancelCard;

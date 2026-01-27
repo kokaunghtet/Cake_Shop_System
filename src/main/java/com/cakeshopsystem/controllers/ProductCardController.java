@@ -64,7 +64,6 @@ public class ProductCardController {
        State
        ========================================================= */
     private int quantity = 1;
-    private int maxQty = Integer.MAX_VALUE;
 
     /* =========================================================
        Lifecycle
@@ -138,6 +137,7 @@ public class ProductCardController {
         inStockItemsHBox.setVisible(false);
         inStockItemsHBox.setManaged(false);
     }
+
 
     public void setBakedGoodsData(Product product) {
         disableDrinkOptions();
