@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<AnchorPane fx:id="staffPerformanceViewPane" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <TableView fx:id="tblStaffPerformanceView" layoutX="-5.0" prefHeight="380.0" prefWidth="411.0">
+        <columns>
+          <TableColumn fx:id="tblColNo" prefWidth="56.0" text="No" />
+          <TableColumn fx:id="tblColType" prefWidth="107.0" text="Type" />
+            <TableColumn fx:id="tblColDetail" prefWidth="163.0" text="Detail" />
+            <TableColumn fx:id="tblColDate" minWidth="0.0" prefWidth="84.0" text="Date" />
+        </columns>
+      </TableView>
+   </children>
+</AnchorPane>
