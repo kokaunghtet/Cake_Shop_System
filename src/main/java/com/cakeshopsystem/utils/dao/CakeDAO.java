@@ -1,6 +1,7 @@
 package com.cakeshopsystem.utils.dao;
 
 import com.cakeshopsystem.models.Cake;
+import com.cakeshopsystem.models.Product;
 import com.cakeshopsystem.utils.constants.CakeShape;
 import com.cakeshopsystem.utils.constants.CakeType;
 import com.cakeshopsystem.utils.databaseconnection.DB;
@@ -10,6 +11,121 @@ import javafx.collections.ObservableList;
 import java.sql.*;
 
 public class CakeDAO {
+
+    // =====================================
+    // ========= CREATE OPERATIONS =========
+    // =====================================
+
+    public static boolean insertCake(Cake cake) {
+        if (!isCakeValidForDb(cake)) return false;
+
+        // DB rule: Only Prebaked can be DIY
+        if (!isPrebaked(cake.getCakeType())) {
+            cake.setDiyAllowed(false);
+        }
+
+        String sql = "INSERT INTO cakes (product_id, flavour_id, topping_id, size_id, cake_type, shape, is_diy_allowed) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+        try (Connection con = DB.connect();
+             PreparedStatement stmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            stmt.setInt(1, cake.getProductId());
+            stmt.setInt(2, cake.getFlavourId());
+            stmt.setInt(3, cake.getToppingId());
+            stmt.setInt(4, cake.getSizeId());
+            stmt.setString(5, toDbCakeType(cake.getCakeType()));
+            stmt.setString(6, toDbCakeShape(cake.getShape()));
+            stmt.setBoolean(7, cake.isDiyAllowed());
+
+            int affectedRows = stmt.executeUpdate();
+            if (affectedRows == 0) throw new SQLException("Inserting cakes failed, no rows affected.");
+
+            try (ResultSet keys = stmt.getGeneratedKeys()) {
+                if (keys.next()) {
+                    cake.setCakeId(keys.getInt(1));
+                } else {
+                    throw new SQLException("Inserting cakes failed, no id obtained");
+                }
+            }
+
+            return true;
+
+        } catch (SQLException err) {
+            System.err.println("Error inserting cake: " + err.getLocalizedMessage());
+            return false;
+        }
+    }
+
+    public static boolean insertPrebakedCakeWithProduct(
+            Product product,
+            int flavourId,
+            int toppingId,
+            int sizeId,
+            String cakeType,     // "Prebaked"
+            String shape,        // "Square"/"Circle"/"Heart"
+            boolean isDiyAllowed
+    ) {
+        String insertProductSql = """
+                    INSERT INTO products (product_name, category_id, price, is_active, track_inventory, shelf_life_days, img_path)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                """;
+
+        String insertCakeSql = """
+                    INSERT INTO cakes (product_id, flavour_id, topping_id, size_id, cake_type, shape, is_diy_allowed)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                """;
+
+        try (Connection con = DB.connect()) {
+            con.setAutoCommit(false);
+
+            int productId;
+
+            // 1) insert product
+            try (PreparedStatement ps = con.prepareStatement(insertProductSql, Statement.RETURN_GENERATED_KEYS)) {
+                ps.setString(1, product.getProductName());
+                ps.setInt(2, product.getCategoryId());
+                ps.setDouble(3, product.getPrice());
+                ps.setBoolean(4, product.isActive());
+                ps.setBoolean(5, product.isTrackInventory());
+
+                if (product.getShelfLifeDays() == null) ps.setNull(6, Types.INTEGER);
+                else ps.setInt(6, product.getShelfLifeDays());
+
+                if (product.getImgPath() == null) ps.setNull(7, Types.VARCHAR);
+                else ps.setString(7, product.getImgPath());
+
+                int affected = ps.executeUpdate();
+                if (affected == 0) throw new SQLException("Insert product failed.");
+
+                try (ResultSet keys = ps.getGeneratedKeys()) {
+                    if (!keys.next()) throw new SQLException("No product_id generated.");
+                    productId = keys.getInt(1);
+                    product.setProductId(productId);
+                }
+            }
+
+            // 2) insert cake (uses product_id)
+            try (PreparedStatement ps = con.prepareStatement(insertCakeSql)) {
+                ps.setInt(1, productId);
+                ps.setInt(2, flavourId);
+                ps.setInt(3, toppingId);
+                ps.setInt(4, sizeId);
+                ps.setString(5, cakeType);
+                ps.setString(6, shape);
+                ps.setBoolean(7, isDiyAllowed);
+
+                ps.executeUpdate();
+            }
+
+            con.commit();
+            return true;
+
+        } catch (SQLException e) {
+            System.err.println("Insert prebaked cake failed: " + e.getMessage());
+            return false;
+        }
+    }
 
     // =====================================
     // ========== READ OPERATIONS ===========
@@ -117,52 +233,9 @@ public class CakeDAO {
     }
 
     // =====================================
-    // ========== CRUD OPERATIONS ==========
+    // ========= UPDATE OPERATIONS =========
     // =====================================
 
-    // ----------------- Insert Cake -----------------
-    public static boolean insertCake(Cake cake) {
-        if (!isCakeValidForDb(cake)) return false;
-
-        // DB rule: Only Prebaked can be DIY
-        if (!isPrebaked(cake.getCakeType())) {
-            cake.setDiyAllowed(false);
-        }
-
-        String sql = "INSERT INTO cakes (product_id, flavour_id, topping_id, size_id, cake_type, shape, is_diy_allowed) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?)";
-
-        try (Connection con = DB.connect();
-             PreparedStatement stmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-
-            stmt.setInt(1, cake.getProductId());
-            stmt.setInt(2, cake.getFlavourId());
-            stmt.setInt(3, cake.getToppingId());
-            stmt.setInt(4, cake.getSizeId());
-            stmt.setString(5, toDbCakeType(cake.getCakeType()));
-            stmt.setString(6, toDbCakeShape(cake.getShape()));
-            stmt.setBoolean(7, cake.isDiyAllowed());
-
-            int affectedRows = stmt.executeUpdate();
-            if (affectedRows == 0) throw new SQLException("Inserting cakes failed, no rows affected.");
-
-            try (ResultSet keys = stmt.getGeneratedKeys()) {
-                if (keys.next()) {
-                    cake.setCakeId(keys.getInt(1));
-                } else {
-                    throw new SQLException("Inserting cakes failed, no id obtained");
-                }
-            }
-
-            return true;
-
-        } catch (SQLException err) {
-            System.err.println("Error inserting cake: " + err.getLocalizedMessage());
-            return false;
-        }
-    }
-
-    // ----------------- Update Cake -----------------
     public static boolean updateCake(Cake cake) {
         if (!isCakeValidForDb(cake)) return false;
 
@@ -194,7 +267,33 @@ public class CakeDAO {
         }
     }
 
-    // ----------------- Delete Cake -----------------
+    public static boolean updateDiyAllowedIfPrebaked(int productId, boolean isDiyAllowed) {
+        String sql = """
+                    UPDATE cakes
+                    SET is_diy_allowed = ?
+                    WHERE product_id = ?
+                      AND cake_type = 'Prebaked'
+                """;
+
+        try (var con = DB.connect();
+             var ps = con.prepareStatement(sql)) {
+
+            ps.setBoolean(1, isDiyAllowed);
+            ps.setInt(2, productId);
+
+            ps.executeUpdate();
+            return true;
+
+        } catch (Exception e) {
+            System.err.println("updateDiyAllowedIfPrebaked error: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // =====================================
+    // ========= DELETE OPERATIONS =========
+    // =====================================
+
     public static boolean deleteCake(int cakeId) {
         String sql = "DELETE FROM cakes WHERE cake_id = ?";
 
@@ -257,7 +356,6 @@ public class CakeDAO {
         if (n.equalsIgnoreCase("PREBAKED") || n.equalsIgnoreCase("PRE_BAKED")) return "Prebaked";
         if (n.equalsIgnoreCase("CUSTOM")) return "Custom";
 
-        // fallback: try to store enum name (not recommended, but safer than null)
         return n;
     }
 
@@ -277,7 +375,6 @@ public class CakeDAO {
 
         for (CakeType t : CakeType.values()) {
             if (t.name().equalsIgnoreCase(dbValue)) return t;
-            // allow mapping "Prebaked" -> PREBAKED
             if (dbValue.equalsIgnoreCase("Prebaked") && t.name().equalsIgnoreCase("PREBAKED")) return t;
             if (dbValue.equalsIgnoreCase("Custom") && t.name().equalsIgnoreCase("CUSTOM")) return t;
         }
@@ -295,30 +392,4 @@ public class CakeDAO {
         }
         return null;
     }
-
-    // CakeDAO.java
-    public static boolean updateDiyAllowedIfPrebaked(int productId, boolean isDiyAllowed) {
-        String sql = """
-                    UPDATE cakes
-                    SET is_diy_allowed = ?
-                    WHERE product_id = ?
-                      AND cake_type = 'Prebaked'
-                """;
-
-        try (var con = DB.connect();
-             var ps = con.prepareStatement(sql)) {
-
-            ps.setBoolean(1, isDiyAllowed);
-            ps.setInt(2, productId);
-
-            // returns true even if 0 rows updated (means it was Custom)
-            ps.executeUpdate();
-            return true;
-
-        } catch (Exception e) {
-            System.err.println("updateDiyAllowedIfPrebaked error: " + e.getMessage());
-            return false;
-        }
-    }
-
 }

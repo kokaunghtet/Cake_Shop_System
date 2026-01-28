@@ -16,67 +16,50 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.SelectionMode;
 import javafx.scene.layout.HBox;
-
-import java.io.IOException;
 
 public class ProductViewController {
 
-    /* =========================================================
-       FXML - Main Containers
-       ========================================================= */
+    // =====================================
+    // ============ FXML FIELDS ============
+    // =====================================
+
     @FXML
     private ScrollPane mainScrollPane;
 
-    /* =========================================================
-       FXML - Top Actions
-       ========================================================= */
+    /* Top Action Controls */
     @FXML
     private Button addNewProductBtn;
     @FXML
     private Button cartBtn;
 
-    /* =========================================================
-       FXML - Discount Section
-       ========================================================= */
+    /* Discount Section Controls */
     @FXML
     private ScrollPane discountedItemsScrollPane;
     @FXML
     private HBox discountedItemsHBox;
 
-    /* =========================================================
-       FXML - Category Sections (Horizontal Scrollers)
-       ========================================================= */
-    @FXML
-    private ScrollPane cakeScrollPane;
+    /* Category Containers (Horizontal Scrollers) */
     @FXML
     private HBox cakeHBox;
-
-    @FXML
-    private ScrollPane drinkScrollPane;
     @FXML
     private HBox drinkHBox;
-
-    @FXML
-    private ScrollPane bakedGoodScrollPane;
     @FXML
     private HBox bakedGoodHBox;
-
-    @FXML
-    private ScrollPane accessoryScrollPane;
     @FXML
     private HBox accessoryHBox;
 
-    /* =========================================================
-       Constants
-       ========================================================= */
+    // =====================================
+    // =========== STATE & CONSTS ==========
+    // =====================================
+
     private static final String PRODUCT_CARD_FXML = "/views/ProductCard.fxml";
     private String roleName = "";
 
-    /* =========================================================
-       Lifecycle
-       ========================================================= */
+    // =====================================
+    // ============= LIFECYCLE =============
+    // =====================================
+
     @FXML
     private void initialize() {
         roleName = resolveRoleName();
@@ -95,12 +78,14 @@ public class ProductViewController {
         loadDrinks();
         loadBakedGoods();
         loadAccessories();
+
+        addNewProductBtn.setOnAction(e -> handleAddNewProduct());
     }
 
+    // =====================================
+    // ========= ROLE-BASED ACCESS =========
+    // =====================================
 
-    /* =========================================================
-       Role-Based UI Access Control
-       ========================================================= */
     private String resolveRoleName() {
         User user = SessionManager.getUser();
         if (user == null) return "";
@@ -122,9 +107,10 @@ public class ProductViewController {
         }
     }
 
-    /* =========================================================
-       Data Loading - Discounted Items
-       ========================================================= */
+    // =====================================
+    // ========= DATA LOADING LOGIC ========
+    // =====================================
+
     private void loadDiscountedItems() {
         ObservableList<Inventory> discountedItemList = InventoryDAO.getInventoryDiscountCandidates();
 
@@ -145,9 +131,6 @@ public class ProductViewController {
         }
     }
 
-    /* =========================================================
-       Data Loading - Cakes
-       ========================================================= */
     private void loadCakes() {
         ObservableList<Product> cakeList = ProductDAO.getProductsByCategoryId(1);
 
@@ -155,49 +138,38 @@ public class ProductViewController {
 
         for (Product productCake : cakeList) {
 
-            // ✅ ADD THIS (FILTER)
-            if (!isAdmin && !productCake.isActive()) {
-                continue;
-            }
+            if (!isAdmin && !productCake.isActive()) continue;
 
             Cake cake = CakeDAO.getCakeByProductId(productCake.getProductId());
             if (cake == null) continue;
 
-            if (cake.getCakeType() != CakeType.PREBAKED) {
-                continue;
-            }
+            if (cake.getCakeType() != CakeType.PREBAKED) continue;
 
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource(PRODUCT_CARD_FXML));
                 Parent card = loader.load();
 
                 ProductCardController controller = loader.getController();
+                controller.setExcludeDiscountStock(!isAdmin);
                 controller.setCakeData(productCake);
                 controller.applyRoleBasedBtn(roleName);
 
                 cakeHBox.getChildren().add(card);
             } catch (Exception err) {
+                System.out.println("Error loading cake card: ");
                 err.printStackTrace();
             }
         }
     }
 
-
-    /* =========================================================
-       Data Loading - Drinks
-       ========================================================= */
     private void loadDrinks() {
-
         ObservableList<Product> drinkList = ProductDAO.getProductsByCategoryId(2);
 
         boolean isAdmin = "Admin".equalsIgnoreCase(roleName);
 
         for (Product productDrink : drinkList) {
 
-            // ✅ ADD THIS
-            if (!isAdmin && !productDrink.isActive()) {
-                continue;
-            }
+            if (!isAdmin && !productDrink.isActive()) continue;
 
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource(PRODUCT_CARD_FXML));
@@ -209,59 +181,46 @@ public class ProductViewController {
 
                 drinkHBox.getChildren().add(card);
             } catch (Exception err) {
+                System.out.println("Error loading drink card: ");
                 err.printStackTrace();
             }
         }
     }
 
-
-    /* =========================================================
-       Data Loading - Baked Goods
-       ========================================================= */
     private void loadBakedGoods() {
-
         ObservableList<Product> bakedGoodList = ProductDAO.getProductsByCategoryId(3);
 
         boolean isAdmin = "Admin".equalsIgnoreCase(roleName);
 
         for (Product productBakedGood : bakedGoodList) {
 
-            // ✅ ADD THIS
-            if (!isAdmin && !productBakedGood.isActive()) {
-                continue;
-            }
+            if (!isAdmin && !productBakedGood.isActive()) continue;
 
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource(PRODUCT_CARD_FXML));
                 Parent card = loader.load();
 
                 ProductCardController controller = loader.getController();
+                controller.setExcludeDiscountStock(!isAdmin);
                 controller.setBakedGoodsData(productBakedGood);
                 controller.applyRoleBasedBtn(roleName);
 
                 bakedGoodHBox.getChildren().add(card);
             } catch (Exception err) {
+                System.out.println("Error loading baked good card: ");
                 err.printStackTrace();
             }
         }
     }
 
-
-    /* =========================================================
-       Data Loading - Accessories
-       ========================================================= */
     private void loadAccessories() {
-
         ObservableList<Product> accessoryList = ProductDAO.getProductsByCategoryId(4);
 
         boolean isAdmin = "Admin".equalsIgnoreCase(roleName);
 
         for (Product productAccessory : accessoryList) {
 
-            // ✅ ADD THIS
-            if (!isAdmin && !productAccessory.isActive()) {
-                continue;
-            }
+            if (!isAdmin && !productAccessory.isActive()) continue;
 
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource(PRODUCT_CARD_FXML));
@@ -273,9 +232,56 @@ public class ProductViewController {
 
                 accessoryHBox.getChildren().add(card);
             } catch (Exception err) {
+                System.out.println("Error loading accessory card: ");
                 err.printStackTrace();
             }
         }
     }
-}
 
+    // =====================================
+    // ========= REFRESH & ACTIONS =========
+    // =====================================
+
+    private void reloadAllProducts() {
+        discountedItemsHBox.getChildren().clear();
+        cakeHBox.getChildren().clear();
+        drinkHBox.getChildren().clear();
+        bakedGoodHBox.getChildren().clear();
+        accessoryHBox.getChildren().clear();
+
+        boolean isAdmin = "Admin".equalsIgnoreCase(roleName);
+
+        if (isAdmin) {
+            discountedItemsScrollPane.setVisible(false);
+            discountedItemsScrollPane.setManaged(false);
+        } else {
+            discountedItemsScrollPane.setVisible(true);
+            discountedItemsScrollPane.setManaged(true);
+            loadDiscountedItems();
+        }
+
+        loadCakes();
+        loadDrinks();
+        loadBakedGoods();
+        loadAccessories();
+    }
+
+    private void handleAddNewProduct() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/AddProduct.fxml"));
+            Parent root = loader.load();
+
+            AddProductController controller = loader.getController();
+            controller.setOnSaved(this::afterAddProductSaved);
+
+            MainController.togglePopupContent(root);
+        } catch (Exception e) {
+            System.out.println("Failed to open AddProduct popup:");
+            e.printStackTrace();
+        }
+    }
+
+    private void afterAddProductSaved() {
+        reloadAllProducts();
+    }
+}
