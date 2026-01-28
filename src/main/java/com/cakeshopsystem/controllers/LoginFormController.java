@@ -229,7 +229,8 @@ public class LoginFormController {
     }
 
     @FXML
-    private void togglePasswordVisibility() {
+    private void
+    togglePasswordVisibility() {
         // --- Capture current state before switching ---
         final boolean currentlyVisible = isPasswordVisible; // Snapshot current visibility state
 
