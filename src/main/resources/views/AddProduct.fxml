@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.image.ImageView?>
+<AnchorPane xmlns="http://javafx.com/javafx/25"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.cakeshopsystem.controllers.AddProductController">
+
+    <VBox spacing="16"
+          AnchorPane.topAnchor="0" AnchorPane.leftAnchor="0"
+          AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0">
+
+        <padding>
+            <Insets top="20" right="20" bottom="20" left="20"/>
+        </padding>
+
+        <!-- Category selector -->
+        <HBox alignment="CENTER" spacing="12">
+            <RadioButton fx:id="rbCake" text="Cakes" userData="CAKE">
+                <toggleGroup>
+                    <ToggleGroup fx:id="tgCategory"/>
+                </toggleGroup>
+            </RadioButton>
+
+            <RadioButton fx:id="rbDrink" text="Drinks" toggleGroup="$tgCategory" userData="DRINK"/>
+            <RadioButton fx:id="rbBaked" text="Baked Goods" toggleGroup="$tgCategory" userData="BAKED"/>
+            <RadioButton fx:id="rbAccessory" text="Accessories" toggleGroup="$tgCategory" userData="ACCESSORY"/>
+        </HBox>
+
+        <Separator/>
+
+        <!-- Common product fields (products table) -->
+        <GridPane hgap="12" vgap="8">
+            <columnConstraints>
+                <ColumnConstraints minWidth="140" halignment="LEFT"/>
+                <ColumnConstraints hgrow="ALWAYS"/>
+            </columnConstraints>
+
+            <!-- Name -->
+            <Label text="Name" GridPane.rowIndex="0"/>
+            <TextField fx:id="txtName" promptText="Product name"
+                       GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+            <!-- Price -->
+            <Label text="Price" GridPane.rowIndex="1"/>
+            <TextField fx:id="txtPrice" promptText="e.g. 3500"
+                       GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+            <!-- Image (fixed: row 2, not 4) -->
+            <Label text="Image" GridPane.rowIndex="2"/>
+            <HBox spacing="10" alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                <Button fx:id="btnChooseImage" text="Choose Image"/>
+                <ImageView fx:id="chooseImageView" fitHeight="90" fitWidth="90" preserveRatio="true"/>
+                <Label fx:id="lblImagePath"/>
+            </HBox>
+        </GridPane>
+
+        <Separator/>
+
+        <!-- Category-specific forms -->
+        <StackPane fx:id="categoryStack" VBox.vgrow="ALWAYS">
+
+            <!-- CAKE -->
+            <VBox fx:id="cakeBox" spacing="12">
+                <Label styleClass="title" text="Cake details"/>
+
+                <GridPane hgap="12" vgap="8">
+                    <columnConstraints>
+                        <ColumnConstraints minWidth="140" halignment="LEFT"/>
+                        <ColumnConstraints hgrow="ALWAYS"/>
+                    </columnConstraints>
+
+                    <!-- Flavour -->
+                    <Label text="Flavour" GridPane.rowIndex="0"/>
+                    <ComboBox fx:id="cbFlavour" promptText="Select flavour"
+                              GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                    <!-- Topping -->
+                    <Label text="Topping" GridPane.rowIndex="1"/>
+                    <ComboBox fx:id="cbTopping" promptText="Select topping"
+                              GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                    <!-- Size -->
+                    <Label text="Size" GridPane.rowIndex="2"/>
+                    <ComboBox fx:id="cbSize" promptText="Select size"
+                              GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                    <!-- Shape (fixed: row 3, not 4) -->
+                    <Label text="Shape" GridPane.rowIndex="3"/>
+                    <ComboBox fx:id="cbShape" promptText="Select shape"
+                              GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+                    <!-- DIY (fixed: row 4, not 5) -->
+                    <Label text="DIY Allowed" GridPane.rowIndex="4"/>
+                    <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                        <RadioButton fx:id="rbDiyYes" text="Yes" toggleGroup="$tgDiy">
+                            <toggleGroup>
+                                <ToggleGroup fx:id="tgDiy"/>
+                            </toggleGroup>
+                        </RadioButton>
+                        <RadioButton fx:id="rbDiyNo" text="No" toggleGroup="$tgDiy"/>
+                    </HBox>
+                </GridPane>
+            </VBox>
+
+        </StackPane>
+
+        <!-- Actions -->
+        <HBox alignment="CENTER_RIGHT" spacing="10">
+            <Button fx:id="btnCancel" text="Cancel"/>
+            <Button fx:id="btnSave" text="Save"/>
+        </HBox>
+
+    </VBox>
+</AnchorPane>
