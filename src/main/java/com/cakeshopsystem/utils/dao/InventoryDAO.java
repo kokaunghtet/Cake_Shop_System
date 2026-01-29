@@ -364,4 +364,22 @@ public class InventoryDAO {
     private static LocalDateTime toLocalDateTime(Timestamp ts) {
         return ts == null ? null : ts.toLocalDateTime();
     }
+
+    public static void wasteExpiredInventory (Integer userId) {
+        String sql = "{CALL waste_expired_inventory(?)}";
+
+        try (Connection con = DB.connect();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+
+            if(userId == null) {
+                stmt.setNull(1, Types.INTEGER);
+            } else {
+                stmt.setInt(1, userId);
+            }
+
+            stmt.execute();
+        } catch (SQLException err) {
+            System.err.println("Failed to waste expired inventory : " + err.getLocalizedMessage());
+        }
+    }
 }

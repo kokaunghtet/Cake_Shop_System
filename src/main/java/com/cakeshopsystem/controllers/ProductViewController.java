@@ -5,7 +5,9 @@ import com.cakeshopsystem.models.Inventory;
 import com.cakeshopsystem.models.Product;
 import com.cakeshopsystem.models.User;
 import com.cakeshopsystem.utils.cache.RoleCache;
+import com.cakeshopsystem.utils.components.SnackBar;
 import com.cakeshopsystem.utils.constants.CakeType;
+import com.cakeshopsystem.utils.constants.SnackBarType;
 import com.cakeshopsystem.utils.dao.CakeDAO;
 import com.cakeshopsystem.utils.dao.InventoryDAO;
 import com.cakeshopsystem.utils.dao.ProductDAO;
@@ -17,9 +19,9 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
+import javafx.util.Duration;
 
 public class ProductViewController {
-
     // =====================================
     // ============ FXML FIELDS ============
     // =====================================
@@ -32,6 +34,8 @@ public class ProductViewController {
     private Button addNewProductBtn;
     @FXML
     private Button cartBtn;
+    @FXML
+    private Button processExpiredBtn;
 
     /* Discount Section Controls */
     @FXML
@@ -80,6 +84,7 @@ public class ProductViewController {
         loadAccessories();
 
         addNewProductBtn.setOnAction(e -> handleAddNewProduct());
+        processExpiredBtn.setOnAction(e -> handleWasteProduct());
     }
 
     // =====================================
@@ -241,6 +246,14 @@ public class ProductViewController {
     // =====================================
     // ========= REFRESH & ACTIONS =========
     // =====================================
+
+    private void handleWasteProduct() {
+        Integer userId = SessionManager.getUser().getUserId();
+        InventoryDAO.wasteExpiredInventory(userId);
+
+        // Showing success noti
+        SnackBar.show(SnackBarType.SUCCESS, "Success", "Expired stock has been processed.", Duration.seconds(2));
+    }
 
     private void reloadAllProducts() {
         discountedItemsHBox.getChildren().clear();

@@ -18,10 +18,10 @@
         <ScrollPane fx:id="mainScrollPane" fitToWidth="true" hbarPolicy="NEVER">
             <!-- IMPORTANT: don't center the VBox, let it fill width -->
             <VBox spacing="15">
-                <!-- top bar -->
-                <HBox alignment="CENTER_RIGHT">
-                    <Button fx:id="addNewProductBtn" mnemonicParsing="false" text="Add New Product" />
-                </HBox>
+<!--                &lt;!&ndash; top bar &ndash;&gt;-->
+<!--                <HBox alignment="CENTER_RIGHT">-->
+<!--                    <Button fx:id="addNewProductBtn" mnemonicParsing="false" text="Add New Product" />-->
+<!--                </HBox>-->
 
                 <!-- horizontal scrollers -->
                 <ScrollPane fx:id="discountedItemsScrollPane" fitToHeight="true" pannable="true" vbarPolicy="NEVER">
@@ -82,7 +82,15 @@
             </VBox>
         </ScrollPane>
 
-        <!-- floating overlay button (always bottom-right) -->
+        <!-- floating overlay button -->
+        <HBox spacing="10.0" fillHeight="false" maxWidth="-Infinity" maxHeight="-Infinity" StackPane.alignment="TOP_RIGHT">
+            <padding>
+                <Insets top="10.0" right="10.0"/>
+            </padding>
+            <Button fx:id="processExpiredBtn" mnemonicParsing="false" text="Process Expired Inventory"/>
+            <Button fx:id="addNewProductBtn" mnemonicParsing="false" text="Add New Product"/>
+        </HBox>
+
         <Button fx:id="cartBtn" mnemonicParsing="false" text="Cart" StackPane.alignment="BOTTOM_RIGHT">
             <graphic>
                 <FontIcon iconLiteral="fas-cart-plus" iconSize="15" styleClass="cart-icon" />
