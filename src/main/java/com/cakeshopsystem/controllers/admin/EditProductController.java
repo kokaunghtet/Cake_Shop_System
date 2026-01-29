@@ -290,6 +290,14 @@ public class EditProductController {
         txtStockQty.clear();
         txtShelfLifeDays.clear();
         SnackBar.show(SnackBarType.SUCCESS, "Stock updated", "Inventory was updated.", Duration.seconds(2));
+
+        ProductCache.refreshProducts();
+        CakeCache.refreshCake();
+        DrinkCache.refreshDrinks();
+
+        if (onSaved != null) {
+            onSaved.run();
+        }
     }
 
     // =====================================
