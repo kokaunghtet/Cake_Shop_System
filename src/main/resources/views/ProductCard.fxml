@@ -11,9 +11,9 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<StackPane styleClass="card" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cakeshopsystem.controllers.ProductCardController">
+<StackPane fx:id="productCardStackPane" styleClass="card" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cakeshopsystem.controllers.ProductCardController">
 
-    <VBox fx:id="productCardVBox" spacing="10" styleClass="card-body">
+    <VBox fx:id="productCardVBox" minWidth="200.0" spacing="10" styleClass="card-body">
 
         <!-- Image -->
         <StackPane>
@@ -51,7 +51,7 @@
         <!-- Qty + Add -->
         <HBox alignment="CENTER_LEFT" spacing="10">
 
-            <HBox alignment="CENTER" styleClass="qty-stepper">
+            <HBox fx:id="qtyStepperHBox" alignment="CENTER" styleClass="qty-stepper">
                 <Button fx:id="decreaseBtn" accessibleRole="DECREMENT_BUTTON" mnemonicParsing="false" styleClass="card-dec-btn" text="-" />
                 <Label fx:id="quantityLabel" alignment="CENTER" minWidth="28" prefWidth="28" styleClass="qty-label" text="1" />
                 <Button fx:id="increaseBtn" accessibleRole="INCREMENT_BUTTON" mnemonicParsing="false" styleClass="card-inc-btn" text="+" />
@@ -66,10 +66,9 @@
         </HBox>
 
         <!-- Quantity -->
-        <HBox fx:id="inStockItemsHBox" alignment="CENTER">
+        <HBox fx:id="inStockItemsHBox" alignment="CENTER_RIGHT">
             <Label fx:id="productStock" styleClass="card-quantity" />
             <Label fx:id="stockQuantityLabel" styleClass="meta" text=" Items In Stock" />
-            <Region HBox.hgrow="ALWAYS" />
         </HBox>
 
     </VBox>

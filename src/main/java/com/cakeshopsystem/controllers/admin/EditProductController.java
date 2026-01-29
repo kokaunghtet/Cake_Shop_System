@@ -25,7 +25,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.Window;
 import javafx.util.Duration;
 
-
 import java.io.File;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -33,19 +32,21 @@ import java.util.Locale;
 
 public class EditProductController {
 
-    /* =========================================================
-       FXML: Product Info
-       ========================================================= */
+    // =====================================
+    // ============ FXML FIELDS ============
+    // =====================================
+
+    /* Product Info Section */
     @FXML
     private ImageView previewImageView;
     @FXML
     private Button btnEditImage;
-
     @FXML
     private TextField txtName;
     @FXML
     private TextField txtPrice;
 
+    /* DIY Options (Cakes) */
     @FXML
     private Label diyLabel;
     @FXML
@@ -55,27 +56,25 @@ public class EditProductController {
     @FXML
     private RadioButton rbDiyNo;
 
+    /* Product Status */
     @FXML
     private RadioButton rbActive;
     @FXML
     private RadioButton rbInactive;
 
-    @FXML
-    private Label lblExpireDate;
-
-    /* =========================================================
-       FXML: Shelf-life / Expiry UI
-       ========================================================= */
+    /* Shelf-life / Expiry UI */
     @FXML
     private Label lblShelfLifeDays;
     @FXML
     private TextField txtShelfLifeDays;
     @FXML
     private HBox expireDateHBox;
+    @FXML
+    private Label lblExpireDate;
+    @FXML
+    private Label lblExpireDateText;
 
-    /* =========================================================
-       FXML: Stock Section
-       ========================================================= */
+    /* Stock Section */
     @FXML
     private VBox stockBox;
     @FXML
@@ -84,36 +83,33 @@ public class EditProductController {
     private TextField txtStockQty;
     @FXML
     private Button btnAddStock;
-    @FXML
-    private Label lblExpireDateText;
 
-    /* =========================================================
-       FXML: Actions
-       ========================================================= */
+    /* Global Actions */
     @FXML
     private Button btnCancel;
     @FXML
     private Button btnSave;
 
-    /* =========================================================
-       State
-       ========================================================= */
+    // =====================================
+    // =========== STATE FIELDS ============
+    // =====================================
+
     private Product currentProduct;
     private String selectedImagePath;
+    private Runnable onSaved;
 
     private static final String DEFAULT_PRODUCT_IMAGE = "/images/default-product.png";
     private static final DateTimeFormatter DATE_FMT =
             DateTimeFormatter.ofPattern("MMM d uuuu", Locale.ENGLISH);
 
-    private Runnable onSaved;
-
     public void setOnSaved(Runnable onSaved) {
         this.onSaved = onSaved;
     }
 
-    /* =========================================================
-       Lifecycle
-       ========================================================= */
+    // =====================================
+    // ============= LIFECYCLE =============
+    // =====================================
+
     @FXML
     private void initialize() {
         btnEditImage.setOnAction(e -> chooseAndPreviewImage());
@@ -124,9 +120,10 @@ public class EditProductController {
         setupShelfLifePreview();
     }
 
-    /* =========================================================
-       Public API
-       ========================================================= */
+    // =====================================
+    // ======== PUBLIC API & BINDING =======
+    // =====================================
+
     public void setData(Product product) {
         if (product == null) return;
 
@@ -142,9 +139,6 @@ public class EditProductController {
         loadPreviewImage(selectedImagePath);
     }
 
-    /* =========================================================
-       Bindings
-       ========================================================= */
     private void bindFields(Product p) {
         txtName.setText(p.getProductName());
         txtPrice.setText(String.valueOf(p.getPrice()));
@@ -176,85 +170,10 @@ public class EditProductController {
         if (isAccessory(p)) hide(lblShelfLifeDays, txtShelfLifeDays, lblExpireDate, expireDateHBox);
     }
 
-    private boolean isCake(Product p) {
-        return p.getCategoryId() == 1;
-    }
+    // =====================================
+    // ========= SAVE & STOCK LOGIC ========
+    // =====================================
 
-    private boolean isDrink(Product p) {
-        return p.getCategoryId() == 2;
-    }
-
-    private boolean isAccessory(Product p) {
-        return p.getCategoryId() == 4;
-    }
-
-    /* =========================================================
-       Image
-       ========================================================= */
-    private void chooseAndPreviewImage() {
-        FileChooser chooser = new FileChooser();
-        chooser.setTitle("Choose Product Image");
-        chooser.getExtensionFilters().add(
-                new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg", "*.webp")
-        );
-
-        // Works on Windows/Linux/Mac (user.home exists everywhere)
-        File userHome = new File(System.getProperty("user.home", "."));
-        if (userHome.exists() && userHome.isDirectory()) {
-            chooser.setInitialDirectory(userHome);
-        }
-
-        Window window = (btnEditImage.getScene() != null) ? btnEditImage.getScene().getWindow() : null;
-        File file = chooser.showOpenDialog(window);
-        if (file == null) return;
-
-        selectedImagePath = file.getAbsolutePath();
-        loadPreviewImage(selectedImagePath);
-    }
-
-    private void loadPreviewImage(String imagePath) {
-        Image img = loadImageSmart(imagePath);
-
-        if (img == null || img.isError()) {
-            img = loadImageSmart(DEFAULT_PRODUCT_IMAGE);
-        }
-
-        if (img != null && !img.isError()) {
-            previewImageView.setImage(img);
-        }
-    }
-
-    private Image loadImageSmart(String path) {
-        if (path == null || path.isBlank()) return null;
-
-        try {
-            // 1) URL forms (http/file/jar)
-            if (path.matches("^(https?|file|jar):.*")) {
-                return new Image(path, true);
-            }
-
-            // 2) Classpath resource
-            String res = path.startsWith("/") ? path : "/" + path;
-            var url = getClass().getResource(res);
-            if (url != null) {
-                return new Image(url.toExternalForm(), true);
-            }
-
-            // 3) File system path
-            File f = new File(path);
-            if (f.exists()) {
-                return new Image(f.toURI().toString(), true);
-            }
-        } catch (Exception ignored) {
-            // return null below
-        }
-
-        return null;
-    }
-
-    /* =========================================================
-       Save
-       ========================================================= */
     private void handleSaveChanges() {
         if (currentProduct == null) return;
 
@@ -298,7 +217,7 @@ public class EditProductController {
             }
         }
 
-        SnackBar.show(SnackBarType.SUCCESS, "", "Saved successfully.", Duration.seconds(2));
+        SnackBar.show(SnackBarType.SUCCESS, "Updated", "Changes to the product were saved.", Duration.seconds(2));
 
         ProductCache.refreshProducts();
         CakeCache.refreshCake();
@@ -311,22 +230,18 @@ public class EditProductController {
         MainController.handleClosePopupContent();
     }
 
-    /* =========================================================
-       Adding Stock
-       ========================================================= */
     private void handleAddStock() {
         if (currentProduct == null) return;
-
         if (isDrink(currentProduct)) return;
 
-        // 1) Quantity
+        // 1) Quantity validation
+        if (txtStockQty.getText().isEmpty()) {
+            showError("Quantity is required.");
+            return;
+        }
         int qty;
         try {
             qty = Integer.parseInt(safeTrim(txtStockQty.getText()));
-            if (txtStockQty.getText().isEmpty()) {
-                showError("Quantity is required.");
-                return;
-            }
             if (qty <= 0) {
                 showError("Quantity must be greater than 0.");
                 return;
@@ -336,12 +251,10 @@ public class EditProductController {
             return;
         }
 
-        // 2) shelfLifeDays
+        // 2) shelfLifeDays validation
         Integer shelfLifeDays = null;
-
         if (!isAccessory(currentProduct)) {
             String daysText = safeTrim(txtShelfLifeDays.getText());
-
             if (!daysText.isEmpty()) {
                 try {
                     shelfLifeDays = Integer.parseInt(daysText);
@@ -362,9 +275,8 @@ public class EditProductController {
         // 3) Compute expiry date
         LocalDate expDate = computeLastGoodDate(shelfLifeDays);
 
-        // 4) Save
+        // 4) Save to Database
         Integer userId = SessionManager.getUser() != null ? SessionManager.getUser().getUserId() : null;
-
         boolean ok = InventoryDAO.addStockBatch(currentProduct.getProductId(), qty, expDate, userId);
         if (!ok) {
             showError("Failed to add stock.");
@@ -376,13 +288,75 @@ public class EditProductController {
         lblCurrentStock.setText(String.valueOf(totalStock));
 
         txtStockQty.clear();
-        SnackBar.show(SnackBarType.SUCCESS, "", "Stock added.", Duration.seconds(2));
+        txtShelfLifeDays.clear();
+        SnackBar.show(SnackBarType.SUCCESS, "Stock updated", "Inventory was updated.", Duration.seconds(2));
+
+        ProductCache.refreshProducts();
+        CakeCache.refreshCake();
+        DrinkCache.refreshDrinks();
+
+        if (onSaved != null) {
+            onSaved.run();
+        }
     }
 
+    // =====================================
+    // ========== IMAGE PROCESSING =========
+    // =====================================
 
-    /* =========================================================
-       Small helpers
-       ========================================================= */
+    private void chooseAndPreviewImage() {
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Choose Product Image");
+        chooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg", "*.webp")
+        );
+
+        File userHome = new File(System.getProperty("user.home", "."));
+        if (userHome.exists() && userHome.isDirectory()) {
+            chooser.setInitialDirectory(userHome);
+        }
+
+        Window window = (btnEditImage.getScene() != null) ? btnEditImage.getScene().getWindow() : null;
+        File file = chooser.showOpenDialog(window);
+        if (file == null) return;
+
+        selectedImagePath = file.getAbsolutePath();
+        loadPreviewImage(selectedImagePath);
+    }
+
+    private void loadPreviewImage(String imagePath) {
+        Image img = loadImageSmart(imagePath);
+        if (img == null || img.isError()) {
+            img = loadImageSmart(DEFAULT_PRODUCT_IMAGE);
+        }
+        if (img != null && !img.isError()) {
+            previewImageView.setImage(img);
+        }
+    }
+
+    private Image loadImageSmart(String path) {
+        if (path == null || path.isBlank()) return null;
+        try {
+            if (path.matches("^(https?|file|jar):.*")) return new Image(path, true);
+
+            String res = path.startsWith("/") ? path : "/" + path;
+            var url = getClass().getResource(res);
+            if (url != null) return new Image(url.toExternalForm(), true);
+
+            File f = new File(path);
+            if (f.exists()) return new Image(f.toURI().toString(), true);
+        } catch (Exception ignored) {}
+        return null;
+    }
+
+    // =====================================
+    // =========== UTILITY HELPERS =========
+    // =====================================
+
+    private boolean isCake(Product p)      { return p.getCategoryId() == 1; }
+    private boolean isDrink(Product p)     { return p.getCategoryId() == 2; }
+    private boolean isAccessory(Product p) { return p.getCategoryId() == 4; }
+
     private String safeTrim(String s) {
         return s == null ? "" : s.trim();
     }
@@ -400,36 +374,26 @@ public class EditProductController {
     }
 
     private LocalDate computeLastGoodDate(Integer shelfLifeDays) {
-        if (shelfLifeDays == null) return null;
-
-        if (shelfLifeDays < 1) return null;
-
+        if (shelfLifeDays == null || shelfLifeDays < 1) return null;
         return LocalDate.now().plusDays(shelfLifeDays - 1);
     }
 
     private void setupShelfLifePreview() {
         if (txtShelfLifeDays == null || lblExpireDateText == null) return;
-
         updateExpirePreview(txtShelfLifeDays.getText());
         txtShelfLifeDays.textProperty().addListener((obs, oldVal, newVal) -> updateExpirePreview(newVal));
     }
 
     private void updateExpirePreview(String daysTextRaw) {
-        // Accessories: no expiry concept
         if (currentProduct != null && isAccessory(currentProduct)) {
             lblExpireDateText.setText("-");
             return;
         }
-
         String text = safeTrim(daysTextRaw);
-
-        // Required
         if (text.isEmpty()) {
             lblExpireDateText.setText("Required");
             return;
         }
-
-        // Must be an integer
         final int days;
         try {
             days = Integer.parseInt(text);
@@ -437,15 +401,11 @@ public class EditProductController {
             lblExpireDateText.setText("Invalid");
             return;
         }
-
-        // Must be >= 1
         LocalDate lastGood = computeLastGoodDate(days);
         if (lastGood == null) {
             lblExpireDateText.setText("Invalid");
             return;
         }
-
         lblExpireDateText.setText(lastGood.format(DATE_FMT));
     }
-
 }
