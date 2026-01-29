@@ -13,7 +13,7 @@
 
 <StackPane fx:id="productCardStackPane" styleClass="card" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cakeshopsystem.controllers.ProductCardController">
 
-    <VBox fx:id="productCardVBox" spacing="10" styleClass="card-body">
+    <VBox fx:id="productCardVBox" minWidth="200.0" spacing="10" styleClass="card-body">
 
         <!-- Image -->
         <StackPane>

@@ -144,21 +144,21 @@ Popup Close Button
 /* Header / Name */
 .card-header {
     -fx-text-fill: -app-base-text-color;
-    -fx-font-size: 15px;
+    -fx-font-size: 15;
     -fx-font-weight: 800;
 }
 
 /* Meta small text (Price label) */
 .meta {
     -fx-text-fill: -app-muted-text-color;
-    -fx-font-size: 12px;
+    -fx-font-size: 12;
     -fx-font-weight: 600;
 }
 
 /* Price */
 .card-price {
     -fx-text-fill: -app-secondary-color;
-    -fx-font-size: 13px;
+    -fx-font-size: 13;
     -fx-font-weight: 800;
 }
 
@@ -171,7 +171,7 @@ Popup Close Button
 /* Badge (DIY availability) */
 .badge {
     -fx-text-fill: -app-secondary-color;
-    -fx-font-size: 11px;
+    -fx-font-size: 11;
     -fx-font-weight: 800;
 
     -fx-padding: 3 10 3 10;
@@ -186,7 +186,7 @@ Popup Close Button
 
 .badge-danger {
     -fx-text-fill: -app-surface-color;
-    -fx-font-size: 11px;
+    -fx-font-size: 11;
     -fx-font-weight: 800;
 
     -fx-padding: 3 10 3 10;
@@ -211,7 +211,7 @@ Popup Close Button
 /* Qty label */
 .qty-label {
     -fx-text-fill: -app-base-text-color;
-    -fx-font-size: 12px;
+    -fx-font-size: 12;
     -fx-font-weight: 800;
 }
 
@@ -220,7 +220,7 @@ Popup Close Button
 .card-inc-btn {
     -fx-background-color: transparent;
     -fx-text-fill: -app-secondary-color;
-    -fx-font-size: 14px;
+    -fx-font-size: 14;
     -fx-font-weight: 900;
 
     -fx-background-radius: 10;
@@ -242,7 +242,7 @@ Popup Close Button
 .card-btn {
     -fx-background-color: -app-primary-color;
     -fx-text-fill: white;
-    -fx-font-size: 12px;
+    -fx-font-size: 12;
     -fx-font-weight: 800;
 
     -fx-background-radius: 12;
@@ -277,7 +277,7 @@ Popup Close Button
    ========================= */
 .radio-button {
     -fx-text-fill: -app-base-text-color;
-    -fx-font-size: 12px;
+    -fx-font-size: 12;
     -fx-font-weight: 700;
 
     -fx-padding: 4 10;
