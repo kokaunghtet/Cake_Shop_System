@@ -31,7 +31,7 @@ public class CustomOrderController {
                 VBox card = loader.load();
 
                 ProductCardController controller = loader.getController();
-                controller.setData(product);
+                controller.setCakeData(product);
 
                 customCakePane.getChildren().add(card);
 

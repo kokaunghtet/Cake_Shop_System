@@ -1,6 +1,7 @@
 package com.cakeshopsystem.utils.dao;
 
 import com.cakeshopsystem.models.Cake;
+import com.cakeshopsystem.models.Product;
 import com.cakeshopsystem.utils.constants.CakeShape;
 import com.cakeshopsystem.utils.constants.CakeType;
 import com.cakeshopsystem.utils.databaseconnection.DB;
@@ -8,6 +9,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CakeDAO {
 
@@ -320,5 +323,14 @@ public class CakeDAO {
             return false;
         }
     }
+
+    // =====================================
+// ===== TOP SELLING CAKES ==============
+// =====================================
+    // =====================================
+// ===== TOP SELLING CAKES (LABEL + IMAGE) =====
+// =====================================
+
+
 
 }

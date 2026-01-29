@@ -25,23 +25,19 @@
       </VBox>
    </top>
    <center>
-      <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
-         <children>
-            <HBox fx:id="topProductsContainer" />
-            <HBox prefHeight="100.0" prefWidth="200.0">
-               <children>
-                  <BarChart fx:id="productBarChart">
-                    <xAxis>
-                      <CategoryAxis label="Products" side="BOTTOM" />
-                    </xAxis>
-                    <yAxis>
-                      <NumberAxis label="Sales Count" side="LEFT" />
-                    </yAxis>
-                  </BarChart>
-                  <PieChart fx:id="productPieChart" />
-               </children>
-            </HBox>
-         </children>
-      </VBox>
+       <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+           <HBox fx:id="topProductsContainer"/>
+           <HBox prefHeight="100.0" prefWidth="200.0">
+               <BarChart fx:id="productBarChart">
+                   <xAxis>
+                       <CategoryAxis label="Products" side="BOTTOM"/>
+                   </xAxis>
+                   <yAxis>
+                       <NumberAxis label="Sales Count" side="LEFT"/>
+                   </yAxis>
+               </BarChart>
+               <PieChart fx:id="productPieChart"/>
+           </HBox>
+       </VBox>
    </center>
 </BorderPane>

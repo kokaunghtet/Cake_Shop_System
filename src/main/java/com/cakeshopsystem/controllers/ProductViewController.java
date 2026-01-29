@@ -73,7 +73,7 @@ public class ProductViewController {
     /* =========================================================
        Constants
        ========================================================= */
-    private static final String PRODUCT_CARD_FXML = "/views/ProductCard.fxml";
+    public static final String PRODUCT_CARD_FXML = "/views/ProductCard.fxml";
     private String roleName = "";
 
     /* =========================================================

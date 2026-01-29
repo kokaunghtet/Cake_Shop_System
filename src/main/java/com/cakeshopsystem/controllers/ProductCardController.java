@@ -62,6 +62,7 @@ public class ProductCardController {
     private double drinkHotPrice;
     private double drinkColdPrice;
     private ChangeListener<Toggle> drinkToggleListener;
+    private boolean isTopProductCard = false;
 
     /* =========================================================
        Lifecycle
@@ -159,6 +160,35 @@ public class ProductCardController {
 //        quantityLabel.setText(String.valueOf(quantity));
 //        updateQtyButtonsState();
 //    }
+public void setProductData(Product product) {
+    isTopProductCard = true;
+
+//    HBox priceContainer = (HBox) productPrice.getParent();
+//    priceContainer.setVisible(false);
+//    priceContainer.setManaged(false);
+
+    disableDrinkOptions();
+    disableDiyAvailability();
+    showStockSection(false);
+
+    decreaseBtn.setVisible(false);
+    decreaseBtn.setManaged(false);
+
+    addToCartBtn.setVisible(false);
+    addToCartBtn.setManaged(false);
+
+    increaseBtn.setVisible(false);
+    increaseBtn.setManaged(false);
+
+    quantityLabel.setVisible(false);
+    quantityLabel.setManaged(false);
+
+    loadProductImage(product.getImgPath());
+    productName.setText(product.getProductName());
+
+
+}
+
 
     public void setDrinkData(Product product) {
         this.currentProduct = product;
@@ -413,6 +443,8 @@ public class ProductCardController {
        Refresh
        ========================================================= */
     private void refreshThisCard() {
+
+        if (isTopProductCard) return;
         if (currentProduct == null) return;
 
         Product fresh = ProductDAO.getProductById(currentProduct.getProductId());
