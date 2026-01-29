@@ -217,7 +217,7 @@ public class EditProductController {
             }
         }
 
-        SnackBar.show(SnackBarType.SUCCESS, "", "Saved successfully.", Duration.seconds(2));
+        SnackBar.show(SnackBarType.SUCCESS, "Updated", "Changes to the product were saved.", Duration.seconds(2));
 
         ProductCache.refreshProducts();
         CakeCache.refreshCake();
@@ -289,7 +289,7 @@ public class EditProductController {
 
         txtStockQty.clear();
         txtShelfLifeDays.clear();
-        SnackBar.show(SnackBarType.SUCCESS, "", "Stock added.", Duration.seconds(2));
+        SnackBar.show(SnackBarType.SUCCESS, "Stock updated", "Inventory was updated.", Duration.seconds(2));
     }
 
     // =====================================

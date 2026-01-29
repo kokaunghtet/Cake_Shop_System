@@ -19,12 +19,12 @@
 /* SnackBar Text */
 .snack-title {
     -fx-font-weight: 700;
-    -fx-font-size: 14px;
+    -fx-font-size: 16;
     -fx-text-fill: rgba(255,255,255,0.95);
 }
 
 .snack-message {
-    -fx-font-size: 12.5px;
+    -fx-font-size: 14;
     -fx-text-fill: rgba(255,255,255,0.82);
 }
 
