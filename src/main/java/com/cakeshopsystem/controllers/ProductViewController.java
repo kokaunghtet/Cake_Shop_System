@@ -250,6 +250,8 @@ public class ProductViewController {
     private void handleWasteProduct() {
         Integer userId = SessionManager.getUser().getUserId();
         InventoryDAO.wasteExpiredInventory(userId);
+
+        // Showing success noti
         SnackBar.show(SnackBarType.SUCCESS, "Success", "Expired stock has been processed.", Duration.seconds(2));
     }
 
