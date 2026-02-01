@@ -7,6 +7,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.sql.*;
+import java.time.LocalDate;
 
 public class ProductDAO {
 
@@ -250,13 +251,13 @@ public class ProductDAO {
         }
     }
 
-  public static ObservableList<ProductSales>
+  /*public static ObservableList<ProductSales>
     getSalesByProductType(String type) {
 
         ObservableList<ProductSales> list = FXCollections.observableArrayList();
 
         String sql = """
-        SELECT 
+        SELECT
             p.product_name,
             COUNT(oi.product_id) AS total_sold
         FROM order_items oi
@@ -281,19 +282,20 @@ public class ProductDAO {
         }
 
         return list;
-    }
+    }*/
 
-    public static ObservableList<ProductSales> getDiyCakeSales() {
-
+   /* public static ObservableList<ProductSales> getDiyCakeSales() {
         ObservableList<ProductSales> list = FXCollections.observableArrayList();
 
         String sql = """
-        SELECT 
-            diy_cake_name AS product_name,
-            COUNT(*) AS total_sold
-        FROM diy_cake_orders
-        GROUP BY diy_cake_name
-        ORDER BY total_sold DESC
+                     SELECT p.product_name AS product_name,
+                     COUNT(*) AS total_sold
+                    FROM diy_cake_bookings dcb
+                    JOIN cakes c ON dcb.cake_id = c.cake_id
+                    JOIN products p ON c.product_id = p.product_id
+                    GROUP BY p.product_name
+                    ORDER BY total_sold DESC;
+                
     """;
 
         try (PreparedStatement ps = DB.connect().prepareStatement(sql);
@@ -311,21 +313,32 @@ public class ProductDAO {
 
         return list;
     }
+
 
     public static ObservableList<ProductSales> getCustomCakeSales() {
-
         ObservableList<ProductSales> list = FXCollections.observableArrayList();
 
         String sql = """
-        SELECT 
-            custom_cake_name AS product_name,
-            COUNT(*) AS total_sold
-        FROM custom_cake_orders
-        GROUP BY custom_cake_name
-        ORDER BY total_sold DESC
-    """;
+                SELECT p.product_name AS product_name,
+                COUNT(*) AS total_sold
+        FROM custom_cake_bookings cb
+        JOIN cakes c ON cb.cake_id = c.cake_id
+        JOIN products p ON c.product_id = p.product_id
+        GROUP BY p.product_name
+        ORDER BY total_sold DESC""";
 
-        try (PreparedStatement ps = DB.connect().prepareStatement(sql);
+
+
+        /*String sql = """
+        SELECT c.cake_name AS product_name,
+               COUNT(*) AS total_sold
+        FROM custom_cake_bookings cb
+        JOIN cakes c ON cb.cake_id = c.cake_id
+        GROUP BY c.cake_name
+        ORDER BY total_sold DESC
+    """;*/
+
+       /* try (PreparedStatement ps = DB.connect().prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
@@ -340,6 +353,7 @@ public class ProductDAO {
 
         return list;
     }
+
 
 
 
@@ -522,25 +536,79 @@ public class ProductDAO {
         }
 
         return list;
-    }
-    public static ObservableList<ProductSales> getAllProductSales() {
-        ObservableList<ProductSales> list = FXCollections.observableArrayList();
+    }*/
+
+    // ==========================
+// ===== SALES BY CATEGORY =====
+// ==========================
+    /*public static ObservableList<ProductSales> getSalesByCategoryId(int categoryId) {
+        ObservableList<ProductSales> salesList = FXCollections.observableArrayList();
+
         String sql = """
-        SELECT p.product_name, SUM(oi.quantity) AS total_sold
+        SELECT
+            COALESCE(p.product_name, dp.product_name) AS name,
+            SUM(oi.quantity) AS total_sold
         FROM order_items oi
-        JOIN products p ON oi.product_id = p.product_id
-        GROUP BY p.product_name
+        LEFT JOIN products p ON oi.product_id = p.product_id
+        LEFT JOIN drinks d ON oi.drink_id = d.drink_id
+        LEFT JOIN products dp ON d.product_id = dp.product_id
+        WHERE (p.category_id = ? OR dp.category_id = ?)
+        GROUP BY name
         ORDER BY total_sold DESC
     """;
 
-        try (PreparedStatement ps = DB.connect().prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        try (Connection con = DB.connect();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
 
-            while (rs.next()) {
-                list.add(new ProductSales(
-                        rs.getString("product_name"),
-                        rs.getInt("total_sold")
-                ));
+            stmt.setInt(1, categoryId);
+            stmt.setInt(2, categoryId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    salesList.add(new ProductSales(
+                            rs.getString("name"),
+                            rs.getInt("total_sold")
+                    ));
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return salesList;
+    }*/// Example: Updated getSalesByCategoryId in ProductDAO.java
+
+    // --------------------------
+// ===== TOP PRODUCTS =======
+// --------------------------
+    public static ObservableList<Product> getTopDiyCakes(LocalDate start, LocalDate end) {
+        ObservableList<Product> list = FXCollections.observableArrayList();
+        String sql = """
+        SELECT p.product_name, p.img_path, COUNT(*) AS total_orders
+        FROM diy_cake_bookings dcb
+        JOIN orders o ON dcb.order_id = o.order_id
+        JOIN cakes c ON dcb.cake_id = c.cake_id
+        JOIN products p ON c.product_id = p.product_id
+        WHERE o.order_date BETWEEN ? AND ?
+        GROUP BY p.product_name, p.img_path
+        ORDER BY total_orders DESC
+        LIMIT 5
+    """;
+
+        try (var con = DB.connect();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setDate(1, java.sql.Date.valueOf(start));
+            ps.setDate(2, java.sql.Date.valueOf(end.plusDays(1))); // include full day
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Product p = new Product();
+                    p.setProductName(rs.getString("product_name"));
+                    p.setImgPath(rs.getString("img_path"));
+                    list.add(p);
+                }
             }
 
         } catch (SQLException e) {
@@ -550,6 +618,273 @@ public class ProductDAO {
         return list;
     }
 
+    public static ObservableList<Product> getTopCustomCakes(LocalDate start, LocalDate end) {
+        ObservableList<Product> list = FXCollections.observableArrayList();
+        String sql = """
+        SELECT p.product_name, p.img_path, COUNT(*) AS total_orders
+        FROM custom_cake_bookings cb
+        JOIN orders o ON cb.order_id = o.order_id
+        JOIN cakes c ON cb.cake_id = c.cake_id
+        JOIN products p ON c.product_id = p.product_id
+        WHERE o.order_date BETWEEN ? AND ?
+        GROUP BY p.product_name, p.img_path
+        ORDER BY total_orders DESC
+        LIMIT 5
+    """;
+
+        try (var con = DB.connect();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setDate(1, java.sql.Date.valueOf(start));
+            ps.setDate(2, java.sql.Date.valueOf(end.plusDays(1)));
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Product p = new Product();
+                    p.setProductName(rs.getString("product_name"));
+                    p.setImgPath(rs.getString("img_path"));
+                    list.add(p);
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    public static ObservableList<Product> getTopDrinks(LocalDate start, LocalDate end) {
+        ObservableList<Product> list = FXCollections.observableArrayList();
+        String sql = """
+        SELECT p.product_name, p.img_path, SUM(oi.quantity) AS total_sold
+        FROM order_items oi
+        JOIN orders o ON oi.order_id = o.order_id
+        JOIN drinks d ON oi.drink_id = d.drink_id
+        JOIN products p ON d.product_id = p.product_id
+        WHERE o.order_date BETWEEN ? AND ?
+        GROUP BY p.product_name, p.img_path
+        ORDER BY total_sold DESC
+        LIMIT 5
+    """;
+
+        try (var con = DB.connect();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setDate(1, java.sql.Date.valueOf(start));
+            ps.setDate(2, java.sql.Date.valueOf(end.plusDays(1)));
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Product p = new Product();
+                    p.setProductName(rs.getString("product_name"));
+                    p.setImgPath(rs.getString("img_path"));
+                    list.add(p);
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+    public static ObservableList<Product> getTopSellingProductsByType(String filter, LocalDate start, LocalDate end) {
+        ObservableList<Product> list = FXCollections.observableArrayList();
+
+        String sql = """
+        SELECT 
+            p.product_name,
+            p.img_path,
+            SUM(oi.quantity) AS total_sold
+        FROM order_items oi
+        JOIN products p ON oi.product_id = p.product_id
+        JOIN categories c ON p.category_id = c.category_id
+        JOIN orders o ON oi.order_id = o.order_id
+        WHERE c.category_name = ?
+        AND o.order_date BETWEEN ? AND ?
+        GROUP BY p.product_name, p.img_path
+        ORDER BY total_sold DESC
+        LIMIT 5
+    """;
+
+        try (var con = DB.connect();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setString(1, filter);
+            ps.setDate(2, java.sql.Date.valueOf(start));
+            ps.setDate(3, java.sql.Date.valueOf(end.plusDays(1))); // include full day
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Product p = new Product();
+                    p.setProductName(rs.getString("product_name"));
+                    p.setImgPath(rs.getString("img_path"));
+                    list.add(p);
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+    // ==========================
+// ===== DIY CAKE SALES =====
+// ==========================
+    public static ObservableList<ProductSales> getDiyCakeSales(LocalDate start, LocalDate end) {
+        ObservableList<ProductSales> list = FXCollections.observableArrayList();
+
+        String sql = """
+        SELECT p.product_name AS product_name,
+               COUNT(*) AS total_sold
+        FROM diy_cake_bookings dcb
+        JOIN orders o ON dcb.order_id = o.order_id
+        JOIN cakes c ON dcb.cake_id = c.cake_id
+        JOIN products p ON c.product_id = p.product_id
+        WHERE o.order_date BETWEEN ? AND ?
+        GROUP BY p.product_name
+        ORDER BY total_sold DESC
+    """;
+
+        try (PreparedStatement ps = DB.connect().prepareStatement(sql)) {
+            ps.setDate(1, java.sql.Date.valueOf(start));
+            ps.setDate(2, java.sql.Date.valueOf(end.plusDays(1))); // include full day
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(new ProductSales(
+                            rs.getString("product_name"),
+                            rs.getInt("total_sold")
+                    ));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    // ==========================
+// ===== CUSTOM CAKE SALES ===
+// ==========================
+    public static ObservableList<ProductSales> getCustomCakeSales(LocalDate start, LocalDate end) {
+        ObservableList<ProductSales> list = FXCollections.observableArrayList();
+
+        String sql = """
+        SELECT p.product_name AS product_name,
+               COUNT(*) AS total_sold
+        FROM custom_cake_bookings cb
+        JOIN orders o ON cb.order_id = o.order_id
+        JOIN cakes c ON cb.cake_id = c.cake_id
+        JOIN products p ON c.product_id = p.product_id
+        WHERE o.order_date BETWEEN ? AND ?
+        GROUP BY p.product_name
+        ORDER BY total_sold DESC
+    """;
+
+        try (PreparedStatement ps = DB.connect().prepareStatement(sql)) {
+            ps.setDate(1, java.sql.Date.valueOf(start));
+            ps.setDate(2, java.sql.Date.valueOf(end.plusDays(1)));
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(new ProductSales(
+                            rs.getString("product_name"),
+                            rs.getInt("total_sold")
+                    ));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    // ==========================
+// ===== TOP DRINK SALES =====
+// ==========================
+    public static ObservableList<ProductSales> getTopDrinksSales(LocalDate start, LocalDate end) {
+        ObservableList<ProductSales> list = FXCollections.observableArrayList();
+
+        String sql = """
+        SELECT p.product_name,
+               SUM(oi.quantity) AS total_sold
+        FROM order_items oi
+        JOIN orders o ON oi.order_id = o.order_id
+        JOIN drinks d ON oi.drink_id = d.drink_id
+        JOIN products p ON d.product_id = p.product_id
+        WHERE o.order_date BETWEEN ? AND ?
+        GROUP BY p.product_name
+        ORDER BY total_sold DESC
+    """;
+
+        try (PreparedStatement ps = DB.connect().prepareStatement(sql)) {
+            ps.setDate(1, java.sql.Date.valueOf(start));
+            ps.setDate(2, java.sql.Date.valueOf(end.plusDays(1)));
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(new ProductSales(
+                            rs.getString("product_name"),
+                            rs.getInt("total_sold")
+                    ));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    // ==========================
+// ===== SALES BY CATEGORY ===
+// ==========================
+    public static ObservableList<ProductSales> getSalesByCategoryId(int categoryId, LocalDate start, LocalDate end) {
+        ObservableList<ProductSales> salesList = FXCollections.observableArrayList();
+
+        String sql = """
+        SELECT COALESCE(p.product_name, dp.product_name) AS name,
+               SUM(oi.quantity) AS total_sold
+        FROM order_items oi
+        JOIN orders o ON oi.order_id = o.order_id
+        LEFT JOIN products p ON oi.product_id = p.product_id
+        LEFT JOIN drinks d ON oi.drink_id = d.drink_id
+        LEFT JOIN products dp ON d.product_id = dp.product_id
+        WHERE (p.category_id = ? OR dp.category_id = ?)
+          AND o.order_date BETWEEN ? AND ?
+        GROUP BY name
+        ORDER BY total_sold DESC
+    """;
+
+        try (Connection con = DB.connect();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+
+            stmt.setInt(1, categoryId);
+            stmt.setInt(2, categoryId);
+            stmt.setDate(3, java.sql.Date.valueOf(start));
+            stmt.setDate(4, java.sql.Date.valueOf(end.plusDays(1)));
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    salesList.add(new ProductSales(
+                            rs.getString("name"),
+                            rs.getInt("total_sold")
+                    ));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return salesList;
+    }
 
 
 }
+
+

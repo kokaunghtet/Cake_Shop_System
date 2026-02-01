@@ -25,7 +25,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.scene.control.Toggle;
 
 public class ProductCardController {
-
     // =====================================
     // ============ FXML FIELDS ============
     // =====================================
@@ -65,6 +64,8 @@ public class ProductCardController {
 
     /* Quantity Stepper UI */
     @FXML
+    private HBox qtyBtnHBox;
+    @FXML
     private HBox qtyStepperHBox;
     @FXML
     private Button decreaseBtn;
@@ -74,6 +75,8 @@ public class ProductCardController {
     private Button increaseBtn;
 
     /* Action Buttons */
+    @FXML
+    private HBox priceHBox;
     @FXML
     private Button addToCartBtn;
     @FXML
@@ -208,28 +211,22 @@ public class ProductCardController {
     public void setProductData(Product product) {
         isTopProductCard = true;
 
-        HBox priceContainer = (HBox) productPrice.getParent();
-        priceContainer.setVisible(false);
-        priceContainer.setManaged(false);
+        qtyBtnHBox.setVisible(false);
+        qtyBtnHBox.setManaged(false);
 
         disableDrinkOptions();
         disableDiyAvailability();
         showStockSection(false);
 
-        decreaseBtn.setVisible(false);
-        decreaseBtn.setManaged(false);
-
         addToCartBtn.setVisible(false);
         addToCartBtn.setManaged(false);
 
-        increaseBtn.setVisible(false);
-        increaseBtn.setManaged(false);
-
-        quantityLabel.setVisible(false);
-        quantityLabel.setManaged(false);
+        priceHBox.setVisible(false);
+        priceHBox.setManaged(false);
 
         loadProductImage(product.getImgPath());
         productName.setText(product.getProductName());
+        productName.setAlignment(Pos.CENTER);
     }
 
     public void setDrinkData(Product product) {
