@@ -33,8 +33,6 @@ public class ProductViewController {
     @FXML
     private Button addNewProductBtn;
     @FXML
-    private Button cartBtn;
-    @FXML
     private Button processExpiredBtn;
 
     /* Discount Section Controls */
@@ -54,7 +52,7 @@ public class ProductViewController {
     private HBox accessoryHBox;
 
     // =====================================
-    // =========== STATE & CONSTS ==========
+    // ========== STATE & CONSTANTS ========
     // =====================================
 
     private static final String PRODUCT_CARD_FXML = "/views/ProductCard.fxml";
@@ -103,10 +101,15 @@ public class ProductViewController {
     }
 
     private void configureRoleBasedAccess(String roleName) {
-        if (roleName.equalsIgnoreCase("Admin")) {
-            cartBtn.setVisible(false);
-            cartBtn.setManaged(false);
-        } else if (roleName.equalsIgnoreCase("Cashier")) {
+//        if (roleName.equalsIgnoreCase("Admin")) {
+//            MainController.getCartBtn().setVisible(false);
+//            MainController.getCartBtn().setManaged(false);
+//        } else if (roleName.equalsIgnoreCase("Cashier")) {
+//            addNewProductBtn.setVisible(false);
+//            addNewProductBtn.setManaged(false);
+//        }
+
+        if(roleName.equalsIgnoreCase("Cashier")) {
             addNewProductBtn.setVisible(false);
             addNewProductBtn.setManaged(false);
         }
@@ -250,8 +253,9 @@ public class ProductViewController {
     private void handleWasteProduct() {
         Integer userId = SessionManager.getUser().getUserId();
         InventoryDAO.wasteExpiredInventory(userId);
+        reloadAllProducts();
 
-        // Showing success noti
+        // Showing success notification
         SnackBar.show(SnackBarType.SUCCESS, "Success", "Expired stock has been processed.", Duration.seconds(2));
     }
 
