@@ -272,6 +272,24 @@ Popup Close Button
     -fx-text-fill: -app-base-text-color;
 }
 
+.btn-danger-icon {
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+    -fx-padding: 4 6 4 6;
+}
+
+.btn-danger-icon:hover {
+    -fx-background-color: transparent
+}
+
+.btn-danger-icon:pressed {
+    -fx-background-color: transparent;
+}
+
+.btn-danger-icon .ikonli-font-icon {
+    -fx-icon-color: red;
+}
+
 /* =========================
    Radio (Pill style)
    ========================= */

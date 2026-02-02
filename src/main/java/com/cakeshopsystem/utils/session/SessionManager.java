@@ -8,6 +8,8 @@ import com.cakeshopsystem.utils.cache.UserCache;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.math.BigDecimal;
+
 public class SessionManager {
 
     // =========================
@@ -28,6 +30,7 @@ public class SessionManager {
     public static User user;
     public static boolean isAdmin;
     public static boolean isDarkModeOn = false;
+    public static double discountRate = 0.5; // 50% discount rate for expired soon products
 
     // Utility class (prevent instantiation)
     private SessionManager() {}

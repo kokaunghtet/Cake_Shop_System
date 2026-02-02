@@ -91,11 +91,11 @@
             <Button fx:id="addNewProductBtn" mnemonicParsing="false" text="Add New Product"/>
         </HBox>
 
-        <Button fx:id="cartBtn" mnemonicParsing="false" text="Cart" StackPane.alignment="BOTTOM_RIGHT">
-            <graphic>
-                <FontIcon iconLiteral="fas-cart-plus" iconSize="15" styleClass="cart-icon" />
-            </graphic>
-        </Button>
+<!--        <Button fx:id="cartBtn" mnemonicParsing="false" text="Cart" StackPane.alignment="BOTTOM_RIGHT">-->
+<!--            <graphic>-->
+<!--                <FontIcon iconLiteral="fas-cart-plus" iconSize="15" styleClass="cart-icon" />-->
+<!--            </graphic>-->
+<!--        </Button>-->
 
     </StackPane>
 </AnchorPane>
