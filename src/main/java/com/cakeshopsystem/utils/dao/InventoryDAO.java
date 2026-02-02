@@ -205,6 +205,30 @@ public class InventoryDAO {
         return null;
     }
 
+    public static int getDiscountQuantityByProductId(int productId) {
+        String sql = """
+                SELECT COALESCE(SUM(quantity), 0) AS qty
+                FROM inventory
+                WHERE product_id = ?
+                  AND quantity > 0
+                  AND exp_date = CURRENT_DATE
+                """;
+
+        try (Connection con = DB.connect();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+
+            stmt.setInt(1, productId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) return rs.getInt("qty");
+            }
+        } catch (SQLException err) {
+            System.err.println("Error fetching discount qty: " + err.getLocalizedMessage());
+        }
+
+        return 0;
+    }
+
     public static int getTotalAvailableQuantityByProductId(int productId) {
         String query = """
                     SELECT COALESCE(SUM(quantity), 0) AS total_qty
@@ -365,13 +389,13 @@ public class InventoryDAO {
         return ts == null ? null : ts.toLocalDateTime();
     }
 
-    public static void wasteExpiredInventory (Integer userId) {
+    public static void wasteExpiredInventory(Integer userId) {
         String sql = "{CALL waste_expired_inventory(?)}";
 
         try (Connection con = DB.connect();
              PreparedStatement stmt = con.prepareStatement(sql)) {
 
-            if(userId == null) {
+            if (userId == null) {
                 stmt.setNull(1, Types.INTEGER);
             } else {
                 stmt.setInt(1, userId);

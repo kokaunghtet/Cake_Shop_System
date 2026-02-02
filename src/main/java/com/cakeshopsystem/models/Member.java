@@ -20,6 +20,13 @@ public class Member {
         this.qualifiedOrderId = qualifiedOrderId;
     }
 
+    public Member(String memberName, String phone, int qualifiedOrderId, LocalDateTime memberSince) {
+        this.memberName = memberName;
+        this.phone = phone;
+        this.qualifiedOrderId = qualifiedOrderId;
+        this.memberSince = memberSince;
+    }
+
     public int getMemberId() {
         return memberId;
     }

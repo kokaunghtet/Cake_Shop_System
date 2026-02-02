@@ -440,13 +440,6 @@ public class AddProductController {
     // =====================================
     // ========= VALIDATION HELPERS ========
     // =====================================
-
-//    private String requiredText(TextField tf, String fieldName) {
-//        String v = tf.getText() == null ? "" : tf.getText().trim();
-//        if (v.isEmpty()) throw new IllegalArgumentException(fieldName + " is required.");
-//        return v;
-//    }
-
     private String requiredText(TextField tf, String fieldName) {
         String v = (tf.getText() == null) ? "" : tf.getText().trim();
         if (v.isEmpty()) {

@@ -1,6 +1,7 @@
 package com.cakeshopsystem.utils.dao;
 
 import com.cakeshopsystem.models.OrderItem;
+import com.cakeshopsystem.utils.constants.OrderOption;
 import com.cakeshopsystem.utils.databaseconnection.DB;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -196,10 +197,13 @@ public class OrderItemDAO {
         Integer productId = (Integer) rs.getObject("product_id");
         Integer drinkId = (Integer) rs.getObject("drink_id");
 
+        String typeStr = rs.getString("order_option");
+        OrderOption orderOption = OrderOption.valueOf(typeStr);
+
         int quantity = rs.getInt("quantity");
         double unitPrice = rs.getDouble("unit_price");
         double lineTotal = rs.getDouble("line_total"); // generated column
 
-        return new OrderItem(orderItemId, orderId, productId, drinkId, quantity, unitPrice, lineTotal);
+        return new OrderItem(orderItemId, orderId, productId, drinkId, orderOption, quantity, unitPrice, lineTotal);
     }
 }

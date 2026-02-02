@@ -7,12 +7,14 @@ import com.cakeshopsystem.utils.components.BreadcrumbBar;
 import com.cakeshopsystem.utils.components.BreadcrumbManager;
 import com.cakeshopsystem.utils.components.SnackBar;
 import com.cakeshopsystem.utils.constants.SnackBarType;
+import com.cakeshopsystem.utils.services.CartService;
 import com.cakeshopsystem.utils.session.SessionManager;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -50,40 +52,31 @@ import java.util.concurrent.Executors;
 public class MainController {
 
     /* =========================================================
-     * Constants / State
+     * 1. CONSTANTS & STATE
      * ========================================================= */
-
     private static final String DEFAULT_VIEW_FXML = "/views/admin/AdminDashboard.fxml";
     private static final String DEFAULT_CASHIER_VIEW_FXML = "/views/ProductView.fxml";
     private static final String DEFAULT_TITLE_PREFIX = "Cake Shop System | ";
 
-    // Tracks which nav link is currently active for styling
     private Hyperlink activeLink;
-
-    // Popup state
     private static boolean isPopupContentOpen = false;
+    private Popup settingsPopup;
 
-    // Use a single background thread for FXML loading (prevents spawning many threads)
     private final ExecutorService fxmlLoaderExecutor = Executors.newSingleThreadExecutor(r -> {
         Thread t = new Thread(r, "fxml-loader");
-        t.setDaemon(true); // Daemon so app can exit cleanly
+        t.setDaemon(true);
         return t;
     });
 
     /* =========================================================
-     * FXML: Icons
+     * 2. FXML INJECTIONS
      * ========================================================= */
-
     @FXML
     private FontIcon settingIcon;
     @FXML
     private FontIcon signOutIcon;
     @FXML
     private FontIcon moonIcon;
-
-    /* =========================================================
-     * FXML: Layout Containers
-     * ========================================================= */
 
     @FXML
     private AnchorPane contentPane;
@@ -97,10 +90,9 @@ public class MainController {
     private AnchorPane popupPane;
     @FXML
     public StackPane popupHost;
+    @FXML
+    private StackPane badgePane;
 
-    /* =========================================================
-     * FXML: Top Bar
-     * ========================================================= */
 
     @FXML
     private ImageView profileImageView;
@@ -111,16 +103,12 @@ public class MainController {
     @FXML
     private Label usernameLabel;
 
-    /* =========================================================
-     * FXML: Navigation Links
-     * ========================================================= */
-
     @FXML
     private Hyperlink adminDashboardLink;
     @FXML
     private Hyperlink adminProductLink;
     @FXML
-    private Hyperlink customerOrderLink;
+    private Hyperlink customOrderLink;
     @FXML
     private Hyperlink memberLink;
     @FXML
@@ -130,40 +118,33 @@ public class MainController {
     @FXML
     private Hyperlink bookingLink;
 
-    /* =========================================================
-     * FXML: Breadcrumbs
-     * ========================================================= */
-
     @FXML
     private BreadcrumbBar breadcrumbBar;
 
+    @FXML
+    private Button cartBtn;
+    @FXML
+    private Label badgeLabel;
+
+
     /* =========================================================
-     * Static References for Popup System
+     * 3. STATIC REFERENCES (For Popup/Focus System)
      * ========================================================= */
-
-    // Loading overlay (added to mainStackPane)
     private static StackPane loadingOverlay;
-
-    // Static references to allow popup control from other controllers
     private static BorderPane staticBorderPane;
     private static AnchorPane staticPopupContentPane;
     private static AnchorPane staticOverlayPane;
 
-    private Popup settingsPopup;
-
-    /* =========================================================
-     * Focus Trapping for Popups
-     * ========================================================= */
     private static EventHandler<KeyEvent> focusTrapHandler;
     private static Parent focusTrapRoot;
 
-    /* =========================================================
-     * Lifecycle
-     * ========================================================= */
+    private final CartService cartService = CartService.getInstance();
 
+    /* =========================================================
+     * 4. INITIALIZATION
+     * ========================================================= */
     @FXML
     public void initialize() {
-        // Make controller state accessible from static popup helpers
         staticOverlayPane = overlayPane;
         staticBorderPane = mainBorderPane;
         staticPopupContentPane = popupPane;
@@ -177,7 +158,6 @@ public class MainController {
             signOutIcon.setOnMouseClicked(e -> handleLogout());
         }
 
-        // Loading overlay
         loadingOverlay = createLoadingOverlay();
         loadingOverlay.setVisible(false);
         loadingOverlay.setManaged(false);
@@ -186,164 +166,40 @@ public class MainController {
             mainStackPane.getChildren().add(loadingOverlay);
         }
 
-        // Breadcrumb binding
         if (breadcrumbBar != null) {
             breadcrumbBar.bindToGlobal();
         }
 
-        if (signOutIcon != null) signOutIcon.setOnMouseClicked(e -> handleLogout());
-
-        // Initialize the popup logic once
         initSettingsPopup();
-        settingIcon.setOnMouseClicked(e -> showSettingsPopup());
+        if (settingIcon != null) settingIcon.setOnMouseClicked(e -> showSettingsPopup());
 
-        // Default navigation
+
         if (SessionManager.isAdmin) {
             BreadcrumbManager.setBreadcrumbs();
             navigate(DEFAULT_VIEW_FXML, adminDashboardLink, "Dashboard");
+
+            hideCartUI();
         } else {
             BreadcrumbManager.setBreadcrumbs();
             navigate(DEFAULT_CASHIER_VIEW_FXML, staffProductLink, "Products");
+
+            initCartUI();
         }
 
-        // Navigation handlers
         if (adminDashboardLink != null) adminDashboardLink.setOnMouseClicked(e -> loadAdminDashboard());
         if (userLink != null) userLink.setOnMouseClicked(e -> loadUser());
         if (memberLink != null) memberLink.setOnMouseClicked(e -> loadMember());
         if (adminProductLink != null) adminProductLink.setOnMouseClicked(e -> loadAdminProduct());
-
         if (staffProductLink != null) staffProductLink.setOnMouseClicked(e -> loadStaffProduct());
     }
 
     /* =========================================================
-     * Settings Popup Optimization
+     * 5. NAVIGATION & VIEW LOADING
      * ========================================================= */
-
-    /**
-     * Build the popup once in memory.
-     */
-    private void initSettingsPopup() {
-        Hyperlink link1 = new Hyperlink("User Configuration");
-        Hyperlink link2 = new Hyperlink("Payment Configuration");
-
-        VBox box;
-        if(SessionManager.isAdmin) {
-             box = new VBox(10, link1, link2);
-        } else {
-             box = new VBox(link1);
-        }
-
-        box.getStyleClass().add("container"); // Ensure your CSS has this class or use inline style
-
-        settingsPopup = new Popup();
-        settingsPopup.getContent().add(box);
-        settingsPopup.setAutoHide(true);
-
-        // Close popup when links are clicked
-        link1.setOnAction(e -> {
-            togglePopupContent("/views/EditUserConfig.fxml");
-            settingsPopup.hide();
-        });
-        link2.setOnAction(e -> {
-            togglePopupContent("/views/EditPaymentConfig.fxml");
-            settingsPopup.hide();
-        });
-    }
-
-    /**
-     * Show the pre-built popup.
-     */
-    private void showSettingsPopup() {
-        if (settingsPopup == null) return;
-
-        if (settingsPopup.isShowing()) {
-            settingsPopup.hide();
-            return;
-        }
-
-        // Calculate position relative to the icon
-        var bounds = settingIcon.localToScreen(settingIcon.getBoundsInLocal());
-        if (bounds != null) {
-            settingsPopup.show(settingIcon,
-                    bounds.getMaxX() - 140, // Adjusted X to align better
-                    bounds.getMaxY() + 20
-            );
-        }
-    }
-
-    /* =========================================================
-     * User / Session
-     * ========================================================= */
-
-    private void handleLogout() {
-        SessionManager.forceLogout(); // Clear session state
-        SnackBar.show(SnackBarType.SUCCESS, "Logged out successfully", "", Duration.seconds(3));
-    }
-
-    /**
-     * Updates username and role labels from the current session user.
-     */
-    private void updateUserInfo() {
-        User user = SessionManager.getUser();
-        if (user == null) return;
-
-        String path = user.getImagePath();
-
-        if (path == null || path.isBlank()) {
-            path = "/images/default-profile.jpg";
-        }
-
-        Image userProfileImage = loadImageSmart(path);
-
-        // fallback if loading failed
-        if (userProfileImage == null || userProfileImage.isError()) {
-            userProfileImage = loadImageSmart("/images/default-profile.jpg");
-        }
-
-        if (userProfileImage != null && !userProfileImage.isError()) {
-            ImageHelper.setCircularAvatar(profileImageView, userProfileImage, 60);
-        }
-
-        if (usernameLabel != null) {
-            usernameLabel.setText(user.getUserName());
-        }
-
-        if (roleLabel != null && RoleCache.getRolesMap().containsKey(user.getRole())) {
-            roleLabel.setText(RoleCache.getRolesMap().get(user.getRole()).getRoleName());
-        }
-    }
-
-    /* =========================================================
-     * Role-Based Access Control
-     * ========================================================= */
-
-    /**
-     * Hides navigation links depending on the current user's role.
-     * Uses managed=false to remove layout space as well.
-     */
-    private void configureRoleBasedAccess() {
-        User user = SessionManager.getUser();
-        if (user == null) return;
-        if (!RoleCache.getRolesMap().containsKey(user.getRole())) return;
-
-        String roleName = RoleCache.getRolesMap().get(user.getRole()).getRoleName();
-
-        if (roleName.equalsIgnoreCase("Admin")) {
-            hideLinks(customerOrderLink, staffProductLink, bookingLink);
-        } else if (roleName.equalsIgnoreCase("Cashier")) {
-            hideLinks(adminDashboardLink, adminProductLink, memberLink, userLink);
-        }
-    }
-
-    /* =========================================================
-     * Navigation (Public Handlers)
-     * ========================================================= */
-
     private void navigate(String fxmlPath, Hyperlink navLink, String pageName) {
         loadView(fxmlPath, navLink, DEFAULT_TITLE_PREFIX + pageName, pageName);
     }
 
-    // ADMIN
     public void loadAdminDashboard() {
         navigate("/views/admin/AdminDashboard.fxml", adminDashboardLink, "Dashboard");
     }
@@ -360,28 +216,53 @@ public class MainController {
         navigate("/views/ProductView.fxml", adminProductLink, "Products");
     }
 
-    // CASHIER
     public void loadStaffProduct() {
         navigate("/views/ProductView.fxml", staffProductLink, "Products");
     }
 
-    /* =========================================================
-     * Breadcrumb + View Loader
-     * ========================================================= */
+    private void openCartPopup() {
+        togglePopupContent("/views/Cart.fxml");
+    }
 
-    /**
-     * Loads an FXML into the center content pane asynchronously and updates the window title.
-     */
     private void loadView(String fxmlPath, Hyperlink navLink, String windowTitle, String breadcrumbTitle) {
         setCenterContent(fxmlPath, windowTitle);
         setActiveLink(navLink);
 
-        BreadcrumbManager.setBreadcrumbs(
-                new BreadcrumbBar.BreadcrumbItem(
-                        breadcrumbTitle,
-                        ev -> loadView(fxmlPath, navLink, windowTitle, breadcrumbTitle)
-                )
+        BreadcrumbManager.setBreadcrumbs(new BreadcrumbBar.BreadcrumbItem(breadcrumbTitle, ev -> loadView(fxmlPath, navLink, windowTitle, breadcrumbTitle)));
+    }
+
+    private void initCartUI() {
+        if (cartBtn == null || badgePane == null || badgeLabel == null) return;
+
+        cartBtn.setOnAction(e -> openCartPopup());
+
+        badgePane.visibleProperty().unbind();
+        badgeLabel.textProperty().unbind();
+
+        badgePane.visibleProperty().bind(cartService.distinctProductCountProperty().greaterThan(0));
+
+        badgeLabel.textProperty().bind(
+                Bindings.createStringBinding(() -> {
+                    int n = cartService.getDistinctProductCount();
+                    return n > 99 ? "99+" : String.valueOf(n);
+                }, cartService.distinctProductCountProperty())
         );
+    }
+
+
+    private void hideCartUI() {
+        if (cartBtn != null) {
+            cartBtn.setVisible(false);
+            cartBtn.setManaged(false);
+        }
+        if (badgePane != null) {
+            badgePane.visibleProperty().unbind();
+            badgePane.setVisible(false);
+            badgePane.setManaged(false);
+        }
+        if (badgeLabel != null) {
+            badgeLabel.textProperty().unbind();
+        }
     }
 
     private void setCenterContent(String fxmlFile, String title) {
@@ -422,15 +303,11 @@ public class MainController {
         fxmlLoaderExecutor.submit(loadTask);
     }
 
-    /**
-     * Replaces the center content pane with the given Node and anchors it to all sides.
-     */
     private void setCenterContent(Node content) {
         if (contentPane == null) return;
 
         Platform.runLater(() -> {
             contentPane.getChildren().setAll(content);
-
             AnchorPane.setTopAnchor(content, 0.0);
             AnchorPane.setBottomAnchor(content, 0.0);
             AnchorPane.setLeftAnchor(content, 0.0);
@@ -438,12 +315,8 @@ public class MainController {
         });
     }
 
-    /**
-     * Sets "active" style on selected nav link.
-     */
     private void setActiveLink(Hyperlink link) {
         if (link == null) return;
-
         if (activeLink != null) {
             activeLink.getStyleClass().remove("active");
         }
@@ -452,8 +325,45 @@ public class MainController {
     }
 
     /* =========================================================
-     * Popup Content (Static API)
+     * 6. POPUP SYSTEM (Settings & Modal Popups)
      * ========================================================= */
+    private void initSettingsPopup() {
+        Hyperlink link1 = new Hyperlink("User Configuration");
+        Hyperlink link2 = new Hyperlink("Payment Configuration");
+
+        VBox box;
+        if (SessionManager.isAdmin) {
+            box = new VBox(10, link1, link2);
+        } else {
+            box = new VBox(link1);
+        }
+        box.getStyleClass().add("container");
+
+        settingsPopup = new Popup();
+        settingsPopup.getContent().add(box);
+        settingsPopup.setAutoHide(true);
+
+        link1.setOnAction(e -> {
+            togglePopupContent("/views/EditUserConfig.fxml");
+            settingsPopup.hide();
+        });
+        link2.setOnAction(e -> {
+            togglePopupContent("/views/EditPaymentConfig.fxml");
+            settingsPopup.hide();
+        });
+    }
+
+    private void showSettingsPopup() {
+        if (settingsPopup == null) return;
+        if (settingsPopup.isShowing()) {
+            settingsPopup.hide();
+            return;
+        }
+        var bounds = settingIcon.localToScreen(settingIcon.getBoundsInLocal());
+        if (bounds != null) {
+            settingsPopup.show(settingIcon, bounds.getMaxX() - 140, bounds.getMaxY() + 20);
+        }
+    }
 
     public static void togglePopupContent(String fxmlPath) {
         try {
@@ -470,7 +380,6 @@ public class MainController {
     public static void togglePopupContent(Parent content) {
         if (!isPopupContentOpen) {
             loadPopupContent(content);
-
             Platform.runLater(() -> {
                 openPopupContentAnimation();
                 applyBlur(true);
@@ -482,18 +391,15 @@ public class MainController {
     }
 
     private static void loadPopupContent(Parent content) {
-        // Ensure close button exists once
         Button existingCloseBtn = (Button) staticPopupContentPane.lookup("#closeBtn");
         if (existingCloseBtn == null) {
             Button closeBtn = createCloseButton();
             staticPopupContentPane.getChildren().add(closeBtn);
         }
-
         setPopupContent(content);
     }
 
     private static void setPopupContent(Parent content) {
-
         if (content instanceof Region r) {
             r.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
         }
@@ -503,12 +409,8 @@ public class MainController {
 
         StackPane wrapper = new StackPane();
         wrapper.setPadding(new Insets(15));
-
-        wrapper.getChildren().add(content);
-        wrapper.getChildren().add(closeBtn);
-
+        wrapper.getChildren().addAll(content, closeBtn);
         StackPane.setAlignment(closeBtn, Pos.TOP_RIGHT);
-//        StackPane.setMargin(closeBtn, new Insets(14));
 
         AnchorPane.setTopAnchor(wrapper, 0.0);
         AnchorPane.setRightAnchor(wrapper, 0.0);
@@ -519,22 +421,14 @@ public class MainController {
         Platform.runLater(() -> installFocusTrap(wrapper));
 
         wrapper.setOpacity(0);
-        new Timeline(new KeyFrame(Duration.millis(200),
-                new KeyValue(wrapper.opacityProperty(), 1, Interpolator.EASE_BOTH)
-        )).play();
+        new Timeline(new KeyFrame(Duration.millis(200), new KeyValue(wrapper.opacityProperty(), 1, Interpolator.EASE_BOTH))).play();
     }
-
-    /* =========================================================
-     * Popup UI Controls
-     * ========================================================= */
 
     public static Button createCloseButton() {
         Button btn = new Button("✕");
         btn.setId("closeBtn");
         btn.getStyleClass().add("popup-box-close-btn");
-
         btn.setOnAction(e -> handleClosePopupContent());
-
         AnchorPane.setRightAnchor(btn, 14.0);
         AnchorPane.setTopAnchor(btn, 14.0);
         return btn;
@@ -543,68 +437,89 @@ public class MainController {
     private static void openPopupContentAnimation() {
         staticOverlayPane.setVisible(true);
         staticOverlayPane.setManaged(true);
-
         staticPopupContentPane.setOpacity(0);
         staticPopupContentPane.setScaleX(0.96);
         staticPopupContentPane.setScaleY(0.96);
 
-        Timeline tl = new Timeline(
-                new KeyFrame(Duration.millis(160),
-                        new KeyValue(staticPopupContentPane.opacityProperty(), 1, Interpolator.EASE_BOTH),
-                        new KeyValue(staticPopupContentPane.scaleXProperty(), 1, Interpolator.EASE_BOTH),
-                        new KeyValue(staticPopupContentPane.scaleYProperty(), 1, Interpolator.EASE_BOTH)
-                )
-        );
-        tl.play();
+        new Timeline(new KeyFrame(Duration.millis(160), new KeyValue(staticPopupContentPane.opacityProperty(), 1, Interpolator.EASE_BOTH), new KeyValue(staticPopupContentPane.scaleXProperty(), 1, Interpolator.EASE_BOTH), new KeyValue(staticPopupContentPane.scaleYProperty(), 1, Interpolator.EASE_BOTH))).play();
     }
 
     public static void handleClosePopupContent() {
         if (!isPopupContentOpen) return;
-
-        Timeline tl = new Timeline(
-                new KeyFrame(Duration.millis(140),
-                        new KeyValue(staticPopupContentPane.opacityProperty(), 0, Interpolator.EASE_BOTH),
-                        new KeyValue(staticPopupContentPane.scaleXProperty(), 0.96, Interpolator.EASE_BOTH),
-                        new KeyValue(staticPopupContentPane.scaleYProperty(), 0.96, Interpolator.EASE_BOTH)
-                )
-        );
-
+        Timeline tl = new Timeline(new KeyFrame(Duration.millis(140), new KeyValue(staticPopupContentPane.opacityProperty(), 0, Interpolator.EASE_BOTH), new KeyValue(staticPopupContentPane.scaleXProperty(), 0.96, Interpolator.EASE_BOTH), new KeyValue(staticPopupContentPane.scaleYProperty(), 0.96, Interpolator.EASE_BOTH)));
         tl.setOnFinished(e -> {
             staticOverlayPane.setVisible(false);
             staticOverlayPane.setManaged(false);
-
             staticPopupContentPane.getChildren().clear();
             staticPopupContentPane.setOpacity(1);
             staticPopupContentPane.setScaleX(1);
             staticPopupContentPane.setScaleY(1);
-
             isPopupContentOpen = false;
             applyBlur(false);
-
             uninstallFocusTrap();
         });
-
         tl.play();
     }
 
-    private static void applyBlur(boolean enable) {
-        staticBorderPane.setEffect(enable ? new GaussianBlur(10) : null);
+    @FXML
+    private void handleOverlayClick(MouseEvent e) {
+        if (staticOverlayPane != null && e.getTarget() == staticOverlayPane) {
+            handleClosePopupContent();
+        }
     }
 
     /* =========================================================
-     * Loading Overlay
+     * 7. SESSION & USER UI HELPERS
      * ========================================================= */
+    private void handleLogout() {
+        SessionManager.forceLogout();
+        SnackBar.show(SnackBarType.SUCCESS, "Logged out successfully", "", Duration.seconds(3));
+    }
 
+    private void updateUserInfo() {
+        User user = SessionManager.getUser();
+        if (user == null) return;
+
+        String path = user.getImagePath();
+        if (path == null || path.isBlank()) path = "/images/default-profile.jpg";
+
+        Image userProfileImage = loadImageSmart(path);
+        if (userProfileImage == null || userProfileImage.isError()) {
+            userProfileImage = loadImageSmart("/images/default-profile.jpg");
+        }
+
+        if (userProfileImage != null && !userProfileImage.isError()) {
+            ImageHelper.setCircularAvatar(profileImageView, userProfileImage, 60);
+        }
+
+        if (usernameLabel != null) usernameLabel.setText(user.getUserName());
+        if (roleLabel != null && RoleCache.getRolesMap().containsKey(user.getRole())) {
+            roleLabel.setText(RoleCache.getRolesMap().get(user.getRole()).getRoleName());
+        }
+    }
+
+    private void configureRoleBasedAccess() {
+        User user = SessionManager.getUser();
+        if (user == null) return;
+        if (!RoleCache.getRolesMap().containsKey(user.getRole())) return;
+
+        String roleName = RoleCache.getRolesMap().get(user.getRole()).getRoleName();
+        if (roleName.equalsIgnoreCase("Admin")) {
+            hideLinks(customOrderLink, staffProductLink, bookingLink);
+        } else if (roleName.equalsIgnoreCase("Cashier")) {
+            hideLinks(adminDashboardLink, adminProductLink, memberLink, userLink);
+        }
+    }
+
+    /* =========================================================
+     * 8. UTILITY & VISUAL HELPERS
+     * ========================================================= */
     private StackPane createLoadingOverlay() {
         ProgressIndicator pi = new ProgressIndicator();
         pi.setMaxSize(60, 60);
-
         StackPane overlay = new StackPane(pi);
-        overlay.setPickOnBounds(true); // blocks clicks behind it
-        overlay.setStyle("""
-                -fx-background-color: rgba(0,0,0,0.25);
-                -fx-padding: 20;
-                """);
+        overlay.setPickOnBounds(true);
+        overlay.setStyle("-fx-background-color: rgba(0,0,0,0.25); -fx-padding: 20;");
         return overlay;
     }
 
@@ -614,9 +529,9 @@ public class MainController {
         loadingOverlay.setManaged(show);
     }
 
-    /* =========================================================
-     * Helpers
-     * ========================================================= */
+    private static void applyBlur(boolean enable) {
+        staticBorderPane.setEffect(enable ? new GaussianBlur(10) : null);
+    }
 
     private void hideLinks(Hyperlink... links) {
         Arrays.stream(links).forEach(this::hideLink);
@@ -632,27 +547,14 @@ public class MainController {
         return Objects.requireNonNull(getClass().getResource(path), "Missing resource: " + path);
     }
 
-
     private Image loadImageSmart(String path) {
         try {
-            // 1) URL / file: / jar:
-            if (path.matches("^(https?|file|jar):.*")) {
-                return new Image(path, true);
-            }
-
-            // 2) Classpath resource (recommended for default images)
+            if (path.matches("^(https?|file|jar):.*")) return new Image(path, true);
             String resourcePath = path.startsWith("/") ? path : "/" + path;
             var url = getClass().getResource(resourcePath);
-            if (url != null) {
-                return new Image(url.toExternalForm(), true);
-            }
-
-            // 3) File system path (absolute or relative)
+            if (url != null) return new Image(url.toExternalForm(), true);
             var f = new java.io.File(path);
-            if (f.exists()) {
-                return new Image(f.toURI().toString(), true);
-            }
-
+            if (f.exists()) return new Image(f.toURI().toString(), true);
             return null;
         } catch (Exception e) {
             return null;
@@ -660,36 +562,20 @@ public class MainController {
     }
 
     /* =========================================================
-     * Overlay Click Handler
-     * ========================================================= */
-
-    @FXML
-    private void handleOverlayClick(MouseEvent e) {
-        if (staticOverlayPane != null && e.getTarget() == staticOverlayPane) {
-            handleClosePopupContent();
-        }
-    }
-
-    /* =========================================================
-     * Focus Trap Helpers
+     * 9. FOCUS TRAP ENGINE
      * ========================================================= */
     private static void installFocusTrap(Parent trapRoot) {
         if (staticOverlayPane == null) return;
-
         Scene scene = staticOverlayPane.getScene();
         if (scene == null) return;
 
         uninstallFocusTrap();
-
         focusTrapRoot = trapRoot;
 
-        // Block background focus/clicks
         if (staticBorderPane != null) staticBorderPane.setDisable(true);
 
         focusTrapHandler = e -> {
-            // (Don’t rely on isPopupContentOpen; overlay visibility is enough)
             if (staticOverlayPane == null || !staticOverlayPane.isVisible()) return;
-
             if (e.getCode() != KeyCode.TAB) return;
             if (focusTrapRoot == null) return;
 
@@ -698,69 +584,51 @@ public class MainController {
 
             Node owner = scene.getFocusOwner();
             int idx = focusables.indexOf(owner);
-
             boolean backward = e.isShiftDown();
             int nextIdx;
 
             if (idx < 0) {
                 nextIdx = backward ? focusables.size() - 1 : 0;
             } else {
-                nextIdx = backward
-                        ? (idx - 1 + focusables.size()) % focusables.size()
-                        : (idx + 1) % focusables.size();
+                nextIdx = backward ? (idx - 1 + focusables.size()) % focusables.size() : (idx + 1) % focusables.size();
             }
 
             focusables.get(nextIdx).requestFocus();
-            e.consume(); // ✅ critical
+            e.consume();
         };
 
         scene.addEventFilter(KeyEvent.KEY_PRESSED, focusTrapHandler);
-
-        // focus first item in popup
         List<Node> focusables = getFocusableNodes(focusTrapRoot);
         if (!focusables.isEmpty()) focusables.get(0).requestFocus();
     }
 
     private static void uninstallFocusTrap() {
         if (staticOverlayPane == null) return;
-
         Scene scene = staticOverlayPane.getScene();
         if (scene != null && focusTrapHandler != null) {
             scene.removeEventFilter(KeyEvent.KEY_PRESSED, focusTrapHandler);
         }
         focusTrapHandler = null;
         focusTrapRoot = null;
-
         if (staticBorderPane != null) staticBorderPane.setDisable(false);
     }
 
     private static List<Node> getFocusableNodes(Parent root) {
         List<Node> nodes = new ArrayList<>();
         collectFocusable(root, nodes);
-
-        // stable order: top-to-bottom, left-to-right
-        nodes.sort(Comparator
-                .comparingDouble((Node n) -> n.localToScene(0, 0).getY())
-                .thenComparingDouble(n -> n.localToScene(0, 0).getX()));
-
+        nodes.sort(Comparator.comparingDouble((Node n) -> n.localToScene(0, 0).getY()).thenComparingDouble(n -> n.localToScene(0, 0).getX()));
         return nodes;
     }
 
     private static void collectFocusable(Node node, List<Node> out) {
         if (node == null) return;
-
-        if (node.isVisible()
-                && node.isManaged()
-                && !node.isDisabled()
-                && node.isFocusTraversable()) {
+        if (node.isVisible() && node.isManaged() && !node.isDisabled() && node.isFocusTraversable()) {
             out.add(node);
         }
-
         if (node instanceof Parent p) {
             for (Node child : p.getChildrenUnmodifiable()) {
                 collectFocusable(child, out);
             }
         }
     }
-
 }

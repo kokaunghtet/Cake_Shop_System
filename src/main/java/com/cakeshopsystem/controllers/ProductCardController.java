@@ -7,6 +7,8 @@ import com.cakeshopsystem.utils.cache.CakeCache;
 import com.cakeshopsystem.utils.dao.DrinkDAO;
 import com.cakeshopsystem.utils.dao.InventoryDAO;
 import com.cakeshopsystem.utils.dao.ProductDAO;
+import com.cakeshopsystem.utils.services.CartService;
+import com.cakeshopsystem.utils.session.SessionManager;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -91,6 +93,9 @@ public class ProductCardController {
     private ChangeListener<Toggle> drinkToggleListener;
     private Label inactiveOverlay;
     private boolean excludeDiscountStock = false;
+    private final CartService cartService = CartService.getInstance();
+    private Double unitPriceOverride = null;
+    private String optionOverride = null;
 
     // =====================================
     // ============= LIFECYCLE =============
@@ -102,6 +107,7 @@ public class ProductCardController {
         decreaseBtn.setOnAction(e -> handleDecrementQuantity());
 
         addStockQtyBtn.setOnAction(e -> openEditProductPopup());
+        addToCartBtn.setOnAction(e -> handleAddToCart());
     }
 
     // =====================================
@@ -126,16 +132,23 @@ public class ProductCardController {
     }
 
     public void setDiscountedItemsData(Inventory inv) {
+        resetCardState();
+
+        Product product = ProductDAO.getProductById(inv.getProductId());
+
+        if (product == null) return;
+
+        this.currentProduct = product;
+        this.unitPriceOverride = product.getPrice() * SessionManager.discountRate;
+        this.optionOverride = "DISCOUNT";
+
         disableDrinkOptions();
         disableDiyAvailability();
         showStockSection(true);
 
-        Product product = ProductDAO.getProductById(inv.getProductId());
-        if (product == null) return;
-
         loadProductImage(product.getImgPath());
         productName.setText(product.getProductName());
-        productPrice.setText(String.valueOf(product.getPrice() * 0.4));
+        productPrice.setText(String.valueOf(unitPriceOverride));
 
         int batchQty = inv.getQuantity();
         productStock.setText(String.valueOf(batchQty));
@@ -146,9 +159,14 @@ public class ProductCardController {
         setMaxQtyFromStock(batchQty);
         addToCartBtn.setDisable(batchQty <= 0);
         updateQtyButtonsState();
+
+        // Disable for discounted items if inactive
+        applyActiveState(product);
     }
 
     public void setCakeData(Product product) {
+        resetCardState();
+
         this.currentProduct = product;
 
         disableDrinkOptions();
@@ -168,12 +186,13 @@ public class ProductCardController {
         }
 
         updateStockUI(product.getProductId());
-        setAddToCartDisable(product.getProductId());
 
         applyActiveState(product);
     }
 
     public void setDrinkData(Product product) {
+        resetCardState();
+
         this.currentProduct = product;
 
         disableDiyAvailability();
@@ -204,6 +223,8 @@ public class ProductCardController {
     }
 
     public void setBakedGoodsData(Product product) {
+        resetCardState();
+
         this.currentProduct = product;
 
         disableDrinkOptions();
@@ -215,12 +236,13 @@ public class ProductCardController {
         productPrice.setText(String.valueOf(product.getPrice()));
 
         updateStockUI(product.getProductId());
-        setAddToCartDisable(product.getProductId());
 
         applyActiveState(product);
     }
 
     public void setAccessoryData(Product product) {
+        resetCardState();
+
         this.currentProduct = product;
 
         disableDrinkOptions();
@@ -232,9 +254,50 @@ public class ProductCardController {
         productPrice.setText(String.valueOf(product.getPrice()));
 
         updateStockUI(product.getProductId());
-        setAddToCartDisable(product.getProductId());
 
         applyActiveState(product);
+    }
+
+    public void handleAddToCart() {
+        if (currentProduct == null) return;
+        if (!currentProduct.isActive()) return;
+        if (quantity <= 0) return;
+
+        String option = optionOverride;
+        double unitPrice = unitPriceOverride != null ? unitPriceOverride : currentProduct.getPrice();
+
+        if (currentProduct.getCategoryId() == 2) {
+            Toggle t = drinkOptionsRadioBtn == null ? null : drinkOptionsRadioBtn.getSelectedToggle();
+            boolean cold = (t == coldOption);
+            option = cold ? "COLD" : "HOT";
+            unitPrice = cold ? drinkColdPrice : drinkHotPrice;
+
+            cartService.addItem(currentProduct, option, unitPrice, quantity);
+
+            quantity = 1;
+            quantityLabel.setText("1");
+            updateQtyButtonsState();
+            return;
+        }
+
+        int alreadyInCart = cartService.getQuantity(currentProduct.getProductId(), option);
+        int remaining = maxQty - alreadyInCart;
+
+        if (remaining <= 0) {
+            addToCartBtn.setDisable(true);
+            return;
+        }
+
+        int addQty = Math.min(quantity, remaining);
+        cartService.addItem(currentProduct, option, unitPrice, addQty);
+
+        if (alreadyInCart + addQty >= maxQty) {
+            addToCartBtn.setDisable(true);
+        }
+
+        quantity = 1;
+        quantityLabel.setText("1");
+        updateQtyButtonsState();
     }
 
     // =====================================
@@ -265,17 +328,15 @@ public class ProductCardController {
     }
 
     private int getAvailableQty(int productId) {
-        return excludeDiscountStock
-                ? InventoryDAO.getRegularQuantityByProductId(productId)
-                : InventoryDAO.getTotalAvailableQuantityByProductId(productId);
+        return excludeDiscountStock ? InventoryDAO.getRegularQuantityByProductId(productId) : InventoryDAO.getTotalAvailableQuantityByProductId(productId);
     }
 
     private void setMaxQtyFromStock(int stockQty) {
         this.maxQty = Math.max(stockQty, 0);
 
         if (maxQty == 0) {
-            quantity = 0;
-            quantityLabel.setText("0");
+            quantity = 1;
+            quantityLabel.setText("1");
             return;
         }
 
@@ -320,7 +381,13 @@ public class ProductCardController {
 
     // =====================================
     // ========= UI STATE HELPERS ==========
-    // =====================================
+    // ====================================
+    private void resetCardState() {
+        unitPriceOverride = null;
+        optionOverride = null;
+        quantity = 1;
+        quantityLabel.setText("1");
+    }
 
     private void applyActiveState(Product product) {
         boolean active = product != null && product.isActive();
