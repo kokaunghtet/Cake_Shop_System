@@ -19,6 +19,8 @@ import com.cakeshopsystem.utils.dao.InventoryDAO;
 import javafx.util.Duration;
 import org.kordamp.ikonli.javafx.FontIcon;
 
+import java.math.BigDecimal;
+
 /**
  * Controller responsible for managing the shopping cart UI,
  * handling quantity adjustments, and finalizing orders.
@@ -125,12 +127,24 @@ public class CartController {
         });
 
         // Bind Grand Total Label
-        lblTotalAmount.textProperty().bind(
-                javafx.beans.binding.Bindings.createStringBinding(
-                        () -> "Total Amount : " + computeGrandTotal().toPlainString(),
-                        cartService.getItems()
-                )
-        );
+        updateTotalLabel();
+
+        cartService.getItems().addListener((javafx.collections.ListChangeListener<CartItem>) c -> updateTotalLabel());
+
+        // also listen quantity changes of each item
+        for (CartItem it : cartService.getItems()) {
+            it.quantityProperty().addListener((obs, o, n) -> updateTotalLabel());
+        }
+
+        cartService.getItems().addListener((javafx.collections.ListChangeListener<CartItem>) c -> {
+            while (c.next()) {
+                if (c.wasAdded()) {
+                    for (CartItem it : c.getAddedSubList()) {
+                        it.quantityProperty().addListener((obs, o, n) -> updateTotalLabel());
+                    }
+                }
+            }
+        });
     }
 
     // ---------------------------------------------------------
@@ -151,56 +165,33 @@ public class CartController {
 
         int userId = SessionManager.getUser().getUserId();
         int paymentId = pay.getPaymentId();
+        String cashierName = SessionManager.getUser().getUserName();
+        String paymentName = pay.getPaymentName();
+
         var snapshot = new java.util.ArrayList<>(cartService.getItems());
 
         confirmOrderBtn.setDisable(true);
-
         try {
-            int orderId = OrderService.placeOrder(userId, paymentId, snapshot);
-
-            // Calculation Logic for Receipt Generation
-            java.math.BigDecimal subtotal = java.math.BigDecimal.ZERO;
-            java.math.BigDecimal discount = java.math.BigDecimal.ZERO;
-            java.math.BigDecimal grand = java.math.BigDecimal.ZERO;
-
-            for (CartItem it : snapshot) {
-                String opt = normalizeOpt(it.getOption());
-                java.math.BigDecimal qty = java.math.BigDecimal.valueOf(it.getQuantity());
-                java.math.BigDecimal chargedUnit = java.math.BigDecimal.valueOf(it.getUnitPrice()).setScale(2, java.math.RoundingMode.HALF_UP);
-                java.math.BigDecimal lineCharged = chargedUnit.multiply(qty);
-
-                grand = grand.add(lineCharged);
-
-                if ("DISCOUNT".equals(opt)) {
-                    java.math.BigDecimal normalUnit = getProductBasePrice(it.getProductId());
-                    java.math.BigDecimal lineNormal = normalUnit.multiply(qty);
-                    subtotal = subtotal.add(lineNormal);
-                    discount = discount.add(lineNormal.subtract(lineCharged));
-                } else {
-                    subtotal = subtotal.add(lineCharged);
-                }
-            }
-
-            subtotal = money2(subtotal);
-            discount = money2(discount);
-            grand = money2(grand);
-
-            var rd = new com.cakeshopsystem.models.ReceiptData(
-                    orderId,
-                    java.time.LocalDateTime.now(),
-                    SessionManager.getUser().getUserName(),
-                    pay.getPaymentName(),
-                    snapshot,
-                    subtotal,
-                    discount,
-                    grand
+            ReceiptData rd = OrderService.placeOrderAndBuildReceipt(
+                    userId, paymentId, cashierName, paymentName, snapshot
             );
 
             cartService.clear();
             com.cakeshopsystem.utils.events.AppEvents.fireOrderCompleted();
-            SnackBar.show(SnackBarType.SUCCESS, "Success", "Order confirmed (ID: " + orderId + ")", Duration.seconds(2));
 
-            openReceiptPopup(rd);
+            SnackBar.show(SnackBarType.SUCCESS, "Success", "Order confirmed (ID: " + rd.getOrderId() + ")", Duration.seconds(2));
+
+            BigDecimal oneLakh = new BigDecimal("100000");
+            if (rd.getGrandTotal().compareTo(oneLakh) >= 0) {
+                openMemberRegistrationPopup(rd.getOrderId(), () -> {
+                    try { openReceiptPopup(rd); }
+                    catch (Exception ex) {
+                        SnackBar.show(SnackBarType.ERROR, "Failed", ex.getMessage(), Duration.seconds(3));
+                    }
+                });
+            } else {
+                openReceiptPopup(rd);
+            }
 
         } catch (Exception ex) {
             SnackBar.show(SnackBarType.ERROR, "Failed", ex.getMessage(), Duration.seconds(3));
@@ -278,6 +269,30 @@ public class CartController {
         });
     }
 
+    private void updateTotalLabel() {
+        lblTotalAmount.setText("Total Amount : " + computeGrandTotal().toPlainString());
+    }
+
+    private void showPopup(Parent root) {
+        MainController.handleClosePopupContent();
+        javafx.animation.PauseTransition pt = new javafx.animation.PauseTransition(Duration.millis(180));
+        pt.setOnFinished(e -> MainController.togglePopupContent(root));
+        pt.play();
+    }
+
+    private void openMemberRegistrationPopup(int orderId, Runnable afterDone) throws Exception {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/RegisterMember.fxml"));
+        Parent root = loader.load();
+
+        RegisterMemberController controller = loader.getController();
+        controller.setData(orderId);
+
+        controller.setOnRegistered(afterDone);
+        controller.setOnSkipped(afterDone);
+
+        showPopup(root);
+    }
+
     private void openReceiptPopup(ReceiptData rd) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/Receipt.fxml"));
         Parent root = loader.load();
@@ -285,10 +300,7 @@ public class CartController {
         ReceiptController controller = loader.getController();
         controller.setData(rd);
 
-        MainController.handleClosePopupContent();
-
-        javafx.animation.PauseTransition pt = new javafx.animation.PauseTransition(Duration.millis(180));
-        pt.setOnFinished(e -> MainController.togglePopupContent(root));
-        pt.play();
+        showPopup(root);
     }
+
 }

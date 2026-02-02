@@ -5,8 +5,12 @@ import com.cakeshopsystem.models.ReceiptData;
 import com.cakeshopsystem.utils.components.SnackBar;
 import com.cakeshopsystem.utils.constants.SnackBarType;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.print.PrinterJob;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import javafx.geometry.Pos;
@@ -26,19 +30,32 @@ public class ReceiptController {
     // ---------------------------------------------------------
     // FXML UI Components
     // ---------------------------------------------------------
-    @FXML private VBox receiptRoot;
-    @FXML private Label lblOrderId;
-    @FXML private Label lblDate;
-    @FXML private Label lblCashier;
-    @FXML private Label lblPayment;
-    @FXML private VBox itemsBox;
+    @FXML
+    private ScrollPane spItems;
+    @FXML
+    private VBox receiptRoot;
+    @FXML
+    private Label lblOrderId;
+    @FXML
+    private Label lblDate;
+    @FXML
+    private Label lblCashier;
+    @FXML
+    private Label lblPayment;
+    @FXML
+    private VBox itemsBox;
 
-    @FXML private Label lblSubtotal;
-    @FXML private Label lblDiscount;
-    @FXML private Label lblGrandTotal;
+    @FXML
+    private Label lblSubtotal;
+    @FXML
+    private Label lblDiscount;
+    @FXML
+    private Label lblGrandTotal;
 
-    @FXML private Button btnCancel;
-    @FXML private Button btnPrint;
+    @FXML
+    private Button btnCancel;
+    @FXML
+    private Button btnPrint;
 
     // ---------------------------------------------------------
     // Data Members
@@ -48,6 +65,7 @@ public class ReceiptController {
     // ---------------------------------------------------------
     // Data Binding & Initialization
     // ---------------------------------------------------------
+
     /**
      * Populates the receipt view with data from a ReceiptData object.
      */
@@ -85,51 +103,185 @@ public class ReceiptController {
     /**
      * Handles the printing process and saves a snapshot of the receipt to a PNG file.
      */
+//    @FXML
+//    private void onPrint() {
+//        if (data == null) return;
+//
+//        try {
+//            // 1) make a full snapshot (expands scroll content temporarily)
+//            var img = snapshotReceiptFull();
+//
+//            // 2) save PNG
+//            saveImageToResources(img);
+//
+//            // 3) print the IMAGE (stable, no UI distortion)
+//            printImage(img);
+//
+//            SnackBar.show(SnackBarType.SUCCESS, "Success", "Receipt saved & printed.", Duration.seconds(2));
+//            MainController.handleClosePopupContent();
+//
+//        } catch (Exception ex) {
+//            SnackBar.show(SnackBarType.ERROR, "Error", "Failed: " + ex.getMessage(), Duration.seconds(3));
+//        }
+//    }
     @FXML
     private void onPrint() {
         if (data == null) return;
 
         try {
-            saveReceiptToResourcesFolder();
-            SnackBar.show(SnackBarType.SUCCESS, "Success", "Receipt saved successfully.", Duration.seconds(2));
-            MainController.handleClosePopupContent();
-        } catch (Exception ex) {
-            new Alert(Alert.AlertType.ERROR, "Failed to save receipt: " + ex.getMessage()).showAndWait();
-            return;
-        }
+            Parent printRoot = loadPrintableReceipt(data);      // off-screen node
+            var img = snapshotNodeForPrint(printRoot);          // snapshot off-screen
 
-        // Logic for triggering the physical printer dialog
-        PrinterJob job = PrinterJob.createPrinterJob();
-        if (job != null && job.showPrintDialog(receiptRoot.getScene().getWindow())) {
-            boolean ok = job.printPage(receiptRoot);
-            if (ok) job.endJob();
+//            saveImageToResources(img);                          // save PNG
+            saveImageToResourcesAsync(img);
+            printImage(img);                                    // print image
+
+            SnackBar.show(SnackBarType.SUCCESS, "Success", "Receipt saved & printed.", Duration.seconds(2));
+            MainController.handleClosePopupContent();
+
+        } catch (Exception ex) {
+            SnackBar.show(SnackBarType.ERROR, "Error", "Failed: " + ex.getMessage(), Duration.seconds(3));
         }
     }
 
     // ---------------------------------------------------------
     // File I/O Logic
     // ---------------------------------------------------------
-    /**
-     * Saves a snapshot of the receipt UI as a PNG image in the project's resource folder.
-     */
-    private void saveReceiptToResourcesFolder() throws Exception {
+
+//    private javafx.scene.image.WritableImage snapshotReceiptFull() {
+//        // force css/layout
+//        receiptRoot.applyCss();
+//        receiptRoot.layout();
+//
+//        // --- backup scrollpane state
+//        double oldPrefH = spItems.getPrefViewportHeight();
+//        var oldV = spItems.getVbarPolicy();
+//        var oldH = spItems.getHbarPolicy();
+//
+//        try {
+//            // compute full content height
+//            itemsBox.applyCss();
+//            itemsBox.layout();
+//            double contentH = itemsBox.getBoundsInLocal().getHeight();
+//
+//            // expand scrollpane so everything is visible
+//            spItems.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+//            spItems.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+//            spItems.setPrefViewportHeight(contentH + 10);
+//
+//            receiptRoot.applyCss();
+//            receiptRoot.layout();
+//
+//            var params = new javafx.scene.SnapshotParameters();
+//
+//            // if your receipt background becomes transparent, enable white background:
+//            params.setFill(javafx.scene.paint.Color.WHITE);
+//
+//            return receiptRoot.snapshot(params, null);
+//
+//        } finally {
+//            // restore scrollpane state (prevents UI "breaking")
+//            spItems.setPrefViewportHeight(oldPrefH);
+//            spItems.setVbarPolicy(oldV);
+//            spItems.setHbarPolicy(oldH);
+//
+//            receiptRoot.applyCss();
+//            receiptRoot.layout();
+//        }
+//    }
+
+    private Parent loadPrintableReceipt(ReceiptData data) throws Exception {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/ReceiptPrint.fxml"));
+        Parent root = loader.load();
+
+        ReceiptController ctrl = loader.getController();
+        ctrl.setData(data);
+
+        return root;
+    }
+
+    private javafx.scene.image.WritableImage snapshotNodeForPrint(Parent root) {
+        StackPane wrapper = new StackPane(root);
+        wrapper.setStyle("-fx-background-color: white;");
+
+        Scene tmp = new Scene(wrapper);
+
+        Scene current = receiptRoot.getScene();
+        if (current != null) {
+            tmp.getStylesheets().addAll(current.getStylesheets());
+        }
+
+        wrapper.applyCss();
+        wrapper.layout();
+
+        javafx.scene.SnapshotParameters params = new javafx.scene.SnapshotParameters();
+        params.setFill(javafx.scene.paint.Color.WHITE);
+
+        return wrapper.snapshot(params, null);
+    }
+
+//    private void saveImageToResources(javafx.scene.image.WritableImage img) throws Exception {
+//        java.nio.file.Path dir = java.nio.file.Paths.get("src", "main", "resources", "receipts");
+//        java.nio.file.Files.createDirectories(dir);
+//
+//        String stamp = java.time.LocalDateTime.now()
+//                .format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss"));
+//        String filename = "receipt-" + data.getOrderId() + "-" + stamp + ".png";
+//
+//        java.io.File out = dir.resolve(filename).toFile();
+//        javax.imageio.ImageIO.write(
+//                javafx.embed.swing.SwingFXUtils.fromFXImage(img, null),
+//                "png",
+//                out
+//        );
+//    }
+
+    private void saveImageToResourcesAsync(javafx.scene.image.WritableImage img) throws Exception {
+        var buf = javafx.embed.swing.SwingFXUtils.fromFXImage(img, null);
+
         java.nio.file.Path dir = java.nio.file.Paths.get("src", "main", "resources", "receipts");
         java.nio.file.Files.createDirectories(dir);
 
         String stamp = java.time.LocalDateTime.now()
                 .format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss"));
         String filename = "receipt-" + data.getOrderId() + "-" + stamp + ".png";
-
         java.io.File out = dir.resolve(filename).toFile();
 
-        // Capture a snapshot of the UI node
-        javafx.scene.image.WritableImage img = receiptRoot.snapshot(new javafx.scene.SnapshotParameters(), null);
-        javax.imageio.ImageIO.write(javafx.embed.swing.SwingFXUtils.fromFXImage(img, null), "png", out);
+        java.util.concurrent.CompletableFuture.runAsync(() -> {
+            try {
+                javax.imageio.ImageIO.write(buf, "png", out);
+            } catch (Exception e) {
+                javafx.application.Platform.runLater(() ->
+                        SnackBar.show(SnackBarType.ERROR, "Save Failed", e.getMessage(), Duration.seconds(3))
+                );
+            }
+        });
+    }
+
+    private void printImage(javafx.scene.image.WritableImage img) {
+        PrinterJob job = PrinterJob.createPrinterJob();
+        if (job == null) return;
+
+        var window = receiptRoot.getScene().getWindow();
+        if (!job.showPrintDialog(window)) return;
+
+        var pageLayout = job.getJobSettings().getPageLayout();
+
+        javafx.scene.image.ImageView iv = new javafx.scene.image.ImageView(img);
+        iv.setPreserveRatio(true);
+
+        // scale to printable area
+        iv.setFitWidth(pageLayout.getPrintableWidth());
+        iv.setFitHeight(pageLayout.getPrintableHeight());
+
+        boolean ok = job.printPage(pageLayout, iv);
+        if (ok) job.endJob();
     }
 
     // ---------------------------------------------------------
     // Dynamic Layout Generation Helpers
     // ---------------------------------------------------------
+
     /**
      * Creates the column headers for the items list.
      */
@@ -192,6 +344,7 @@ public class ReceiptController {
     // ---------------------------------------------------------
     // Formatting Utilities
     // ---------------------------------------------------------
+
     /**
      * Formats BigDecimal values to a standard 2-decimal money format.
      */

@@ -1,49 +1,92 @@
 package com.cakeshopsystem.utils.services;
 
 import com.cakeshopsystem.models.CartItem;
+import com.cakeshopsystem.models.ReceiptData;
 import com.cakeshopsystem.utils.databaseconnection.DB;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class OrderService {
 
     public static int placeOrder(int userId, int paymentId, List<CartItem> items) throws Exception {
+        ReceiptData rd = placeOrderAndBuildReceipt(
+                userId,
+                paymentId,
+                "",
+                "",
+                items
+        );
+        return rd.getOrderId();
+    }
+
+    public static ReceiptData placeOrderAndBuildReceipt(
+            int userId,
+            int paymentId,
+            String cashierName,
+            String paymentName,
+            List<CartItem> items
+    ) throws Exception {
+
         if (items == null || items.isEmpty()) throw new Exception("Cart is empty.");
+
+        List<CartItem> receiptItems = deepCopyItems(items);
 
         try (Connection con = DB.connect()) {
             con.setAutoCommit(false);
 
-            Totals totals = computeTotals(con, items);
+            try {
+                Totals totals = computeTotals(con, items);
 
-            int orderId = insertOrder(con, totals.subtotal, totals.discountAmount, totals.grandTotal, userId, paymentId);
+                LocalDateTime orderDate = LocalDateTime.now();
+                int orderId = insertOrder(con, orderDate, totals.subtotal, totals.discountAmount, totals.grandTotal, userId, paymentId);
 
-            for (CartItem it : items) {
-                String opt = normalize(it.getOption());
+                for (CartItem it : items) {
+                    String opt = normalize(it.getOption());
 
-                if (isDrink(opt)) {
-                    int drinkId = getDrinkId(con, it.getProductId(), "COLD".equals(opt));
-                    insertDrinkOrderItem(con, orderId, drinkId, opt, it.getQuantity(), bd(it.getUnitPrice()));
-                } else {
-                    String productOpt = ("DISCOUNT".equals(opt)) ? "DISCOUNT" : "REGULAR";
-                    int orderItemId = insertProductOrderItem(
-                            con, orderId, it.getProductId(), productOpt, it.getQuantity(), bd(it.getUnitPrice())
-                    );
+                    if (isDrink(opt)) {
+                        int drinkId = getDrinkId(con, it.getProductId(), "COLD".equals(opt));
+                        insertDrinkOrderItem(con, orderId, drinkId, opt, it.getQuantity(), money2(BigDecimal.valueOf(it.getUnitPrice())));
+                    } else {
+                        String productOpt = ("DISCOUNT".equals(opt)) ? "DISCOUNT" : "REGULAR";
 
-                    if (isTrackInventory(con, it.getProductId())) {
-                        boolean discount = "DISCOUNT".equals(productOpt);
-                        deductInventoryFEFO(con, it.getProductId(), it.getQuantity(), discount, orderItemId, userId);
+                        int orderItemId = insertProductOrderItem(
+                                con,
+                                orderId,
+                                it.getProductId(),
+                                productOpt,
+                                it.getQuantity(),
+                                money2(BigDecimal.valueOf(it.getUnitPrice()))
+                        );
+
+                        if (isTrackInventory(con, it.getProductId())) {
+                            boolean discount = "DISCOUNT".equals(productOpt);
+                            deductInventoryFEFO(con, it.getProductId(), it.getQuantity(), discount, orderItemId, userId);
+                        }
                     }
                 }
+
+                con.commit();
+
+                return new ReceiptData(
+                        orderId,
+                        orderDate,
+                        cashierName == null ? "" : cashierName,
+                        paymentName == null ? "" : paymentName,
+                        receiptItems,
+                        totals.subtotal,
+                        totals.discountAmount,
+                        totals.grandTotal
+                );
+
+            } catch (Exception ex) {
+                con.rollback();
+                throw ex;
             }
-
-            con.commit();
-            return orderId;
-
-        } catch (Exception ex) {
-            throw ex;
         }
     }
 
@@ -60,7 +103,7 @@ public class OrderService {
             int qty = it.getQuantity();
 
             BigDecimal qtyBD = BigDecimal.valueOf(qty);
-            BigDecimal chargedUnit = bd(it.getUnitPrice());
+            BigDecimal chargedUnit = money2(BigDecimal.valueOf(it.getUnitPrice()));
             BigDecimal lineCharged = chargedUnit.multiply(qtyBD);
 
             grandTotal = grandTotal.add(lineCharged);
@@ -72,17 +115,14 @@ public class OrderService {
                 subtotal = subtotal.add(lineNormal);
                 discountAmount = discountAmount.add(lineNormal.subtract(lineCharged));
             } else {
-                // REGULAR products + HOT/COLD drinks count at charged price (no “discount saving”)
                 subtotal = subtotal.add(lineCharged);
             }
         }
 
-        // Ensure scale 2 for DB
         subtotal = money2(subtotal);
         discountAmount = money2(discountAmount);
         grandTotal = money2(grandTotal);
 
-        // Defensive: avoid tiny negative due to logic mistakes
         if (discountAmount.compareTo(BigDecimal.ZERO) < 0) {
             discountAmount = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
         }
@@ -96,15 +136,9 @@ public class OrderService {
             ps.setInt(1, productId);
             try (ResultSet rs = ps.executeQuery()) {
                 if (!rs.next()) throw new SQLException("Missing product price for product_id=" + productId);
-                BigDecimal price = rs.getBigDecimal(1);
-                return money2(price);
+                return money2(rs.getBigDecimal(1));
             }
         }
-    }
-
-    private static BigDecimal bd(double v) {
-        // BigDecimal.valueOf uses string conversion internally and is safe for money input
-        return money2(BigDecimal.valueOf(v));
     }
 
     private static BigDecimal money2(BigDecimal v) {
@@ -128,6 +162,7 @@ public class OrderService {
     // Inserts
     // =========================
     private static int insertOrder(Connection con,
+                                   LocalDateTime orderDate,
                                    BigDecimal subtotal,
                                    BigDecimal discountAmount,
                                    BigDecimal grandTotal,
@@ -135,16 +170,17 @@ public class OrderService {
                                    int paymentId) throws SQLException {
 
         String sql = """
-                INSERT INTO orders (subtotal, discount_amount, grand_total, member_id, user_id, payment_id)
-                VALUES (?, ?, ?, NULL, ?, ?)
+                INSERT INTO orders (order_date, subtotal, discount_amount, grand_total, member_id, user_id, payment_id)
+                VALUES (?, ?, ?, ?, NULL, ?, ?)
                 """;
 
         try (PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            ps.setBigDecimal(1, subtotal);
-            ps.setBigDecimal(2, discountAmount);
-            ps.setBigDecimal(3, grandTotal);
-            ps.setInt(4, userId);
-            ps.setInt(5, paymentId);
+            ps.setTimestamp(1, Timestamp.valueOf(orderDate));
+            ps.setBigDecimal(2, subtotal);
+            ps.setBigDecimal(3, discountAmount);
+            ps.setBigDecimal(4, grandTotal);
+            ps.setInt(5, userId);
+            ps.setInt(6, paymentId);
 
             int affected = ps.executeUpdate();
             if (affected != 1) throw new SQLException("Failed to create order.");
@@ -188,7 +224,7 @@ public class OrderService {
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, orderId);
             ps.setInt(2, drinkId);
-            ps.setString(3, orderOption); // HOT or COLD
+            ps.setString(3, orderOption);
             ps.setInt(4, qty);
             ps.setBigDecimal(5, money2(unitPrice));
 
@@ -300,5 +336,19 @@ public class OrderService {
 
     private static String normalize(String s) {
         return s == null ? "" : s.trim().toUpperCase();
+    }
+
+    private static List<CartItem> deepCopyItems(List<CartItem> items) {
+        List<CartItem> copy = new ArrayList<>(items.size());
+        for (CartItem it : items) {
+            copy.add(new CartItem(
+                    it.getProductId(),
+                    it.getName(),
+                    it.getOption(),
+                    it.getUnitPrice(),
+                    it.getQuantity()
+            ));
+        }
+        return copy;
     }
 }
