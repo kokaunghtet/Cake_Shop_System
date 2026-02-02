@@ -1,22 +1,27 @@
 package com.cakeshopsystem.models;
 
+import com.cakeshopsystem.utils.constants.OrderOption;
+
 public class OrderItem {
 
     private int orderItemId;
     private int orderId;
     private Integer productId;
     private Integer drinkId;
-    private static int quantity;
+    private OrderOption orderOption;
+    private int quantity;
     private double unitPrice;
     private double lineTotal;
 
-    public OrderItem(){}
+    public OrderItem() {
+    }
 
-    public OrderItem(int orderItemId, int orderId, Integer productId, Integer drinkId, int quantity, double unitPrice, double lineTotal) {
+    public OrderItem(int orderItemId, int orderId, Integer productId, Integer drinkId, OrderOption orderOption, int quantity, double unitPrice, double lineTotal) {
         this.orderItemId = orderItemId;
         this.orderId = orderId;
         this.productId = productId;
         this.drinkId = drinkId;
+        this.orderOption = orderOption;
         this.quantity = quantity;
         this.unitPrice = unitPrice;
         this.lineTotal = lineTotal;
@@ -54,12 +59,20 @@ public class OrderItem {
         this.drinkId = drinkId;
     }
 
-    public static int getQuantity() {
+    public OrderOption getOrderOption() {
+        return orderOption;
+    }
+
+    public void setOrderOption(OrderOption orderOption) {
+        this.orderOption = orderOption;
+    }
+
+    public int getQuantity() {
         return quantity;
     }
 
-    public static void setQuantity(int quantity) {
-        OrderItem.quantity = quantity;
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 
     public double getUnitPrice() {
@@ -78,28 +91,11 @@ public class OrderItem {
         this.lineTotal = lineTotal;
     }
 
-    @Override
-    public String toString() {
-        return "OrderItem{" +
-                "orderItemId=" + orderItemId +
-                ", orderId=" + orderId +
-                ", productId=" + productId +
-                ", drinkId=" + drinkId +
-                ", quantity=" + quantity +
-                ", unitPrice=" + unitPrice +
-                ", lineTotal=" + lineTotal +
-                '}';
-    }
-
     public String getName() {
         return "";
     }
 
     public String getPrice() {
-        return "";
-    }
-
-    public String getImageURL() {
         return "";
     }
 }

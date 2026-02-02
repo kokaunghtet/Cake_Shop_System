@@ -11,11 +11,16 @@ import com.cakeshopsystem.utils.constants.SnackBarType;
 import com.cakeshopsystem.utils.dao.CakeDAO;
 import com.cakeshopsystem.utils.dao.InventoryDAO;
 import com.cakeshopsystem.utils.dao.ProductDAO;
+import com.cakeshopsystem.utils.events.AppEvents;
 import com.cakeshopsystem.utils.session.SessionManager;
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
@@ -58,6 +63,10 @@ public class ProductViewController {
     private static final String PRODUCT_CARD_FXML = "/views/ProductCard.fxml";
     private String roleName = "";
 
+    private final ChangeListener<Number> orderListener = (obs, oldV, newV) -> {
+        Platform.runLater(this::reloadAllProducts);
+    };
+
     // =====================================
     // ============= LIFECYCLE =============
     // =====================================
@@ -73,6 +82,8 @@ public class ProductViewController {
             discountedItemsScrollPane.setVisible(false);
             discountedItemsScrollPane.setManaged(false);
         } else {
+            discountedItemsScrollPane.setVisible(true);
+            discountedItemsScrollPane.setManaged(true);
             loadDiscountedItems();
         }
 
@@ -83,7 +94,21 @@ public class ProductViewController {
 
         addNewProductBtn.setOnAction(e -> handleAddNewProduct());
         processExpiredBtn.setOnAction(e -> handleWasteProduct());
+
+        // add listener
+        AppEvents.orderCompletedCounterProperty().addListener(orderListener);
+
+        // remove listener automatically when this view is detached
+        mainScrollPane.sceneProperty().addListener(new ChangeListener<>() {
+            @Override
+            public void changed(ObservableValue<? extends Scene> obs, javafx.scene.Scene oldScene, javafx.scene.Scene newScene) {
+                if (oldScene != null && newScene == null) {
+                    AppEvents.orderCompletedCounterProperty().removeListener(orderListener);
+                }
+            }
+        });
     }
+
 
     // =====================================
     // ========= ROLE-BASED ACCESS =========
@@ -101,15 +126,7 @@ public class ProductViewController {
     }
 
     private void configureRoleBasedAccess(String roleName) {
-//        if (roleName.equalsIgnoreCase("Admin")) {
-//            MainController.getCartBtn().setVisible(false);
-//            MainController.getCartBtn().setManaged(false);
-//        } else if (roleName.equalsIgnoreCase("Cashier")) {
-//            addNewProductBtn.setVisible(false);
-//            addNewProductBtn.setManaged(false);
-//        }
-
-        if(roleName.equalsIgnoreCase("Cashier")) {
+        if (roleName.equalsIgnoreCase("Cashier")) {
             addNewProductBtn.setVisible(false);
             addNewProductBtn.setManaged(false);
         }

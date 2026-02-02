@@ -8,6 +8,7 @@ import com.cakeshopsystem.utils.dao.DrinkDAO;
 import com.cakeshopsystem.utils.dao.InventoryDAO;
 import com.cakeshopsystem.utils.dao.ProductDAO;
 import com.cakeshopsystem.utils.services.CartService;
+import com.cakeshopsystem.utils.session.SessionManager;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -138,7 +139,7 @@ public class ProductCardController {
         if (product == null) return;
 
         this.currentProduct = product;
-        this.unitPriceOverride = product.getPrice() * 0.4;
+        this.unitPriceOverride = product.getPrice() * SessionManager.discountRate;
         this.optionOverride = "DISCOUNT";
 
         disableDrinkOptions();
