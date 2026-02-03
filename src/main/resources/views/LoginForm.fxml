@@ -85,7 +85,7 @@
                                                           GridPane.rowIndex="3">
                                                     <GridPane.margin>
                                                         <Insets/>
-                                                    </GridPane.margin>
+                                                    </GridPane.margin>cv x
                                                 </FontIcon>
                                                 <FontIcon fx:id="eyeSlashToggleButton"
                                                           boundsType="LOGICAL_VERTICAL_CENTER"

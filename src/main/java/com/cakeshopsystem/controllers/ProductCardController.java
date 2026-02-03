@@ -27,7 +27,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.scene.control.Toggle;
 
 public class ProductCardController {
-
     // =====================================
     // ============ FXML FIELDS ============
     // =====================================
@@ -67,6 +66,8 @@ public class ProductCardController {
 
     /* Quantity Stepper UI */
     @FXML
+    private HBox qtyBtnHBox;
+    @FXML
     private HBox qtyStepperHBox;
     @FXML
     private Button decreaseBtn;
@@ -76,6 +77,8 @@ public class ProductCardController {
     private Button increaseBtn;
 
     /* Action Buttons */
+    @FXML
+    private HBox priceHBox;
     @FXML
     private Button addToCartBtn;
     @FXML
@@ -93,6 +96,7 @@ public class ProductCardController {
     private ChangeListener<Toggle> drinkToggleListener;
     private Label inactiveOverlay;
     private boolean excludeDiscountStock = false;
+    private boolean isTopProductCard = false;
     private final CartService cartService = CartService.getInstance();
     private Double unitPriceOverride = null;
     private String optionOverride = null;
@@ -188,6 +192,27 @@ public class ProductCardController {
         updateStockUI(product.getProductId());
 
         applyActiveState(product);
+    }
+  
+    public void setProductData(Product product) {
+        isTopProductCard = true;
+
+        qtyBtnHBox.setVisible(false);
+        qtyBtnHBox.setManaged(false);
+
+        disableDrinkOptions();
+        disableDiyAvailability();
+        showStockSection(false);
+
+        addToCartBtn.setVisible(false);
+        addToCartBtn.setManaged(false);
+
+        priceHBox.setVisible(false);
+        priceHBox.setManaged(false);
+
+        loadProductImage(product.getImgPath());
+        productName.setText(product.getProductName());
+        productName.setAlignment(Pos.CENTER);
     }
 
     public void setDrinkData(Product product) {
