@@ -87,9 +87,10 @@ public class MainController {
     @FXML
     private AnchorPane overlayPane;
     @FXML
-    private AnchorPane popupPane;
-    @FXML
-    public StackPane popupHost;
+//    private AnchorPane popupPane;
+    private StackPane popupPane;
+    //    @FXML
+    //    public StackPane popupHost;
     @FXML
     private StackPane badgePane;
 
@@ -116,6 +117,8 @@ public class MainController {
     @FXML
     private Hyperlink userLink;
     @FXML
+    private Hyperlink diyOrderLink;
+    @FXML
     private Hyperlink bookingLink;
 
     @FXML
@@ -132,7 +135,8 @@ public class MainController {
      * ========================================================= */
     private static StackPane loadingOverlay;
     private static BorderPane staticBorderPane;
-    private static AnchorPane staticPopupContentPane;
+    //    private static AnchorPane staticPopupContentPane;
+    private static StackPane staticPopupContentPane;
     private static AnchorPane staticOverlayPane;
 
     private static EventHandler<KeyEvent> focusTrapHandler;
@@ -191,6 +195,9 @@ public class MainController {
         if (memberLink != null) memberLink.setOnMouseClicked(e -> loadMember());
         if (adminProductLink != null) adminProductLink.setOnMouseClicked(e -> loadAdminProduct());
         if (staffProductLink != null) staffProductLink.setOnMouseClicked(e -> loadStaffProduct());
+        if (customOrderLink != null) customOrderLink.setOnMouseClicked(e -> loadCustomOrder());
+        if (diyOrderLink != null) diyOrderLink.setOnMouseClicked(e -> loadDiyOrder());
+        if (bookingLink != null) bookingLink.setOnMouseClicked(e -> loadBooking());
     }
 
     /* =========================================================
@@ -218,6 +225,18 @@ public class MainController {
 
     public void loadStaffProduct() {
         navigate("/views/ProductView.fxml", staffProductLink, "Products");
+    }
+
+    public void loadCustomOrder() {
+        navigate("/views/CustomOrder.fxml", customOrderLink, "Custom Orders");
+    }
+
+    public void loadDiyOrder() {
+        navigate("/views/DiyOrder.fxml", diyOrderLink, "DIY");
+    }
+
+    public void loadBooking() {
+        navigate("/views/Booking.fxml", bookingLink, "Bookings");
     }
 
     private void openCartPopup() {
@@ -399,29 +418,50 @@ public class MainController {
         setPopupContent(content);
     }
 
+//    private static void setPopupContent(Parent content) {
+//        if (content instanceof Region r) {
+//            r.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+//        }
+//
+//        Button closeBtn = (Button) staticPopupContentPane.lookup("#closeBtn");
+//        if (closeBtn == null) closeBtn = createCloseButton();
+//
+//        StackPane wrapper = new StackPane();
+//        wrapper.setPadding(new Insets(15));
+//        wrapper.getChildren().addAll(content, closeBtn);
+//        StackPane.setAlignment(closeBtn, Pos.TOP_RIGHT);
+//
+//        AnchorPane.setTopAnchor(wrapper, 0.0);
+//        AnchorPane.setRightAnchor(wrapper, 0.0);
+//        AnchorPane.setBottomAnchor(wrapper, 0.0);
+//        AnchorPane.setLeftAnchor(wrapper, 0.0);
+//
+//        staticPopupContentPane.getChildren().setAll(wrapper);
+//        Platform.runLater(() -> installFocusTrap(wrapper));
+//
+//        wrapper.setOpacity(0);
+//        new Timeline(new KeyFrame(Duration.millis(200), new KeyValue(wrapper.opacityProperty(), 1, Interpolator.EASE_BOTH))).play();
+//    }
+
     private static void setPopupContent(Parent content) {
         if (content instanceof Region r) {
+            r.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
             r.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
         }
 
-        Button closeBtn = (Button) staticPopupContentPane.lookup("#closeBtn");
-        if (closeBtn == null) closeBtn = createCloseButton();
+        Button closeBtn = createCloseButton();
 
-        StackPane wrapper = new StackPane();
-        wrapper.setPadding(new Insets(15));
-        wrapper.getChildren().addAll(content, closeBtn);
+        StackPane card = new StackPane(content, closeBtn);
+        card.getStyleClass().add("container");
+        card.setPadding(new Insets(20));
+
         StackPane.setAlignment(closeBtn, Pos.TOP_RIGHT);
 
-        AnchorPane.setTopAnchor(wrapper, 0.0);
-        AnchorPane.setRightAnchor(wrapper, 0.0);
-        AnchorPane.setBottomAnchor(wrapper, 0.0);
-        AnchorPane.setLeftAnchor(wrapper, 0.0);
+        card.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+        card.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
 
-        staticPopupContentPane.getChildren().setAll(wrapper);
-        Platform.runLater(() -> installFocusTrap(wrapper));
-
-        wrapper.setOpacity(0);
-        new Timeline(new KeyFrame(Duration.millis(200), new KeyValue(wrapper.opacityProperty(), 1, Interpolator.EASE_BOTH))).play();
+        staticPopupContentPane.getChildren().setAll(card);
+        StackPane.setAlignment(card, Pos.CENTER);
     }
 
     public static Button createCloseButton() {
@@ -505,7 +545,7 @@ public class MainController {
 
         String roleName = RoleCache.getRolesMap().get(user.getRole()).getRoleName();
         if (roleName.equalsIgnoreCase("Admin")) {
-            hideLinks(customOrderLink, staffProductLink, bookingLink);
+            hideLinks(customOrderLink, staffProductLink, bookingLink, diyOrderLink);
         } else if (roleName.equalsIgnoreCase("Cashier")) {
             hideLinks(adminDashboardLink, adminProductLink, memberLink, userLink);
         }

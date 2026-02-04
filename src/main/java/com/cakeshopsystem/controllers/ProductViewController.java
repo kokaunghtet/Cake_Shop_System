@@ -1,22 +1,21 @@
 package com.cakeshopsystem.controllers;
 
-import com.cakeshopsystem.models.Cake;
 import com.cakeshopsystem.models.Inventory;
 import com.cakeshopsystem.models.Product;
 import com.cakeshopsystem.models.User;
+import com.cakeshopsystem.utils.cache.CakeCache;
+import com.cakeshopsystem.utils.cache.InventoryCache;
+import com.cakeshopsystem.utils.cache.ProductCache;
 import com.cakeshopsystem.utils.cache.RoleCache;
 import com.cakeshopsystem.utils.components.SnackBar;
 import com.cakeshopsystem.utils.constants.CakeType;
 import com.cakeshopsystem.utils.constants.SnackBarType;
-import com.cakeshopsystem.utils.dao.CakeDAO;
 import com.cakeshopsystem.utils.dao.InventoryDAO;
-import com.cakeshopsystem.utils.dao.ProductDAO;
 import com.cakeshopsystem.utils.events.AppEvents;
 import com.cakeshopsystem.utils.session.SessionManager;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -64,7 +63,10 @@ public class ProductViewController {
     private String roleName = "";
 
     private final ChangeListener<Number> orderListener = (obs, oldV, newV) -> {
-        Platform.runLater(this::reloadAllProducts);
+        Platform.runLater(() -> {
+            InventoryCache.refresh();
+            reloadAllProducts();
+        });
     };
 
     // =====================================
@@ -136,17 +138,52 @@ public class ProductViewController {
     // ========= DATA LOADING LOGIC ========
     // =====================================
 
-    private void loadDiscountedItems() {
-        ObservableList<Inventory> discountedItemList = InventoryDAO.getInventoryDiscountCandidates();
+    private void loadCategory(
+            int categoryId,
+            HBox targetHBox,
+            java.util.function.BiConsumer<ProductCardController, Product> binder,
+            java.util.function.Predicate<Product> extraFilter
+    ) {
+        var list = ProductCache.getProductsByCategoryId(categoryId);
+        boolean isAdmin = "Admin".equalsIgnoreCase(roleName);
 
-        for (Inventory inventoryRow : discountedItemList) {
+        for (Product p : list) {
+            if (!isAdmin && !p.isActive()) continue;
+            if (extraFilter != null && !extraFilter.test(p)) continue;
+
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource(PRODUCT_CARD_FXML));
                 Parent card = loader.load();
 
                 ProductCardController controller = loader.getController();
-                controller.setDiscountedItemsData(inventoryRow);
+                controller.setExcludeDiscountStock(!isAdmin);
                 controller.applyRoleBasedBtn(roleName);
+
+                binder.accept(controller, p);
+
+                targetHBox.getChildren().add(card);
+            } catch (Exception err) {
+                System.out.println("Error loading product card: ");
+                err.printStackTrace();
+            }
+        }
+    }
+
+    private void loadDiscountedItems() {
+        var list = InventoryCache.getDiscountCandidates();
+        boolean isAdmin = "Admin".equalsIgnoreCase(roleName);
+
+        for (Inventory inv : list) {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource(PRODUCT_CARD_FXML));
+                Parent card = loader.load();
+
+                ProductCardController controller = loader.getController();
+                controller.setExcludeDiscountStock(!isAdmin);
+                controller.applyRoleBasedBtn(roleName);
+
+                Product p = ProductCache.getProductById(inv.getProductId());
+                controller.setDiscountedItemsData(inv, p);
 
                 discountedItemsHBox.getChildren().add(card);
             } catch (Exception err) {
@@ -157,110 +194,27 @@ public class ProductViewController {
     }
 
     private void loadCakes() {
-        ObservableList<Product> cakeList = ProductDAO.getProductsByCategoryId(1);
-
-        boolean isAdmin = "Admin".equalsIgnoreCase(roleName);
-
-        for (Product productCake : cakeList) {
-
-            if (!isAdmin && !productCake.isActive()) continue;
-
-            Cake cake = CakeDAO.getCakeByProductId(productCake.getProductId());
-            if (cake == null) continue;
-
-            if (cake.getCakeType() != CakeType.PREBAKED) continue;
-
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource(PRODUCT_CARD_FXML));
-                Parent card = loader.load();
-
-                ProductCardController controller = loader.getController();
-                controller.setExcludeDiscountStock(!isAdmin);
-                controller.setCakeData(productCake);
-                controller.applyRoleBasedBtn(roleName);
-
-                cakeHBox.getChildren().add(card);
-            } catch (Exception err) {
-                System.out.println("Error loading cake card: ");
-                err.printStackTrace();
-            }
-        }
+        loadCategory(
+                1,
+                cakeHBox,
+                (c, p) -> c.setCakeData(p),
+                p -> {
+                    var cake = CakeCache.getCakeByProductId(p.getProductId());
+                    return cake != null && cake.getCakeType() == CakeType.PREBAKED;
+                }
+        );
     }
 
     private void loadDrinks() {
-        ObservableList<Product> drinkList = ProductDAO.getProductsByCategoryId(2);
-
-        boolean isAdmin = "Admin".equalsIgnoreCase(roleName);
-
-        for (Product productDrink : drinkList) {
-
-            if (!isAdmin && !productDrink.isActive()) continue;
-
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource(PRODUCT_CARD_FXML));
-                Parent card = loader.load();
-
-                ProductCardController controller = loader.getController();
-                controller.setDrinkData(productDrink);
-                controller.applyRoleBasedBtn(roleName);
-
-                drinkHBox.getChildren().add(card);
-            } catch (Exception err) {
-                System.out.println("Error loading drink card: ");
-                err.printStackTrace();
-            }
-        }
+        loadCategory(2, drinkHBox, (c, p) -> c.setDrinkData(p), null);
     }
 
     private void loadBakedGoods() {
-        ObservableList<Product> bakedGoodList = ProductDAO.getProductsByCategoryId(3);
-
-        boolean isAdmin = "Admin".equalsIgnoreCase(roleName);
-
-        for (Product productBakedGood : bakedGoodList) {
-
-            if (!isAdmin && !productBakedGood.isActive()) continue;
-
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource(PRODUCT_CARD_FXML));
-                Parent card = loader.load();
-
-                ProductCardController controller = loader.getController();
-                controller.setExcludeDiscountStock(!isAdmin);
-                controller.setBakedGoodsData(productBakedGood);
-                controller.applyRoleBasedBtn(roleName);
-
-                bakedGoodHBox.getChildren().add(card);
-            } catch (Exception err) {
-                System.out.println("Error loading baked good card: ");
-                err.printStackTrace();
-            }
-        }
+        loadCategory(3, bakedGoodHBox, (c, p) -> c.setBakedGoodsData(p), null);
     }
 
     private void loadAccessories() {
-        ObservableList<Product> accessoryList = ProductDAO.getProductsByCategoryId(4);
-
-        boolean isAdmin = "Admin".equalsIgnoreCase(roleName);
-
-        for (Product productAccessory : accessoryList) {
-
-            if (!isAdmin && !productAccessory.isActive()) continue;
-
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource(PRODUCT_CARD_FXML));
-                Parent card = loader.load();
-
-                ProductCardController controller = loader.getController();
-                controller.setAccessoryData(productAccessory);
-                controller.applyRoleBasedBtn(roleName);
-
-                accessoryHBox.getChildren().add(card);
-            } catch (Exception err) {
-                System.out.println("Error loading accessory card: ");
-                err.printStackTrace();
-            }
-        }
+        loadCategory(4, accessoryHBox, (c, p) -> c.setAccessoryData(p), null);
     }
 
     // =====================================
@@ -270,9 +224,10 @@ public class ProductViewController {
     private void handleWasteProduct() {
         Integer userId = SessionManager.getUser().getUserId();
         InventoryDAO.wasteExpiredInventory(userId);
+
+        InventoryCache.refresh();
         reloadAllProducts();
 
-        // Showing success notification
         SnackBar.show(SnackBarType.SUCCESS, "Success", "Expired stock has been processed.", Duration.seconds(2));
     }
 

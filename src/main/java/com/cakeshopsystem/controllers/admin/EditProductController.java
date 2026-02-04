@@ -4,6 +4,7 @@ import com.cakeshopsystem.controllers.MainController;
 import com.cakeshopsystem.models.Product;
 import com.cakeshopsystem.utils.cache.CakeCache;
 import com.cakeshopsystem.utils.cache.DrinkCache;
+import com.cakeshopsystem.utils.cache.InventoryCache;
 import com.cakeshopsystem.utils.cache.ProductCache;
 import com.cakeshopsystem.utils.components.SnackBar;
 import com.cakeshopsystem.utils.constants.SnackBarType;
@@ -150,14 +151,16 @@ public class EditProductController {
     }
 
     private void bindStock(Product p) {
-        int totalStock = InventoryDAO.getTotalAvailableQuantityByProductId(p.getProductId());
+//        int totalStock = InventoryDAO.getTotalAvailableQuantityByProductId(p.getProductId());
+//        lblCurrentStock.setText(String.valueOf(totalStock));
+        int totalStock = InventoryCache.getTotalQtyByProductId(p.getProductId());
         lblCurrentStock.setText(String.valueOf(totalStock));
     }
 
     private void bindDiyIfCake(Product p) {
         if (!isCake(p)) return;
 
-        var cake = CakeDAO.getCakeByProductId(p.getProductId());
+        var cake = CakeCache.getCakeByProductId(p.getProductId());
         boolean diyAllowed = cake != null && cake.isDiyAllowed();
 
         rbDiyYes.setSelected(diyAllowed);
@@ -208,6 +211,8 @@ public class EditProductController {
             return;
         }
 
+        ProductCache.refreshProducts();
+
         if (isCake(currentProduct)) {
             boolean diyAllowed = rbDiyYes != null && rbDiyYes.isSelected();
             boolean cakeOk = CakeDAO.updateDiyAllowedIfPrebaked(productId, diyAllowed);
@@ -215,13 +220,10 @@ public class EditProductController {
                 showError("Save failed (cakes).");
                 return;
             }
+            CakeCache.refreshCake();
         }
 
         SnackBar.show(SnackBarType.SUCCESS, "Updated", "Changes to the product were saved.", Duration.seconds(2));
-
-        ProductCache.refreshProducts();
-        CakeCache.refreshCake();
-        DrinkCache.refreshDrinks();
 
         if (onSaved != null) {
             onSaved.run();
@@ -283,17 +285,17 @@ public class EditProductController {
             return;
         }
 
+        InventoryCache.refresh();
+
         // 5) Refresh UI
-        int totalStock = InventoryDAO.getTotalAvailableQuantityByProductId(currentProduct.getProductId());
+//        int totalStock = InventoryDAO.getTotalAvailableQuantityByProductId(currentProduct.getProductId());
+//        lblCurrentStock.setText(String.valueOf(totalStock));
+        int totalStock = InventoryCache.getTotalQtyByProductId(currentProduct.getProductId());
         lblCurrentStock.setText(String.valueOf(totalStock));
 
         txtStockQty.clear();
         txtShelfLifeDays.clear();
         SnackBar.show(SnackBarType.SUCCESS, "Stock updated", "Inventory was updated.", Duration.seconds(2));
-
-        ProductCache.refreshProducts();
-        CakeCache.refreshCake();
-        DrinkCache.refreshDrinks();
 
         if (onSaved != null) {
             onSaved.run();

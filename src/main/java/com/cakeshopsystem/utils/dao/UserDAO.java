@@ -40,7 +40,7 @@ public class UserDAO {
                 }
 
                 if (!rs.getBoolean("is_active"))
-                    return new AuthResult(false, "This account has been deactivated by Admin!");
+                    return new AuthResult(false, "This account has been deactivated!");
 
                 int userId = rs.getInt("user_id");
                 String userName = rs.getString("user_name");

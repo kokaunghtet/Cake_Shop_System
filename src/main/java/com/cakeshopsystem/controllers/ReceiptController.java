@@ -103,27 +103,6 @@ public class ReceiptController {
     /**
      * Handles the printing process and saves a snapshot of the receipt to a PNG file.
      */
-//    @FXML
-//    private void onPrint() {
-//        if (data == null) return;
-//
-//        try {
-//            // 1) make a full snapshot (expands scroll content temporarily)
-//            var img = snapshotReceiptFull();
-//
-//            // 2) save PNG
-//            saveImageToResources(img);
-//
-//            // 3) print the IMAGE (stable, no UI distortion)
-//            printImage(img);
-//
-//            SnackBar.show(SnackBarType.SUCCESS, "Success", "Receipt saved & printed.", Duration.seconds(2));
-//            MainController.handleClosePopupContent();
-//
-//        } catch (Exception ex) {
-//            SnackBar.show(SnackBarType.ERROR, "Error", "Failed: " + ex.getMessage(), Duration.seconds(3));
-//        }
-//    }
     @FXML
     private void onPrint() {
         if (data == null) return;
@@ -147,48 +126,6 @@ public class ReceiptController {
     // ---------------------------------------------------------
     // File I/O Logic
     // ---------------------------------------------------------
-
-//    private javafx.scene.image.WritableImage snapshotReceiptFull() {
-//        // force css/layout
-//        receiptRoot.applyCss();
-//        receiptRoot.layout();
-//
-//        // --- backup scrollpane state
-//        double oldPrefH = spItems.getPrefViewportHeight();
-//        var oldV = spItems.getVbarPolicy();
-//        var oldH = spItems.getHbarPolicy();
-//
-//        try {
-//            // compute full content height
-//            itemsBox.applyCss();
-//            itemsBox.layout();
-//            double contentH = itemsBox.getBoundsInLocal().getHeight();
-//
-//            // expand scrollpane so everything is visible
-//            spItems.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-//            spItems.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-//            spItems.setPrefViewportHeight(contentH + 10);
-//
-//            receiptRoot.applyCss();
-//            receiptRoot.layout();
-//
-//            var params = new javafx.scene.SnapshotParameters();
-//
-//            // if your receipt background becomes transparent, enable white background:
-//            params.setFill(javafx.scene.paint.Color.WHITE);
-//
-//            return receiptRoot.snapshot(params, null);
-//
-//        } finally {
-//            // restore scrollpane state (prevents UI "breaking")
-//            spItems.setPrefViewportHeight(oldPrefH);
-//            spItems.setVbarPolicy(oldV);
-//            spItems.setHbarPolicy(oldH);
-//
-//            receiptRoot.applyCss();
-//            receiptRoot.layout();
-//        }
-//    }
 
     private Parent loadPrintableReceipt(ReceiptData data) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/ReceiptPrint.fxml"));
@@ -219,22 +156,6 @@ public class ReceiptController {
 
         return wrapper.snapshot(params, null);
     }
-
-//    private void saveImageToResources(javafx.scene.image.WritableImage img) throws Exception {
-//        java.nio.file.Path dir = java.nio.file.Paths.get("src", "main", "resources", "receipts");
-//        java.nio.file.Files.createDirectories(dir);
-//
-//        String stamp = java.time.LocalDateTime.now()
-//                .format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss"));
-//        String filename = "receipt-" + data.getOrderId() + "-" + stamp + ".png";
-//
-//        java.io.File out = dir.resolve(filename).toFile();
-//        javax.imageio.ImageIO.write(
-//                javafx.embed.swing.SwingFXUtils.fromFXImage(img, null),
-//                "png",
-//                out
-//        );
-//    }
 
     private void saveImageToResourcesAsync(javafx.scene.image.WritableImage img) throws Exception {
         var buf = javafx.embed.swing.SwingFXUtils.fromFXImage(img, null);

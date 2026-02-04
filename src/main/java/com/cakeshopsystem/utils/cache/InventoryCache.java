@@ -5,101 +5,86 @@ import com.cakeshopsystem.utils.dao.InventoryDAO;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.time.LocalDate;
+import java.util.*;
 
 public class InventoryCache {
 
-    private static final ObservableList<Inventory> inventoryList = FXCollections.observableArrayList();
-    private static final Map<Integer, Inventory> inventoryMap = new HashMap<>();
+    private static final ObservableList<Inventory> all = FXCollections.observableArrayList();
+
+    private static final Map<Integer, Integer> totalQtyByProduct = new HashMap<>();
+    private static final Map<Integer, Integer> regularQtyByProduct = new HashMap<>();
+
+    private static final ObservableList<Inventory> discountCandidates = FXCollections.observableArrayList();
+
+    private static boolean loaded = false;
 
     private InventoryCache() {}
 
-    // ===================== Getters =====================
-
-    public static ObservableList<Inventory> getInventoryList() {
-        if (inventoryList.isEmpty()) refreshInventory();
-        return inventoryList;
+    private static void ensureLoaded() {
+        if (!loaded) refresh();
     }
 
-    public static Map<Integer, Inventory> getInventoryMap() {
-        if (inventoryMap.isEmpty()) refreshInventory();
-        return inventoryMap;
-    }
+    public static void refresh() {
+        all.clear();
+        totalQtyByProduct.clear();
+        regularQtyByProduct.clear();
+        discountCandidates.clear();
 
-    public static Inventory getInventoryById(int inventoryId) {
-        if (inventoryMap.isEmpty()) refreshInventory();
-        return inventoryMap.get(inventoryId);
-    }
-
-    // ⚠️ Better fetched from DAO (can be large)
-    public static ObservableList<Inventory> getInventoryByProductId(int productId) {
-        return InventoryDAO.getInventoryByProductId(productId);
-    }
-
-    public static ObservableList<Inventory> ggetInventoryDiscountCandidates() {
-        if(inventoryMap.isEmpty()) refreshInventory();
-        return inventoryList;
-    }
-
-    // ===================== Refresh =====================
-
-    public static void refreshInventory() {
-        inventoryList.clear();
-        inventoryMap.clear();
+        LocalDate today = LocalDate.now();
 
         for (Inventory inv : InventoryDAO.getAllInventory()) {
-            cacheInventory(inv);
+            all.add(inv);
+
+            int qty = inv.getQuantity();
+            if (qty <= 0) continue;
+
+            LocalDate exp = inv.getExpDate();
+            boolean notExpired = (exp == null) || !exp.isBefore(today);
+
+            boolean isDiscountCandidate =
+                    exp != null
+                            && exp.equals(today)
+                            && inv.getCreatedAt() != null
+                            && inv.getCreatedAt().toLocalDate().isBefore(today);
+
+            if (isDiscountCandidate) {
+                discountCandidates.add(inv);
+            }
+
+            if (notExpired) {
+                int pid = inv.getProductId();
+                totalQtyByProduct.merge(pid, qty, Integer::sum);
+
+                if (!isDiscountCandidate) {
+                    regularQtyByProduct.merge(pid, qty, Integer::sum);
+                }
+            }
         }
+
+        discountCandidates.sort(Comparator
+                .comparing(Inventory::getExpDate, Comparator.nullsLast(Comparator.naturalOrder()))
+                .thenComparingInt(Inventory::getInventoryId));
+
+        loaded = true;
     }
 
-    // ===================== CRUD Wrappers =====================
-
-    public static boolean addInventory(Inventory inv) {
-        if (inv == null) return false;
-
-        boolean ok = InventoryDAO.insertInventory(inv);
-        if (ok) cacheInventory(inv);
-
-        return ok;
+    public static int getTotalQtyByProductId(int productId) {
+        ensureLoaded();
+        return totalQtyByProduct.getOrDefault(productId, 0);
     }
 
-    public static boolean updateInventory(Inventory inv) {
-        if (inv == null) return false;
-
-        boolean ok = InventoryDAO.updateInventory(inv);
-        if (ok) cacheInventory(inv);
-
-        return ok;
+    public static int getRegularQtyByProductId(int productId) {
+        ensureLoaded();
+        return regularQtyByProduct.getOrDefault(productId, 0);
     }
 
-    public static boolean deleteInventory(int inventoryId) {
-        boolean ok = InventoryDAO.deleteInventory(inventoryId);
-        if (ok) {
-            inventoryMap.remove(inventoryId);
-            inventoryList.removeIf(i -> i.getInventoryId() == inventoryId);
-        }
-        return ok;
+    public static ObservableList<Inventory> getDiscountCandidates() {
+        ensureLoaded();
+        return discountCandidates;
     }
 
-    // ===================== Helpers =====================
-
-    private static void cacheInventory(Inventory inv) {
-        if (inv == null) return;
-
-        int id = inv.getInventoryId();
-
-        int idx = findIndexById(id);
-        if (idx >= 0) inventoryList.set(idx, inv);
-        else inventoryList.add(inv);
-
-        inventoryMap.put(id, inv);
-    }
-
-    private static int findIndexById(int inventoryId) {
-        for (int i = 0; i < inventoryList.size(); i++) {
-            if (inventoryList.get(i).getInventoryId() == inventoryId) return i;
-        }
-        return -1;
+    public static ObservableList<Inventory> getInventoryByProductId(int productId) {
+        return InventoryDAO.getInventoryByProductId(productId);
     }
 }
