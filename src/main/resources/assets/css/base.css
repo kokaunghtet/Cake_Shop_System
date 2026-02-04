@@ -218,13 +218,11 @@
 }
 
 .button:hover,
-.button:focused,
 .button:pressed {
   -fx-background-color: -app-primary-hover-color;
 }
 
 .button.outline:hover,
-.button.outline:focused,
 .button.outline:pressed {
   -fx-background-color: -app-primary-hover-color;
 }

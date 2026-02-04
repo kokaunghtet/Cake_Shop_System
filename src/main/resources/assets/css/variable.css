@@ -26,6 +26,8 @@
     -fx-info-color: #3498DB;
 }
 */
+
+
 .root {
     -app-base-text-color : #0B1220;
     -app-muted-text-color : #4B5563;
@@ -33,6 +35,7 @@
     -app-bg-color : #F7FAFF;
     -app-border-color : #DCE6F2;
     -app-surface-color : #FFFFFF;
+    -app-surface-hover-color : #F2F2F2;
 
     -app-primary-color : #4682B4;
     -app-primary-hover-color : #2F6690;

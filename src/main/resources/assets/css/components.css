@@ -290,6 +290,37 @@ Popup Close Button
     -fx-icon-color: red;
 }
 
+.cancel-btn {
+    -fx-font-weight: 700;
+    -fx-cursor: hand;
+    -fx-padding: 0 16 0 16;
+    -fx-alignment: center;
+    -fx-background-color: -app-surface-color;
+    -fx-text-fill: -app-primary-color;
+    -fx-graphic-text-gap: 8;
+    -fx-border-width: 1;
+    -fx-border-color: -app-primary-color;
+}
+
+.cancel-btn.outline {
+  -fx-background-color: transparent;
+  -fx-border-color: -app-surface-color;
+  -fx-border-width: 1;
+  -fx-text-fill: -app-primary-hover-color;
+  -fx-border-radius: 8;
+  -fx-background-radius: 8;
+}
+
+.cancel-btn:hover,
+.cancel-btn:pressed {
+  -fx-background-color: -app-surface-hover-color;
+}
+
+.cancel-btn.outline:hover,
+.cancel-btn.outline:pressed {
+  -fx-background-color: -app-surface-hover-color;
+}
+
 /* =========================
    Radio (Pill style)
    ========================= */

@@ -110,7 +110,7 @@
 
         <!-- ================= Actions ================= -->
         <HBox alignment="CENTER_RIGHT" spacing="10">
-            <Button fx:id="btnCancel" text="Cancel" mnemonicParsing="false"/>
+            <Button fx:id="btnCancel" text="Cancel" mnemonicParsing="false" styleClass="cancel-btn"/>
             <Button fx:id="btnSave" text="Save Changes" styleClass="primary-btn" mnemonicParsing="false"/>
         </HBox>
 

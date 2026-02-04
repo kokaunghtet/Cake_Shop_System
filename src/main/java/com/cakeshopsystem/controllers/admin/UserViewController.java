@@ -5,13 +5,19 @@ import com.cakeshopsystem.models.User;
 import com.cakeshopsystem.utils.ImageHelper;
 import com.cakeshopsystem.utils.cache.RoleCache;
 import com.cakeshopsystem.utils.cache.UserCache;
+import com.cakeshopsystem.utils.dao.UserDAO;
+import com.sun.tools.javac.Main;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
 public class UserViewController {
 
@@ -19,7 +25,7 @@ public class UserViewController {
     private Button btnAdd;
 
     @FXML
-    private ComboBox<?> btnFilter;
+    private ComboBox<String> btnFilter;
 
     @FXML
     private TableView<User> userTableView;
@@ -49,6 +55,78 @@ public class UserViewController {
         configureTable();
 
         btnAdd.setOnAction(e -> handleAddUser());
+
+        configureRowDoubleClick();
+    }
+
+    private void editUserStatus(int userId) {
+        User user = UserCache.getUserById(userId);
+        Label name = new Label(user.getUserName());
+        name.getStyleClass().add("sub-title");
+        Button saveBtn = new Button("Save");
+
+        ComboBox<String> statusBox = new ComboBox<>();
+        statusBox.getItems().addAll("ACTIVE", "INACTIVE");
+        statusBox.setValue(user.isActive() ? "ACTIVE" : "INACTIVE");
+
+//        saveBtn.setOnAction(e -> {
+//            boolean newActive = "ACTIVE".equals(statusBox.getValue());
+//            user.setActive(newActive);
+//            UserDAO.updateUser(user);
+//            userTableView.refresh();
+//            MainController.handleClosePopupContent();
+//        });
+
+        saveBtn.setOnAction(e -> {
+            boolean newActive = "ACTIVE".equals(statusBox.getValue());
+            user.setActive(newActive);
+
+            Task<Void> task = new Task<>() {
+                @Override protected Void call() {
+                    UserDAO.updateUser(user); // slow work here
+                    return null;
+                }
+            };
+
+            task.setOnSucceeded(ev -> {
+                userTableView.refresh();
+                MainController.handleClosePopupContent();
+            });
+
+            task.setOnFailed(ev -> {
+                MainController.handleClosePopupContent();
+            });
+
+            new Thread(task, "update-user-status").start();
+        });
+
+
+        Button cancelBtn = new Button("Cancel");
+        cancelBtn.getStyleClass().add("cancel-btn");
+        cancelBtn.setOnAction(e -> MainController.handleClosePopupContent());
+
+        HBox btnRow = new HBox(20, cancelBtn, saveBtn);
+        VBox box = new VBox(20, name, statusBox, btnRow);
+        box.setPadding(new Insets(25));
+        box.setAlignment(Pos.CENTER_LEFT);
+
+        MainController.togglePopupContent(box);
+    }
+
+    // ====================== Row Double Click ======================
+    private void configureRowDoubleClick() {
+        userTableView.setRowFactory(_ -> {
+            TableRow<User> row = new TableRow<>();
+            row.setOnMouseEntered(event->row.setCursor(Cursor.HAND));
+            row.setOnMouseExited(event->row.setCursor(Cursor.DEFAULT));
+            row.setOnMouseClicked(event -> {
+                if (!row.isEmpty() && event.getClickCount() == 2) {
+                    User selectedUser = row.getItem();
+                    editUserStatus(selectedUser.getUserId());
+                }
+            });
+            return row;
+        });
     }
 
     private void configureTable() {
@@ -113,4 +191,6 @@ public class UserViewController {
     private void handleAddUser() {
         MainController.togglePopupContent("/views/admin/AddUser.fxml");
     }
+
+
 }

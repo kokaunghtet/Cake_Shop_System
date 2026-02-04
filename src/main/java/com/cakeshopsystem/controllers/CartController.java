@@ -5,21 +5,28 @@ import com.cakeshopsystem.models.Payment;
 import com.cakeshopsystem.models.ReceiptData;
 import com.cakeshopsystem.utils.components.SnackBar;
 import com.cakeshopsystem.utils.constants.SnackBarType;
+import com.cakeshopsystem.utils.dao.InventoryDAO;
 import com.cakeshopsystem.utils.dao.PaymentDAO;
 import com.cakeshopsystem.utils.services.CartService;
 import com.cakeshopsystem.utils.services.OrderService;
 import com.cakeshopsystem.utils.session.SessionManager;
+import javafx.animation.PauseTransition;
+import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-import com.cakeshopsystem.utils.dao.InventoryDAO;
 import javafx.util.Duration;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Controller responsible for managing the shopping cart UI,
@@ -30,24 +37,15 @@ public class CartController {
     // ---------------------------------------------------------
     // FXML UI Components
     // ---------------------------------------------------------
-    @FXML
-    private Label lblTotalAmount;
-    @FXML
-    private ComboBox<Payment> cbPaymentOptions;
-    @FXML
-    private Button confirmOrderBtn;
-    @FXML
-    private TableView<CartItem> tblCart;
-    @FXML
-    private TableColumn<CartItem, String> colName;
-    @FXML
-    private TableColumn<CartItem, Number> colPrice;
-    @FXML
-    private TableColumn<CartItem, Number> colQty;
-    @FXML
-    private TableColumn<CartItem, Number> colSub;
-    @FXML
-    private TableColumn<CartItem, Void> colActions;
+    @FXML private Label lblTotalAmount;
+    @FXML private ComboBox<Payment> cbPaymentOptions;
+    @FXML private Button confirmOrderBtn;
+    @FXML private TableView<CartItem> tblCart;
+    @FXML private TableColumn<CartItem, String> colName;
+    @FXML private TableColumn<CartItem, Number> colPrice;
+    @FXML private TableColumn<CartItem, Number> colQty;
+    @FXML private TableColumn<CartItem, Number> colSub;
+    @FXML private TableColumn<CartItem, Void> colActions;
 
     // ---------------------------------------------------------
     // Services & Dependencies
@@ -55,13 +53,64 @@ public class CartController {
     private final CartService cartService = CartService.getInstance();
 
     // ---------------------------------------------------------
+    // Payment Icons (local resources)
+    // ---------------------------------------------------------
+    private static final Map<String, String> PAYMENT_ICON = Map.of(
+            "CASH", "/images/payments/cash.png",
+            "KPAY", "/images/payments/kpay-logo.png",
+            "WAVEMONEY", "/images/payments/wavemoney-logo.png",
+            "AYAPAY", "/images/payments/ayapay-logo.png"
+    );
+
+    private static final double ICON_SIZE = 18;
+
+    private String paymentIconPath(String name) {
+        if (name == null) return null;
+        String key = name.replaceAll("\\s+", "").toUpperCase();
+        return PAYMENT_ICON.get(key);
+    }
+
+    // Cache decoded images (avoid reloading/decoding on every selection)
+    private final Map<String, Image> iconCache = new HashMap<>();
+
+    /**
+     * Load icon with requested size and background loading to keep UI smooth.
+     */
+    private Image loadIcon(String path) {
+        if (path == null || path.isBlank()) return null;
+
+        String p = path.startsWith("/") ? path : "/" + path;
+
+        return iconCache.computeIfAbsent(p, key -> {
+            var url = getClass().getResource(key);
+            if (url == null) return null;
+
+            // request final size => less scaling work at render time
+            return new Image(
+                    url.toExternalForm(),
+                    ICON_SIZE, ICON_SIZE,
+                    true,   // preserve ratio
+                    true,   // smooth
+                    true    // background loading
+            );
+        });
+    }
+
+    // ---------------------------------------------------------
     // Initialization Logic
     // ---------------------------------------------------------
     @FXML
     private void initialize() {
+        // Preload icons to remove first-click lag
+        PAYMENT_ICON.values().forEach(this::loadIcon);
+
         // Initialize Payment Dropdown
         cbPaymentOptions.setItems(PaymentDAO.getActivePayments());
-        setupComboBox(cbPaymentOptions, Payment::getPaymentName);
+        setupComboBox(
+                cbPaymentOptions,
+                Payment::getPaymentName,
+                p -> paymentIconPath(p.getPaymentName())
+        );
 
         // Bind Table Items
         tblCart.setItems(cartService.getItems());
@@ -70,7 +119,9 @@ public class CartController {
         colName.setCellValueFactory(c -> {
             CartItem it = c.getValue();
             String opt = it.getOption();
-            String display = (opt == null || opt.isBlank()) ? it.getName() : it.getName() + " (" + opt + ")";
+            String display = (opt == null || opt.isBlank())
+                    ? it.getName()
+                    : it.getName() + " (" + opt + ")";
             return new javafx.beans.property.SimpleStringProperty(display);
         });
 
@@ -91,6 +142,9 @@ public class CartController {
                 btnDel.setGraphic(trash);
                 btnDel.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
                 btnDel.getStyleClass().add("btn-danger-icon");
+
+                btnMinus.getStyleClass().add("card-dec-btn");
+                btnPlus.getStyleClass().add("card-inc-btn");
                 box.setAlignment(Pos.CENTER_LEFT);
 
                 btnMinus.setOnAction(e -> {
@@ -129,14 +183,14 @@ public class CartController {
         // Bind Grand Total Label
         updateTotalLabel();
 
-        cartService.getItems().addListener((javafx.collections.ListChangeListener<CartItem>) c -> updateTotalLabel());
+        cartService.getItems().addListener((ListChangeListener<CartItem>) c -> updateTotalLabel());
 
         // also listen quantity changes of each item
         for (CartItem it : cartService.getItems()) {
             it.quantityProperty().addListener((obs, o, n) -> updateTotalLabel());
         }
 
-        cartService.getItems().addListener((javafx.collections.ListChangeListener<CartItem>) c -> {
+        cartService.getItems().addListener((ListChangeListener<CartItem>) c -> {
             while (c.next()) {
                 if (c.wasAdded()) {
                     for (CartItem it : c.getAddedSubList()) {
@@ -179,7 +233,12 @@ public class CartController {
             cartService.clear();
             com.cakeshopsystem.utils.events.AppEvents.fireOrderCompleted();
 
-            SnackBar.show(SnackBarType.SUCCESS, "Success", "Order confirmed (ID: " + rd.getOrderId() + ")", Duration.seconds(2));
+            SnackBar.show(
+                    SnackBarType.SUCCESS,
+                    "Success",
+                    "Order confirmed (ID: " + rd.getOrderId() + ")",
+                    Duration.seconds(2)
+            );
 
             BigDecimal oneLakh = new BigDecimal("100000");
             if (rd.getGrandTotal().compareTo(oneLakh) >= 0) {
@@ -203,14 +262,14 @@ public class CartController {
     // ---------------------------------------------------------
     // Helper Methods & Validations
     // ---------------------------------------------------------
-    private java.math.BigDecimal computeGrandTotal() {
-        java.math.BigDecimal total = java.math.BigDecimal.ZERO;
+    private BigDecimal computeGrandTotal() {
+        BigDecimal total = BigDecimal.ZERO;
         for (CartItem it : cartService.getItems()) {
-            java.math.BigDecimal unit = java.math.BigDecimal.valueOf(it.getUnitPrice());
-            java.math.BigDecimal qty = java.math.BigDecimal.valueOf(it.getQuantity());
+            BigDecimal unit = BigDecimal.valueOf(it.getUnitPrice());
+            BigDecimal qty = BigDecimal.valueOf(it.getQuantity());
             total = total.add(unit.multiply(qty));
         }
-        return total.setScale(2, java.math.RoundingMode.HALF_UP);
+        return total.setScale(2, RoundingMode.HALF_UP);
     }
 
     private boolean canIncrease(CartItem it) {
@@ -225,48 +284,67 @@ public class CartController {
         }
 
         if (it.getQuantity() >= available) {
-            SnackBar.show(SnackBarType.WARNING, "Failed", "Cannot increase quantity beyond available stock.", Duration.seconds(2));
+            SnackBar.show(
+                    SnackBarType.WARNING,
+                    "Failed",
+                    "Cannot increase quantity beyond available stock.",
+                    Duration.seconds(2)
+            );
             return false;
         }
         return true;
     }
 
-    private java.math.BigDecimal getProductBasePrice(int productId) throws Exception {
-        String sql = "SELECT price FROM products WHERE product_id = ? LIMIT 1";
-        try (var con = com.cakeshopsystem.utils.databaseconnection.DB.connect();
-             var ps = con.prepareStatement(sql)) {
-            ps.setInt(1, productId);
-            try (var rs = ps.executeQuery()) {
-                if (!rs.next()) throw new Exception("Missing product price for product_id=" + productId);
-                return money2(rs.getBigDecimal(1));
+    /**
+     * Smooth ComboBox rendering:
+     * - Preloads icons (done in initialize)
+     * - Loads icons at final size (ICON_SIZE)
+     * - Reuses ImageView per cell (no new ImageView per updateItem)
+     */
+    private <T> void setupComboBox(
+            ComboBox<T> combo,
+            java.util.function.Function<T, String> textFn,
+            java.util.function.Function<T, String> iconPathFn
+    ) {
+        java.util.function.Supplier<ListCell<T>> cellSupplier = () -> new ListCell<>() {
+            private final ImageView iv = new ImageView();
+
+            {
+                iv.setFitWidth(ICON_SIZE);
+                iv.setFitHeight(ICON_SIZE);
+                iv.setPreserveRatio(true);
+                iv.setSmooth(true);
             }
-        }
-    }
 
-    private java.math.BigDecimal money2(java.math.BigDecimal v) {
-        if (v == null) return java.math.BigDecimal.ZERO.setScale(2, java.math.RoundingMode.HALF_UP);
-        return v.setScale(2, java.math.RoundingMode.HALF_UP);
-    }
-
-    private String normalizeOpt(String s) {
-        return s == null ? "" : s.trim().toUpperCase();
-    }
-
-    private <T> void setupComboBox(ComboBox<T> combo, java.util.function.Function<T, String> textFn) {
-        combo.setCellFactory(lv -> new ListCell<>() {
             @Override
             protected void updateItem(T item, boolean empty) {
                 super.updateItem(item, empty);
-                setText(empty || item == null ? null : textFn.apply(item));
+
+                if (empty || item == null) {
+                    setText(null);
+                    setGraphic(null);
+                    iv.setImage(null);
+                    return;
+                }
+
+                String text = textFn.apply(item);
+                String iconPath = (iconPathFn == null) ? null : iconPathFn.apply(item);
+
+                setText(text);
+
+                Image icon = loadIcon(iconPath);
+                if (icon == null) {
+                    setGraphic(null);
+                    iv.setImage(null);
+                } else {
+                    iv.setImage(icon);
+                    setGraphic(iv);
+                }
             }
-        });
-        combo.setButtonCell(new ListCell<>() {
-            @Override
-            protected void updateItem(T item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty || item == null ? null : textFn.apply(item));
-            }
-        });
+        };
+
+        combo.setCellFactory(lv -> cellSupplier.get());
+        combo.setButtonCell(cellSupplier.get());
     }
 
     private void updateTotalLabel() {
@@ -275,7 +353,7 @@ public class CartController {
 
     private void showPopup(Parent root) {
         MainController.handleClosePopupContent();
-        javafx.animation.PauseTransition pt = new javafx.animation.PauseTransition(Duration.millis(180));
+        PauseTransition pt = new PauseTransition(Duration.millis(180));
         pt.setOnFinished(e -> MainController.togglePopupContent(root));
         pt.play();
     }
@@ -302,5 +380,4 @@ public class CartController {
 
         showPopup(root);
     }
-
 }

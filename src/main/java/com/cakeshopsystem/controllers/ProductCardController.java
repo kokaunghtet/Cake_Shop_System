@@ -1,12 +1,13 @@
 package com.cakeshopsystem.controllers;
 
 import com.cakeshopsystem.controllers.admin.EditProductController;
+import com.cakeshopsystem.models.Drink;
 import com.cakeshopsystem.models.Inventory;
 import com.cakeshopsystem.models.Product;
 import com.cakeshopsystem.utils.cache.CakeCache;
-import com.cakeshopsystem.utils.dao.DrinkDAO;
-import com.cakeshopsystem.utils.dao.InventoryDAO;
-import com.cakeshopsystem.utils.dao.ProductDAO;
+import com.cakeshopsystem.utils.cache.DrinkCache;
+import com.cakeshopsystem.utils.cache.InventoryCache;
+import com.cakeshopsystem.utils.cache.ProductCache;
 import com.cakeshopsystem.utils.services.CartService;
 import com.cakeshopsystem.utils.session.SessionManager;
 import javafx.fxml.FXML;
@@ -135,12 +136,10 @@ public class ProductCardController {
         qtyStepperHBox.setManaged(!isAdmin);
     }
 
-    public void setDiscountedItemsData(Inventory inv) {
+    public void setDiscountedItemsData(Inventory inv, Product product) {
         resetCardState();
 
-        Product product = ProductDAO.getProductById(inv.getProductId());
-
-        if (product == null) return;
+        if (inv == null || product == null) return;
 
         this.currentProduct = product;
         this.unitPriceOverride = product.getPrice() * SessionManager.discountRate;
@@ -164,9 +163,9 @@ public class ProductCardController {
         addToCartBtn.setDisable(batchQty <= 0);
         updateQtyButtonsState();
 
-        // Disable for discounted items if inactive
         applyActiveState(product);
     }
+
 
     public void setCakeData(Product product) {
         resetCardState();
@@ -193,7 +192,7 @@ public class ProductCardController {
 
         applyActiveState(product);
     }
-  
+
     public void setProductData(Product product) {
         isTopProductCard = true;
 
@@ -226,11 +225,17 @@ public class ProductCardController {
         loadProductImage(product.getImgPath());
         productName.setText(product.getProductName());
 
-        var drinks = DrinkDAO.getDrinksByProductId(product.getProductId());
+        int productId = product.getProductId();
         double base = product.getPrice();
 
-        drinkHotPrice = base + drinks.getFirst().getPriceDelta();
-        drinkColdPrice = base + drinks.getLast().getPriceDelta();
+        Drink hot = DrinkCache.getDrinkByProductIdAndCold(productId, false);
+        Drink cold = DrinkCache.getDrinkByProductIdAndCold(productId, true);
+
+        double hotDelta = (hot == null) ? 0.0 : hot.getPriceDelta();
+        double coldDelta = (cold == null) ? 0.0 : cold.getPriceDelta();
+
+        drinkHotPrice = base + hotDelta;
+        drinkColdPrice = base + coldDelta;
 
         ensureDrinkToggleGroup();
         installDrinkPriceListenerIfNeeded();
@@ -352,9 +357,15 @@ public class ProductCardController {
         updateQtyButtonsState();
     }
 
+    //    private int getAvailableQty(int productId) {
+//        return excludeDiscountStock ? InventoryDAO.getRegularQuantityByProductId(productId) : InventoryDAO.getTotalAvailableQuantityByProductId(productId);
+//    }
     private int getAvailableQty(int productId) {
-        return excludeDiscountStock ? InventoryDAO.getRegularQuantityByProductId(productId) : InventoryDAO.getTotalAvailableQuantityByProductId(productId);
+        return excludeDiscountStock
+                ? InventoryCache.getRegularQtyByProductId(productId)
+                : InventoryCache.getTotalQtyByProductId(productId);
     }
+
 
     private void setMaxQtyFromStock(int stockQty) {
         this.maxQty = Math.max(stockQty, 0);
@@ -559,7 +570,7 @@ public class ProductCardController {
     private void refreshThisCard() {
         if (currentProduct == null) return;
 
-        Product fresh = ProductDAO.getProductById(currentProduct.getProductId());
+        Product fresh = ProductCache.getProductById(currentProduct.getProductId());
         if (fresh == null) return;
 
         currentProduct = fresh;

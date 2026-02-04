@@ -79,7 +79,7 @@ public class RegisterMemberController {
             return;
         }
 
-        showSuccess("Success", "Member registered.");
+        showSuccess();
         closeThen(onRegistered);
     }
 
@@ -155,7 +155,7 @@ public class RegisterMemberController {
         SnackBar.show(SnackBarType.ERROR, title, message, ERROR_DURATION);
     }
 
-    private void showSuccess(String title, String message) {
-        SnackBar.show(SnackBarType.SUCCESS, title, message, SUCCESS_DURATION);
+    private void showSuccess() {
+        SnackBar.show(SnackBarType.SUCCESS, "Success", "Member registered.", SUCCESS_DURATION);
     }
 }
