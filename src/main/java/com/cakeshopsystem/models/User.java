@@ -1,5 +1,9 @@
 package com.cakeshopsystem.models;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+
+
 public class User {
     private int userId;
     private String userName;
@@ -9,7 +13,7 @@ public class User {
     private boolean isActive = true;
     private int role;
 
-    public User() {
+    public User(int userId, String staffName, String avatarPath) {
     }
 
     public User(int userId, String userName, String email, String password, String imagePath, boolean isActive, int role) {

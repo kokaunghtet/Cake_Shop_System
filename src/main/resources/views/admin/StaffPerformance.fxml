@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.ScrollPane?>
+<?import org.controlsfx.control.BreadCrumbBar?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.cakeshopsystem.controllers.admin.StaffPerformanceController"
+            prefWidth="800" prefHeight="600">
+
+    <VBox spacing="10" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" style="-fx-padding: 10;">
+        <!-- Filter & Breadcrumb -->
+        <HBox spacing="10">
+            <ComboBox fx:id="periodCombo" prefWidth="120"/>
+            <DatePicker fx:id="datePicker"/>
+            <BreadCrumbBar fx:id="breadCrumbBar" HBox.hgrow="ALWAYS"/>
+        </HBox>
+
+        <!-- Scrollable cards -->
+        <ScrollPane fx:id="scrollPane" fitToWidth="true" VBox.vgrow="ALWAYS">
+            <FlowPane fx:id="cardContainer" hgap="15" vgap="15" prefWrapLength="780" alignment="TOP_LEFT"/>
+        </ScrollPane>
+    </VBox>
+</AnchorPane>
