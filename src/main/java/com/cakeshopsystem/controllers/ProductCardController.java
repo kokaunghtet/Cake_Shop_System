@@ -10,85 +10,54 @@ import com.cakeshopsystem.utils.cache.InventoryCache;
 import com.cakeshopsystem.utils.cache.ProductCache;
 import com.cakeshopsystem.utils.services.CartService;
 import com.cakeshopsystem.utils.session.SessionManager;
+import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.beans.value.ChangeListener;
-import javafx.scene.control.Toggle;
 
 public class ProductCardController {
-    // =====================================
-    // ============ FXML FIELDS ============
-    // =====================================
-
-    @FXML
-    private StackPane productCardStackPane;
-    @FXML
-    private VBox productCardVBox;
-    @FXML
-    private ImageView productImage;
-    @FXML
-    private Label productName;
-
-    /* Drink Options UI */
-    @FXML
-    private HBox drinkOptions;
-    @FXML
-    private RadioButton hotOption;
-    @FXML
-    private RadioButton coldOption;
-    @FXML
-    private ToggleGroup drinkOptionsRadioBtn;
-
-    /* Product Info UI */
-    @FXML
-    private Label productPrice;
-    @FXML
-    private Label diyAvailability;
-
-    /* Stock Section UI */
-    @FXML
-    private HBox inStockItemsHBox;
-    @FXML
-    private Label stockQuantityLabel;
-    @FXML
-    private Label productStock;
-
-    /* Quantity Stepper UI */
-    @FXML
-    private HBox qtyBtnHBox;
-    @FXML
-    private HBox qtyStepperHBox;
-    @FXML
-    private Button decreaseBtn;
-    @FXML
-    private Label quantityLabel;
-    @FXML
-    private Button increaseBtn;
-
-    /* Action Buttons */
-    @FXML
-    private HBox priceHBox;
-    @FXML
-    private Button addToCartBtn;
-    @FXML
-    private Button addStockQtyBtn;
 
     // =====================================
-    // =========== STATE FIELDS ============
+    // FXML UI COMPONENTS
     // =====================================
+    @FXML private StackPane productCardStackPane;
+    @FXML private VBox productCardVBox;
+    @FXML private ImageView productImage;
+    @FXML private Label productName;
 
+    @FXML private HBox drinkOptions;
+    @FXML private RadioButton hotOption;
+    @FXML private RadioButton coldOption;
+    @FXML private ToggleGroup drinkOptionsRadioBtn;
+
+    @FXML private Label productPrice;
+    @FXML private Label diyAvailability;
+
+    @FXML private HBox inStockItemsHBox;
+    @FXML private Label stockQuantityLabel;
+    @FXML private Label productStock;
+
+    @FXML private HBox qtyBtnHBox;
+    @FXML private HBox qtyStepperHBox;
+    @FXML private Button decreaseBtn;
+    @FXML private Label quantityLabel;
+    @FXML private Button increaseBtn;
+
+    @FXML private HBox priceHBox;
+    @FXML private Button addToCartBtn;
+    @FXML private Button addStockQtyBtn;
+
+    // =====================================
+    // INTERNAL STATE
+    // =====================================
     private int quantity = 1;
     private int maxQty = Integer.MAX_VALUE;
     private Product currentProduct;
@@ -102,10 +71,11 @@ public class ProductCardController {
     private Double unitPriceOverride = null;
     private String optionOverride = null;
 
-    // =====================================
-    // ============= LIFECYCLE =============
-    // =====================================
+    private java.util.function.Consumer<Product> onCardDoubleClick;
 
+    // =====================================
+    // LIFECYCLE
+    // =====================================
     @FXML
     private void initialize() {
         increaseBtn.setOnAction(e -> handleIncrementQuantity());
@@ -113,12 +83,17 @@ public class ProductCardController {
 
         addStockQtyBtn.setOnAction(e -> openEditProductPopup());
         addToCartBtn.setOnAction(e -> handleAddToCart());
+
+        productCardStackPane.setOnMouseClicked(e -> {
+            if (e.getClickCount() == 2 && onCardDoubleClick != null && currentProduct != null) {
+                onCardDoubleClick.accept(currentProduct);
+            }
+        });
     }
 
     // =====================================
-    // ======== PUBLIC DATA BINDING ========
+    // PUBLIC CONFIGURATION
     // =====================================
-
     public void setExcludeDiscountStock(boolean exclude) {
         this.excludeDiscountStock = exclude;
     }
@@ -136,6 +111,13 @@ public class ProductCardController {
         qtyStepperHBox.setManaged(!isAdmin);
     }
 
+    public void setOnCardDoubleClick(java.util.function.Consumer<Product> handler) {
+        this.onCardDoubleClick = handler;
+    }
+
+    // =====================================
+    // DATA BINDING — PRODUCT TYPES
+    // =====================================
     public void setDiscountedItemsData(Inventory inv, Product product) {
         resetCardState();
 
@@ -166,10 +148,8 @@ public class ProductCardController {
         applyActiveState(product);
     }
 
-
     public void setCakeData(Product product) {
         resetCardState();
-
         this.currentProduct = product;
 
         disableDrinkOptions();
@@ -189,34 +169,11 @@ public class ProductCardController {
         }
 
         updateStockUI(product.getProductId());
-
         applyActiveState(product);
-    }
-
-    public void setProductData(Product product) {
-        isTopProductCard = true;
-
-        qtyBtnHBox.setVisible(false);
-        qtyBtnHBox.setManaged(false);
-
-        disableDrinkOptions();
-        disableDiyAvailability();
-        showStockSection(false);
-
-        addToCartBtn.setVisible(false);
-        addToCartBtn.setManaged(false);
-
-        priceHBox.setVisible(false);
-        priceHBox.setManaged(false);
-
-        loadProductImage(product.getImgPath());
-        productName.setText(product.getProductName());
-        productName.setAlignment(Pos.CENTER);
     }
 
     public void setDrinkData(Product product) {
         resetCardState();
-
         this.currentProduct = product;
 
         disableDiyAvailability();
@@ -243,7 +200,6 @@ public class ProductCardController {
         hotOption.setSelected(true);
         productPrice.setText(String.valueOf(drinkHotPrice));
 
-        // Drinks: no stock limit
         maxQty = Integer.MAX_VALUE;
         if (quantity < 1) quantity = 1;
         quantityLabel.setText(String.valueOf(quantity));
@@ -254,7 +210,6 @@ public class ProductCardController {
 
     public void setBakedGoodsData(Product product) {
         resetCardState();
-
         this.currentProduct = product;
 
         disableDrinkOptions();
@@ -266,13 +221,11 @@ public class ProductCardController {
         productPrice.setText(String.valueOf(product.getPrice()));
 
         updateStockUI(product.getProductId());
-
         applyActiveState(product);
     }
 
     public void setAccessoryData(Product product) {
         resetCardState();
-
         this.currentProduct = product;
 
         disableDrinkOptions();
@@ -284,10 +237,34 @@ public class ProductCardController {
         productPrice.setText(String.valueOf(product.getPrice()));
 
         updateStockUI(product.getProductId());
-
         applyActiveState(product);
     }
 
+    public void setProductData(Product product) {
+        this.currentProduct = product;
+        isTopProductCard = true;
+
+        qtyBtnHBox.setVisible(false);
+        qtyBtnHBox.setManaged(false);
+
+        disableDrinkOptions();
+        disableDiyAvailability();
+        showStockSection(false);
+
+        addToCartBtn.setVisible(false);
+        addToCartBtn.setManaged(false);
+
+        priceHBox.setVisible(false);
+        priceHBox.setManaged(false);
+
+        loadProductImage(product.getImgPath());
+        productName.setText(product.getProductName());
+        productName.setAlignment(Pos.CENTER);
+    }
+
+    // =====================================
+    // CART ACTIONS
+    // =====================================
     public void handleAddToCart() {
         if (currentProduct == null) return;
         if (!currentProduct.isActive()) return;
@@ -331,9 +308,8 @@ public class ProductCardController {
     }
 
     // =====================================
-    // ======== STOCK & QTY LOGIC ==========
+    // STOCK & QUANTITY LOGIC
     // =====================================
-
     private void updateStockUI(int productId) {
         int totalQty = getAvailableQty(productId);
         setMaxQtyFromStock(totalQty);
@@ -357,15 +333,11 @@ public class ProductCardController {
         updateQtyButtonsState();
     }
 
-    //    private int getAvailableQty(int productId) {
-//        return excludeDiscountStock ? InventoryDAO.getRegularQuantityByProductId(productId) : InventoryDAO.getTotalAvailableQuantityByProductId(productId);
-//    }
     private int getAvailableQty(int productId) {
         return excludeDiscountStock
                 ? InventoryCache.getRegularQtyByProductId(productId)
                 : InventoryCache.getTotalQtyByProductId(productId);
     }
-
 
     private void setMaxQtyFromStock(int stockQty) {
         this.maxQty = Math.max(stockQty, 0);
@@ -375,7 +347,6 @@ public class ProductCardController {
             quantityLabel.setText("1");
             return;
         }
-
         clampQuantity();
     }
 
@@ -410,14 +381,13 @@ public class ProductCardController {
 
     private void updateQtyButtonsState() {
         boolean outOfStock = maxQty <= 0;
-
         increaseBtn.setDisable(outOfStock || quantity >= maxQty);
         decreaseBtn.setDisable(outOfStock || quantity <= 1);
     }
 
     // =====================================
-    // ========= UI STATE HELPERS ==========
-    // ====================================
+    // UI STATE HELPERS
+    // =====================================
     private void resetCardState() {
         unitPriceOverride = null;
         optionOverride = null;
@@ -434,7 +404,6 @@ public class ProductCardController {
         inactiveOverlay.setManaged(!active);
 
         productCardStackPane.setOpacity(active ? 1.0 : 0.6);
-
         setInteractiveDisabled(!active);
     }
 
@@ -448,7 +417,6 @@ public class ProductCardController {
         StackPane.setMargin(inactiveOverlay, new Insets(10));
 
         inactiveOverlay.setMouseTransparent(true);
-
         productCardStackPane.getChildren().add(inactiveOverlay);
     }
 
@@ -456,7 +424,6 @@ public class ProductCardController {
         if (addToCartBtn != null) addToCartBtn.setDisable(disabled);
         if (increaseBtn != null) increaseBtn.setDisable(disabled);
         if (decreaseBtn != null) decreaseBtn.setDisable(disabled);
-
         if (hotOption != null) hotOption.setDisable(disabled);
         if (coldOption != null) coldOption.setDisable(disabled);
     }
@@ -504,9 +471,8 @@ public class ProductCardController {
     }
 
     // =====================================
-    // ========= RESOURCE METHODS ==========
+    // IMAGE LOADING
     // =====================================
-
     private void loadProductImage(String imagePath) {
         try {
             Image image = loadImageSmart(imagePath);
@@ -546,9 +512,8 @@ public class ProductCardController {
     }
 
     // =====================================
-    // ========= POPUPS & REFRESH ==========
+    // ADMIN POPUPS & REFRESH
     // =====================================
-
     private void openEditProductPopup() {
         if (currentProduct == null) return;
 

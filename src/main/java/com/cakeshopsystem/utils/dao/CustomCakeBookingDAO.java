@@ -78,7 +78,7 @@ public class CustomCakeBookingDAO {
              PreparedStatement stmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             stmt.setInt(1, booking.getOrderId());
-            stmt.setInt(2, booking.getCustomCakeId());
+            stmt.setInt(2, booking.getCakeId());
 
             if (booking.getBookingId() == null) stmt.setNull(3, Types.INTEGER);
             else stmt.setInt(3, booking.getBookingId());
@@ -94,7 +94,7 @@ public class CustomCakeBookingDAO {
             try (ResultSet keys = stmt.getGeneratedKeys()) {
                 if (keys.next()) {
                     int id = keys.getInt(1);
-                    booking.setCustomCakeOrderId(id); // your model method name
+                    booking.setCustomCakeBookingId(id);
                 } else {
                     throw new SQLException("Inserting custom_cake_bookings failed, no ID obtained.");
                 }
@@ -121,7 +121,7 @@ public class CustomCakeBookingDAO {
              PreparedStatement stmt = con.prepareStatement(sql)) {
 
             stmt.setInt(1, booking.getOrderId());
-            stmt.setInt(2, booking.getCustomCakeId());
+            stmt.setInt(2, booking.getCakeId());
 
             if (booking.getBookingId() == null) stmt.setNull(3, Types.INTEGER);
             else stmt.setInt(3, booking.getBookingId());
@@ -130,7 +130,7 @@ public class CustomCakeBookingDAO {
             else stmt.setDate(4, Date.valueOf(booking.getPickupDate()));
 
             stmt.setString(5, booking.getCustomMessage());
-            stmt.setInt(6, booking.getCustomCakeOrderId());
+            stmt.setInt(6, booking.getCustomCakeBookingId());
 
             return stmt.executeUpdate() > 0;
 
@@ -164,13 +164,35 @@ public class CustomCakeBookingDAO {
         int orderId = rs.getInt("order_id");
         int cakeId = rs.getInt("cake_id");
 
-        Integer bookingId = (Integer) rs.getObject("booking_id"); // handles NULL safely
+        Integer bookingId = (Integer) rs.getObject("booking_id");
 
-        Date pickup = rs.getDate("pickup_date");
+        java.sql.Date pickup = rs.getDate("pickup_date");
         java.time.LocalDate pickupDate = (pickup == null) ? null : pickup.toLocalDate();
+
+        int flavourId = rs.getInt("flavour_id");
+        Integer toppingId = rs.getInt("topping_id");
+        int sizeId = rs.getInt("size_id");
+
+        String shapeStr = rs.getString("shape");
+        com.cakeshopsystem.utils.constants.CakeShape shape =
+                (shapeStr == null || shapeStr.isBlank())
+                        ? null
+                        : com.cakeshopsystem.utils.constants.CakeShape.valueOf(shapeStr.trim().toUpperCase());
 
         String message = rs.getString("custom_message");
 
-        return new CustomCakeBooking(id, orderId, cakeId, bookingId, pickupDate, message);
+        return new CustomCakeBooking(
+                id,
+                orderId,
+                cakeId,
+                bookingId,
+                pickupDate,
+                flavourId,
+                toppingId,
+                sizeId,
+                shape,
+                message
+        );
     }
+
 }

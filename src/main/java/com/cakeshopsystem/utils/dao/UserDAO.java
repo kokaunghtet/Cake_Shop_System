@@ -1,6 +1,5 @@
 package com.cakeshopsystem.utils.dao;
 
-import com.cakeshopsystem.models.StaffPerformanceRow;
 import com.cakeshopsystem.models.User;
 import com.cakeshopsystem.utils.AuthResult;
 import com.cakeshopsystem.utils.PasswordHasher;
@@ -383,15 +382,6 @@ public class UserDAO {
         user.setImagePath(imagePath);
         user.setActive(isActive);
         return user;
-    }
-
-
-    public static List<User> getAllStaff() {
-        return List.of();
-    }
-
-    public static StaffPerformanceRow getStaffPerformance(int userId, String period, LocalDate date) {
-        return null;
     }
 }
 

@@ -71,7 +71,7 @@ public class CustomCakeBookingCache {
         boolean ok = CustomCakeBookingDAO.deleteCustomCakeBooking(customCakeBookingId);
         if (ok) {
             CustomCakeBooking removed = byId.remove(customCakeBookingId);
-            list.removeIf(x -> x.getCustomCakeOrderId() == customCakeBookingId);
+            list.removeIf(x -> x.getCustomCakeBookingId() == customCakeBookingId);
 
             if (removed != null) {
                 orderIdToBookingId.remove(removed.getOrderId());
@@ -87,7 +87,7 @@ public class CustomCakeBookingCache {
     private static void cacheOne(CustomCakeBooking booking) {
         if (booking == null) return;
 
-        int id = booking.getCustomCakeOrderId();
+        int id = booking.getCustomCakeBookingId();
 
         int idx = findIndexById(id);
         if (idx >= 0) list.set(idx, booking);
@@ -99,7 +99,7 @@ public class CustomCakeBookingCache {
 
     private static int findIndexById(int id) {
         for (int i = 0; i < list.size(); i++) {
-            if (list.get(i).getCustomCakeOrderId() == id) return i;
+            if (list.get(i).getCustomCakeBookingId() == id) return i;
         }
         return -1;
     }
@@ -107,7 +107,7 @@ public class CustomCakeBookingCache {
     private static void rebuildOrderMapFromList() {
         orderIdToBookingId.clear();
         for (CustomCakeBooking b : list) {
-            orderIdToBookingId.put(b.getOrderId(), b.getCustomCakeOrderId());
+            orderIdToBookingId.put(b.getOrderId(), b.getCustomCakeBookingId());
         }
     }
 }

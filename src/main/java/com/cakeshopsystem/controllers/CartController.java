@@ -85,13 +85,12 @@ public class CartController {
             var url = getClass().getResource(key);
             if (url == null) return null;
 
-            // request final size => less scaling work at render time
             return new Image(
                     url.toExternalForm(),
                     ICON_SIZE, ICON_SIZE,
-                    true,   // preserve ratio
-                    true,   // smooth
-                    true    // background loading
+                    true,
+                    true,
+                    true
             );
         });
     }
@@ -129,7 +128,6 @@ public class CartController {
         colQty.setCellValueFactory(c -> c.getValue().quantityProperty());
         colSub.setCellValueFactory(c -> c.getValue().subTotalProperty());
 
-        // Set up Action Buttons (Plus, Minus, Delete) within the Table
         colActions.setCellFactory(tc -> new TableCell<>() {
             private final Button btnMinus = new Button("-");
             private final Button btnPlus = new Button("+");

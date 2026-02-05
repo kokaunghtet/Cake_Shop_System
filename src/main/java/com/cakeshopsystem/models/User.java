@@ -13,7 +13,7 @@ public class User {
     private boolean isActive = true;
     private int role;
 
-    public User(int userId, String staffName, String avatarPath) {
+    public User() {
     }
 
     public User(int userId, String userName, String email, String password, String imagePath, boolean isActive, int role) {

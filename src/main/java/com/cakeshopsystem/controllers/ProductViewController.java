@@ -26,39 +26,26 @@ import javafx.scene.layout.HBox;
 import javafx.util.Duration;
 
 public class ProductViewController {
-    // =====================================
-    // ============ FXML FIELDS ============
-    // =====================================
-
-    @FXML
-    private ScrollPane mainScrollPane;
-
-    /* Top Action Controls */
-    @FXML
-    private Button addNewProductBtn;
-    @FXML
-    private Button processExpiredBtn;
-
-    /* Discount Section Controls */
-    @FXML
-    private ScrollPane discountedItemsScrollPane;
-    @FXML
-    private HBox discountedItemsHBox;
-
-    /* Category Containers (Horizontal Scrollers) */
-    @FXML
-    private HBox cakeHBox;
-    @FXML
-    private HBox drinkHBox;
-    @FXML
-    private HBox bakedGoodHBox;
-    @FXML
-    private HBox accessoryHBox;
 
     // =====================================
-    // ========== STATE & CONSTANTS ========
+    // FXML UI COMPONENTS
     // =====================================
+    @FXML private ScrollPane mainScrollPane;
 
+    @FXML private Button addNewProductBtn;
+    @FXML private Button processExpiredBtn;
+
+    @FXML private ScrollPane discountedItemsScrollPane;
+    @FXML private HBox discountedItemsHBox;
+
+    @FXML private HBox cakeHBox;
+    @FXML private HBox drinkHBox;
+    @FXML private HBox bakedGoodHBox;
+    @FXML private HBox accessoryHBox;
+
+    // =====================================
+    // CONSTANTS & STATE
+    // =====================================
     private static final String PRODUCT_CARD_FXML = "/views/ProductCard.fxml";
     private String roleName = "";
 
@@ -70,9 +57,8 @@ public class ProductViewController {
     };
 
     // =====================================
-    // ============= LIFECYCLE =============
+    // LIFECYCLE
     // =====================================
-
     @FXML
     private void initialize() {
         roleName = resolveRoleName();
@@ -97,13 +83,15 @@ public class ProductViewController {
         addNewProductBtn.setOnAction(e -> handleAddNewProduct());
         processExpiredBtn.setOnAction(e -> handleWasteProduct());
 
-        // add listener
         AppEvents.orderCompletedCounterProperty().addListener(orderListener);
 
-        // remove listener automatically when this view is detached
         mainScrollPane.sceneProperty().addListener(new ChangeListener<>() {
             @Override
-            public void changed(ObservableValue<? extends Scene> obs, javafx.scene.Scene oldScene, javafx.scene.Scene newScene) {
+            public void changed(
+                    ObservableValue<? extends Scene> obs,
+                    Scene oldScene,
+                    Scene newScene
+            ) {
                 if (oldScene != null && newScene == null) {
                     AppEvents.orderCompletedCounterProperty().removeListener(orderListener);
                 }
@@ -111,11 +99,9 @@ public class ProductViewController {
         });
     }
 
-
     // =====================================
-    // ========= ROLE-BASED ACCESS =========
+    // ROLE RESOLUTION & ACCESS CONTROL
     // =====================================
-
     private String resolveRoleName() {
         User user = SessionManager.getUser();
         if (user == null) return "";
@@ -135,9 +121,8 @@ public class ProductViewController {
     }
 
     // =====================================
-    // ========= DATA LOADING LOGIC ========
+    // GENERIC CATEGORY LOADER
     // =====================================
-
     private void loadCategory(
             int categoryId,
             HBox targetHBox,
@@ -160,7 +145,6 @@ public class ProductViewController {
                 controller.applyRoleBasedBtn(roleName);
 
                 binder.accept(controller, p);
-
                 targetHBox.getChildren().add(card);
             } catch (Exception err) {
                 System.out.println("Error loading product card: ");
@@ -169,9 +153,19 @@ public class ProductViewController {
         }
     }
 
+    // =====================================
+    // DISCOUNTED ITEMS
+    // =====================================
     private void loadDiscountedItems() {
         var list = InventoryCache.getDiscountCandidates();
         boolean isAdmin = "Admin".equalsIgnoreCase(roleName);
+        boolean hasItems = list != null && !list.isEmpty();
+
+        discountedItemsScrollPane.setVisible(hasItems);
+        discountedItemsScrollPane.setManaged(hasItems);
+
+        discountedItemsHBox.getChildren().clear();
+        if (!hasItems) return;
 
         for (Inventory inv : list) {
             try {
@@ -193,6 +187,9 @@ public class ProductViewController {
         }
     }
 
+    // =====================================
+    // CATEGORY LOADERS
+    // =====================================
     private void loadCakes() {
         loadCategory(
                 1,
@@ -218,9 +215,8 @@ public class ProductViewController {
     }
 
     // =====================================
-    // ========= REFRESH & ACTIONS =========
+    // ACTIONS & REFRESH
     // =====================================
-
     private void handleWasteProduct() {
         Integer userId = SessionManager.getUser().getUserId();
         InventoryDAO.wasteExpiredInventory(userId);
@@ -228,7 +224,12 @@ public class ProductViewController {
         InventoryCache.refresh();
         reloadAllProducts();
 
-        SnackBar.show(SnackBarType.SUCCESS, "Success", "Expired stock has been processed.", Duration.seconds(2));
+        SnackBar.show(
+                SnackBarType.SUCCESS,
+                "Success",
+                "Expired stock has been processed.",
+                Duration.seconds(2)
+        );
     }
 
     private void reloadAllProducts() {
@@ -240,13 +241,12 @@ public class ProductViewController {
 
         boolean isAdmin = "Admin".equalsIgnoreCase(roleName);
 
-        if (isAdmin) {
+        if (!isAdmin) {
+            loadDiscountedItems();
+        } else {
             discountedItemsScrollPane.setVisible(false);
             discountedItemsScrollPane.setManaged(false);
-        } else {
-            discountedItemsScrollPane.setVisible(true);
-            discountedItemsScrollPane.setManaged(true);
-            loadDiscountedItems();
+            discountedItemsHBox.getChildren().clear();
         }
 
         loadCakes();

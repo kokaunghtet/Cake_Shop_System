@@ -63,7 +63,8 @@
                 <AnchorPane fx:id="contentPane" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="20.0"
                             AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0"/>
                 <!-- Breadcrumb Bar -->
-                <BreadcrumbBar fx:id="breadcrumbBar" prefHeight="30.0" styleClass="breadcrumb-container"
+                <BreadcrumbBar fx:id="breadcrumbBar" prefHeight="30.0" alignment="CENTER_LEFT"
+                               styleClass="breadcrumb-container"
                                AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"/>
 
                 <!-- Cart Button with Notification Dot -->
@@ -94,13 +95,11 @@
     <!--        </StackPane>-->
 
     <!--    </AnchorPane>-->
-    <AnchorPane fx:id="overlayPane" managed="false" visible="false"
-                onMouseClicked="#handleOverlayClick"
-                style="-fx-background-color: rgba(0,0,0,0.4);">
+    <AnchorPane fx:id="overlayPane" managed="false" visible="false" style="-fx-background-color: rgba(0,0,0,0.4);">
 
         <StackPane fx:id="popupPane"
                    AnchorPane.topAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                   AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"/>
+                   AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" onMouseClicked="#handleOverlayClick"/>
     </AnchorPane>
 
 

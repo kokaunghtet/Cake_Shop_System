@@ -239,7 +239,7 @@ public class AddProductController {
 
     private boolean saveCake() {
         try {
-            String name = requiredText(txtName, "Name");
+            String name = requiredName(txtName, "Name");
 
             Flavour flavour = requiredValue(cbFlavour, "Flavour");
             Topping topping = requiredValue(cbTopping, "Topping");
@@ -288,7 +288,7 @@ public class AddProductController {
 
     private boolean saveDrink() {
         try {
-            String name = requiredText(txtName, "Name");
+            String name = requiredName(txtName, "Name");
             double basePrice = requiredPrice(txtPrice);
 
             String imgPathToSave = (selectedImagePath == null || selectedImagePath.isBlank())
@@ -321,7 +321,7 @@ public class AddProductController {
 
     private boolean saveBakedGood() {
         try {
-            String name = requiredText(txtName, "Name");
+            String name = requiredName(txtName, "Name");
             double basePrice = requiredPrice(txtPrice);
 
             String imgPathToSave = (selectedImagePath == null || selectedImagePath.isBlank())
@@ -354,7 +354,7 @@ public class AddProductController {
 
     private boolean saveAccessory() {
         try {
-            String name = requiredText(txtName, "Name");
+            String name = requiredName(txtName, "Name");
             double basePrice = requiredPrice(txtPrice);
 
             String imgPathToSave = (selectedImagePath == null || selectedImagePath.isBlank())
@@ -440,20 +440,23 @@ public class AddProductController {
     // =====================================
     // ========= VALIDATION HELPERS ========
     // =====================================
-    private String requiredText(TextField tf, String fieldName) {
+    private String requiredNonEmpty(TextField tf, String fieldName) {
         String v = (tf.getText() == null) ? "" : tf.getText().trim();
-        if (v.isEmpty()) {
-            throw new IllegalArgumentException(fieldName + " is required.");
-        }
-        // Validate format: Only letters (a-zA-Z) and spaces allowed
+        if (v.isEmpty()) throw new IllegalArgumentException(fieldName + " is required.");
+        return v;
+    }
+
+    private String requiredName(TextField tf, String fieldName) {
+        String v = requiredNonEmpty(tf, fieldName);
         if (!v.matches("^[a-zA-Z\\s]+$")) {
             throw new IllegalArgumentException(fieldName + " must contain only letters.");
         }
         return v;
     }
 
+
     private double requiredPrice(TextField tf) {
-        String raw = requiredText(tf, "Price");
+        String raw = requiredNonEmpty(tf, "Price");
 
         boolean ok = raw.matches("^\\d+$") || raw.matches("^\\d{1,3}(,\\d{3})+$");
         if (!ok) {
