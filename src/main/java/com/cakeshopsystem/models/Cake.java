@@ -91,18 +91,4 @@ public class Cake {
     public void setDiyAllowed(boolean diyAllowed) {
         isDiyAllowed = diyAllowed;
     }
-
-    @Override
-    public String toString() {
-        return "Cake{" +
-                "cakeId=" + cakeId +
-                ", productId=" + productId +
-                ", flavourId=" + flavourId +
-                ", toppingId=" + toppingId +
-                ", sizeId=" + sizeId +
-                ", cakeType=" + cakeType +
-                ", shape=" + shape +
-                ", isDiyAllowed=" + isDiyAllowed +
-                '}';
-    }
 }

@@ -129,7 +129,6 @@ public class MainController {
     @FXML
     private Label badgeLabel;
 
-
     /* =========================================================
      * 3. STATIC REFERENCES (For Popup/Focus System)
      * ========================================================= */
@@ -267,7 +266,6 @@ public class MainController {
                 }, cartService.distinctProductCountProperty())
         );
     }
-
 
     private void hideCartUI() {
         if (cartBtn != null) {
@@ -503,9 +501,8 @@ public class MainController {
 
     @FXML
     private void handleOverlayClick(MouseEvent e) {
-        if (staticOverlayPane != null && e.getTarget() == staticOverlayPane) {
+        if (e.getTarget() == popupPane)
             handleClosePopupContent();
-        }
     }
 
     /* =========================================================

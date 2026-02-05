@@ -11,64 +11,70 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<StackPane fx:id="productCardStackPane" styleClass="card" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cakeshopsystem.controllers.ProductCardController">
+<StackPane fx:id="productCardStackPane" styleClass="card" xmlns="http://javafx.com/javafx/25"
+           xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cakeshopsystem.controllers.ProductCardController">
 
     <VBox fx:id="productCardVBox" minWidth="200.0" spacing="10" styleClass="card-body">
 
         <!-- Image -->
         <StackPane>
-            <ImageView fx:id="productImage" fitHeight="140.0" fitWidth="180.0" pickOnBounds="true" preserveRatio="true" styleClass="card-image" />
+            <ImageView fx:id="productImage" fitHeight="140.0" fitWidth="180.0" pickOnBounds="true" preserveRatio="true"
+                       styleClass="card-image"/>
         </StackPane>
 
         <!-- Name -->
-        <Label fx:id="productName" styleClass="card-header" wrapText="true" />
+        <Label fx:id="productName" styleClass="card-header" wrapText="true"/>
 
         <!-- Hot / Cold -->
         <HBox fx:id="drinkOptions" alignment="CENTER_LEFT" spacing="10">
             <RadioButton fx:id="hotOption" contentDisplay="TEXT_ONLY" selected="true" text="Hot">
                 <toggleGroup>
-                    <ToggleGroup fx:id="drinkOptionsRadioBtn" />
+                    <ToggleGroup fx:id="drinkOptionsRadioBtn"/>
                 </toggleGroup>
                 <cursor>
-                    <Cursor fx:constant="HAND" />
+                    <Cursor fx:constant="HAND"/>
                 </cursor>
             </RadioButton>
             <RadioButton fx:id="coldOption" contentDisplay="TEXT_ONLY" text="Cold" toggleGroup="$drinkOptionsRadioBtn">
                 <cursor>
-                    <Cursor fx:constant="HAND" />
+                    <Cursor fx:constant="HAND"/>
                 </cursor>
             </RadioButton>
         </HBox>
 
         <!-- Price + DIY availability -->
-        <HBox alignment="CENTER_LEFT" spacing="8">
-            <Label styleClass="meta" text="Price:" />
-            <Label fx:id="productPrice" styleClass="card-price" />
-            <Region HBox.hgrow="ALWAYS" />
-            <Label fx:id="diyAvailability" styleClass="badge" />
+        <HBox fx:id="priceHBox" alignment="CENTER_LEFT" spacing="8">
+            <Label styleClass="meta" text="Price:"/>
+            <Label fx:id="productPrice" styleClass="card-price"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="diyAvailability" styleClass="badge"/>
         </HBox>
 
         <!-- Qty + Add -->
-        <HBox alignment="CENTER_LEFT" spacing="10">
+        <HBox fx:id="qtyBtnHBox" alignment="CENTER_LEFT" spacing="10">
 
             <HBox fx:id="qtyStepperHBox" alignment="CENTER" styleClass="qty-stepper">
-                <Button fx:id="decreaseBtn" accessibleRole="DECREMENT_BUTTON" mnemonicParsing="false" styleClass="card-dec-btn" text="-" />
-                <Label fx:id="quantityLabel" alignment="CENTER" minWidth="28" prefWidth="28" styleClass="qty-label" text="1" />
-                <Button fx:id="increaseBtn" accessibleRole="INCREMENT_BUTTON" mnemonicParsing="false" styleClass="card-inc-btn" text="+" />
+                <Button fx:id="decreaseBtn" accessibleRole="DECREMENT_BUTTON" mnemonicParsing="false"
+                        styleClass="card-dec-btn" text="-"/>
+                <Label fx:id="quantityLabel" alignment="CENTER" minWidth="28" prefWidth="28" styleClass="qty-label"
+                       text="1"/>
+                <Button fx:id="increaseBtn" accessibleRole="INCREMENT_BUTTON" mnemonicParsing="false"
+                        styleClass="card-inc-btn" text="+"/>
             </HBox>
 
-            <Region HBox.hgrow="ALWAYS" />
+            <Region HBox.hgrow="ALWAYS"/>
 
             <StackPane>
-                <Button fx:id="addToCartBtn" mnemonicParsing="false" styleClass="card-btn" text="Add to Cart" />
-                <Button fx:id="addStockQtyBtn" mnemonicParsing="false" styleClass="card-btn" text="Edit Product" visible="false" />
+                <Button fx:id="addToCartBtn" mnemonicParsing="false" styleClass="card-btn" text="Add to Cart"/>
+                <Button fx:id="addStockQtyBtn" mnemonicParsing="false" styleClass="card-btn" text="Edit Product"
+                        visible="false"/>
             </StackPane>
         </HBox>
 
         <!-- Quantity -->
         <HBox fx:id="inStockItemsHBox" alignment="CENTER_RIGHT">
-            <Label fx:id="productStock" styleClass="card-quantity" />
-            <Label fx:id="stockQuantityLabel" styleClass="meta" text=" Items In Stock" />
+            <Label fx:id="productStock" styleClass="card-quantity"/>
+            <Label fx:id="stockQuantityLabel" styleClass="meta" text=" Items In Stock"/>
         </HBox>
 
     </VBox>

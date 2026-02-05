@@ -15,6 +15,9 @@
 
 <AnchorPane xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.cakeshopsystem.controllers.AddUserController">
+    <padding>
+        <Insets bottom="25.0" left="25.0" right="25.0" top="25.0"/>
+    </padding>
     <VBox alignment="CENTER" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
           AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <Label styleClass="title" text="Add User"/>

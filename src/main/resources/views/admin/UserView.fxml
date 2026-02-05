@@ -12,42 +12,40 @@
 
 <AnchorPane styleClass="container" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.cakeshopsystem.controllers.admin.UserViewController">
-    <children>
-        <!-- anchor 30 30 50 30 -->
-        <VBox alignment="CENTER" spacing="20.0" AnchorPane.bottomAnchor="20.0"
-              AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
-            <children>
-                <HBox alignment="TOP_RIGHT">
-                    <children>
-                        <TextField fx:id="txtSearch" promptText="Search" styleClass="text-field"/>
-                        <ComboBox fx:id="btnFilter" promptText="Filter">
-                            <HBox.margin>
-                                <Insets left="25.0"/>
-                            </HBox.margin>
-                        </ComboBox>
-                        <Button fx:id="btnAdd" mnemonicParsing="false" text="Add">
-                            <HBox.margin>
-                                <Insets left="25.0"/>
-                            </HBox.margin>
-                        </Button>
-                    </children>
-                    <VBox.margin>
-                        <Insets/>
-                    </VBox.margin>
-                </HBox>
-                <TableView fx:id="userTableView" VBox.vgrow="ALWAYS">
-                    <columns>
-                        <TableColumn fx:id="colAvatar" minWidth="60.0" text="Avatar"/>
-                        <TableColumn fx:id="colName" minWidth="200.0" text="Name"/>
-                        <TableColumn fx:id="colEmail" minWidth="200.0" text="Email"/>
-                        <TableColumn fx:id="colRole" minWidth="200.0" text="Role"/>
-                        <TableColumn fx:id="colStatus" minWidth="200.0" text="Status"/>
-                    </columns>
-                    <columnResizePolicy>
-                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
-                    </columnResizePolicy>
-                </TableView>
-            </children>
-        </VBox>
-    </children>
+    <!-- anchor 20 20 20 20 -->
+    <VBox alignment="CENTER" spacing="20.0" AnchorPane.bottomAnchor="20.0"
+          AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+        <children>
+            <HBox alignment="TOP_RIGHT">
+                <children>
+                    <TextField fx:id="txtSearch" promptText="Search" styleClass="text-field"/>
+                    <ComboBox fx:id="btnFilter" promptText="Filter">
+                        <HBox.margin>
+                            <Insets left="25.0"/>
+                        </HBox.margin>
+                    </ComboBox>
+                    <Button fx:id="btnAdd" mnemonicParsing="false" text="Add">
+                        <HBox.margin>
+                            <Insets left="25.0"/>
+                        </HBox.margin>
+                    </Button>
+                </children>
+                <VBox.margin>
+                    <Insets/>
+                </VBox.margin>
+            </HBox>
+            <TableView fx:id="userTableView" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colAvatar" minWidth="60.0" text="Avatar"/>
+                    <TableColumn fx:id="colName" minWidth="200.0" text="Name"/>
+                    <TableColumn fx:id="colEmail" minWidth="200.0" text="Email"/>
+                    <TableColumn fx:id="colRole" minWidth="200.0" text="Role"/>
+                    <TableColumn fx:id="colStatus" minWidth="200.0" text="Status"/>
+                </columns>
+                <columnResizePolicy>
+                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                </columnResizePolicy>
+            </TableView>
+        </children>
+    </VBox>
 </AnchorPane>

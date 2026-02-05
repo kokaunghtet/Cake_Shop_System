@@ -1,5 +1,7 @@
 package com.cakeshopsystem.models;
 
+import com.cakeshopsystem.utils.constants.CakeShape;
+
 import java.time.LocalDate;
 
 public class CustomCakeBooking {
@@ -9,25 +11,43 @@ public class CustomCakeBooking {
     private int cakeId;
     private Integer bookingId;
     private LocalDate pickupDate;
+
+    private int flavourId;
+    private Integer toppingId;
+    private int sizeId;
+    private CakeShape shape;
+
     private String customMessage;
 
-    public CustomCakeBooking() {
-    }
+    public CustomCakeBooking() {}
 
-    public CustomCakeBooking(int customCakeBookingId, int orderId, int cakeId, Integer bookingId, LocalDate pickupDate, String customMessage) {
+    public CustomCakeBooking(int customCakeBookingId,
+                             int orderId,
+                             int cakeId,
+                             Integer bookingId,
+                             LocalDate pickupDate,
+                             int flavourId,
+                             Integer toppingId,
+                             int sizeId,
+                             CakeShape shape,
+                             String customMessage) {
         this.customCakeBookingId = customCakeBookingId;
         this.orderId = orderId;
         this.cakeId = cakeId;
         this.bookingId = bookingId;
         this.pickupDate = pickupDate;
+        this.flavourId = flavourId;
+        this.toppingId = toppingId;
+        this.sizeId = sizeId;
+        this.shape = shape;
         this.customMessage = customMessage;
     }
 
-    public int getCustomCakeOrderId() {
+    public int getCustomCakeBookingId() {
         return customCakeBookingId;
     }
 
-    public void setCustomCakeOrderId(int customCakeBookingId) {
+    public void setCustomCakeBookingId(int customCakeBookingId) {
         this.customCakeBookingId = customCakeBookingId;
     }
 
@@ -39,11 +59,11 @@ public class CustomCakeBooking {
         this.orderId = orderId;
     }
 
-    public int getCustomCakeId() {
+    public int getCakeId() {
         return cakeId;
     }
 
-    public void setCustomCakeId(int cakeId) {
+    public void setCakeId(int cakeId) {
         this.cakeId = cakeId;
     }
 
@@ -63,23 +83,43 @@ public class CustomCakeBooking {
         this.pickupDate = pickupDate;
     }
 
+    public int getFlavourId() {
+        return flavourId;
+    }
+
+    public void setFlavourId(int flavourId) {
+        this.flavourId = flavourId;
+    }
+
+    public Integer getToppingId() {
+        return toppingId;
+    }
+
+    public void setToppingId(Integer toppingId) {
+        this.toppingId = toppingId;
+    }
+
+    public int getSizeId() {
+        return sizeId;
+    }
+
+    public void setSizeId(int sizeId) {
+        this.sizeId = sizeId;
+    }
+
+    public CakeShape getShape() {
+        return shape;
+    }
+
+    public void setShape(CakeShape shape) {
+        this.shape = shape;
+    }
+
     public String getCustomMessage() {
         return customMessage;
     }
 
     public void setCustomMessage(String customMessage) {
         this.customMessage = customMessage;
-    }
-
-    @Override
-    public String toString() {
-        return "CustomCakeOrder{" +
-                "customCakeBookingId=" + customCakeBookingId +
-                ", orderId=" + orderId +
-                ", cakeId=" + cakeId +
-                ", bookingId=" + bookingId +
-                ", pickupDate=" + pickupDate +
-                ", customMessage='" + customMessage +
-                '}';
     }
 }
