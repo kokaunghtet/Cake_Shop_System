@@ -6,9 +6,10 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.StackPane?>
 
-<AnchorPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cakeshopsystem.controllers.admin.AdminDashboardController">
+<AnchorPane styleClass="container" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cakeshopsystem.controllers.admin.AdminDashboardController">
    <children>
-      <BorderPane fx:id="dashboardPane" layoutX="187.0" layoutY="75.0">
+      <BorderPane fx:id="dashboardPane" layoutX="187.0" layoutY="75.0" AnchorPane.bottomAnchor="20.0"
+                  AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
          <top>
             <ToolBar BorderPane.alignment="CENTER">
               <items>
