@@ -18,31 +18,50 @@ import java.util.regex.Pattern;
 
 public class RegisterMemberController {
 
-    private static final Duration ERROR_DURATION   = Duration.seconds(2);
+    // =====================================
+    // CONSTANTS
+    // =====================================
+    private static final Duration ERROR_DURATION = Duration.seconds(2);
     private static final Duration SUCCESS_DURATION = Duration.seconds(2);
-    private static final Duration CLOSE_DELAY      = Duration.millis(200);
+    private static final Duration CLOSE_DELAY = Duration.millis(200);
 
     private static final Pattern NAME_PATTERN = Pattern.compile("^[a-zA-Z\\s]+$");
-
     private static final Pattern PHONE_LOCAL = Pattern.compile("^09\\d{7,9}$");
-    private static final Pattern PHONE_INTL  = Pattern.compile("^\\+959\\d{7,9}$");
+    private static final Pattern PHONE_INTL = Pattern.compile("^\\+959\\d{7,9}$");
 
-    @FXML private Button btnBack;
-    @FXML private VBox confirmationBox;
-    @FXML private VBox registerBox;
+    // =====================================
+    // FXML UI COMPONENTS
+    // =====================================
+    @FXML
+    private Button btnBack;
+    @FXML
+    private VBox confirmationBox;
+    @FXML
+    private VBox registerBox;
 
-    @FXML private Button btnConfirm;
-    @FXML private Button btnCancel;
-    @FXML private Button btnRegister;
+    @FXML
+    private Button btnConfirm;
+    @FXML
+    private Button btnCancel;
+    @FXML
+    private Button btnRegister;
 
-    @FXML private TextField txtName;
-    @FXML private TextField txtPhone;
+    @FXML
+    private TextField txtName;
+    @FXML
+    private TextField txtPhone;
 
+    // =====================================
+    // STATE & CALLBACKS
+    // =====================================
     private int qualifiedOrderId;
 
     private Runnable onRegistered;
     private Runnable onSkipped;
 
+    // =====================================
+    // LIFECYCLE
+    // =====================================
     @FXML
     public void initialize() {
         btnCancel.setOnAction(e -> closeThen(onSkipped));
@@ -51,6 +70,9 @@ public class RegisterMemberController {
         btnRegister.setOnAction(e -> doRegister());
     }
 
+    // =====================================
+    // DATA & CALLBACK SETTERS
+    // =====================================
     public void setData(int qualifiedOrderId) {
         this.qualifiedOrderId = qualifiedOrderId;
     }
@@ -63,8 +85,11 @@ public class RegisterMemberController {
         this.onSkipped = r;
     }
 
+    // =====================================
+    // REGISTRATION FLOW
+    // =====================================
     private void doRegister() {
-        String memberName  = validateName();
+        String memberName = validateName();
         if (memberName == null) return;
 
         String memberPhone = validatePhone();
@@ -72,7 +97,13 @@ public class RegisterMemberController {
 
         btnRegister.setDisable(true);
 
-        Member newMember = new Member(memberName, memberPhone, qualifiedOrderId, LocalDateTime.now());
+        Member newMember = new Member(
+                memberName,
+                memberPhone,
+                qualifiedOrderId,
+                LocalDateTime.now()
+        );
+
         boolean ok = MemberDAO.insertMember(newMember);
 
         if (!ok) {
@@ -85,6 +116,9 @@ public class RegisterMemberController {
         closeThen(onRegistered);
     }
 
+    // =====================================
+    // INPUT VALIDATION
+    // =====================================
     private String validateName() {
         String v = trimmed(txtName);
 
@@ -121,6 +155,9 @@ public class RegisterMemberController {
         return null;
     }
 
+    // =====================================
+    // VIEW TOGGLING
+    // =====================================
     private void showRegisterForm() {
         confirmationBox.setVisible(false);
         confirmationBox.setManaged(false);
@@ -139,8 +176,12 @@ public class RegisterMemberController {
         confirmationBox.setManaged(true);
     }
 
+    // =====================================
+    // POPUP CONTROL
+    // =====================================
     private void closeThen(Runnable cb) {
         MainController.handleClosePopupContent();
+
         PauseTransition pt = new PauseTransition(CLOSE_DELAY);
         pt.setOnFinished(ev -> {
             if (cb != null) cb.run();
@@ -148,11 +189,17 @@ public class RegisterMemberController {
         pt.play();
     }
 
+    // =====================================
+    // UTILITY HELPERS
+    // =====================================
     private static String trimmed(TextField tf) {
         String t = tf.getText();
         return (t == null) ? "" : t.trim();
     }
 
+    // =====================================
+    // FEEDBACK
+    // =====================================
     private void showError(String title, String message) {
         SnackBar.show(SnackBarType.ERROR, title, message, ERROR_DURATION);
     }

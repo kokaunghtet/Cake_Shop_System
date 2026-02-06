@@ -9,28 +9,21 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.Objects;
 
 public class CartService {
 
-    // =================================================
-    // Singleton instance
-    // =================================================
     private static final CartService INSTANCE = new CartService();
 
-    // =================================================
-    // Cart state & observable properties
-    // =================================================
     private final ObservableList<CartItem> items =
             FXCollections.observableArrayList(item -> new Observable[]{item.quantityProperty()});
 
     private final ReadOnlyIntegerWrapper totalQuantity = new ReadOnlyIntegerWrapper(0);
     private final ReadOnlyIntegerWrapper distinctProductCount = new ReadOnlyIntegerWrapper(0);
 
-    // =================================================
-    // Constructor & listeners
-    // =================================================
     private CartService() {
         items.addListener((ListChangeListener<CartItem>) c -> {
             recomputeTotal();
@@ -38,16 +31,10 @@ public class CartService {
         });
     }
 
-    // =================================================
-    // Singleton access
-    // =================================================
     public static CartService getInstance() {
         return INSTANCE;
     }
 
-    // =================================================
-    // Getters & observable properties
-    // =================================================
     public ObservableList<CartItem> getItems() {
         return items;
     }
@@ -68,24 +55,25 @@ public class CartService {
         return distinctProductCount.get();
     }
 
-    // =================================================
-    // Internal recompute helpers
-    // =================================================
     private void recomputeTotal() {
         int sum = 0;
         for (CartItem it : items) sum += it.getQuantity();
         totalQuantity.set(sum);
     }
 
+    // improved distinct count (so special items don’t collide)
     private void recomputeDistinct() {
-        HashSet<Integer> unique = new HashSet<>();
-        for (CartItem it : items) unique.add(it.getProductId());
-        distinctProductCount.set(unique.size());
+        HashSet<String> keys = new HashSet<>();
+        for (CartItem it : items) keys.add(distinctKey(it));
+        distinctProductCount.set(keys.size());
     }
 
-    // =================================================
-    // Item lookup helpers
-    // =================================================
+    private String distinctKey(CartItem it) {
+        String opt = Objects.toString(it.getOption(), "");
+        String type = it.isCustomCake() ? "CUSTOM" : (it.isDiyBooking() ? "DIY" : "NORMAL");
+        return it.getProductId() + "|" + opt + "|" + type;
+    }
+
     public CartItem findItem(int productId, String option) {
         for (CartItem it : items) {
             if (it.getProductId() == productId && Objects.equals(it.getOption(), option)) {
@@ -95,24 +83,13 @@ public class CartService {
         return null;
     }
 
-    public CartItem findItem(int productId) {
-        return findItem(productId, null);
-    }
-
     public int getQuantity(int productId, String option) {
         CartItem it = findItem(productId, option);
-        return it == null ? 0 : it.getQuantity();
+        return (it == null) ? 0 : it.getQuantity();
     }
 
-    // =================================================
-    // Add standard products
-    // =================================================
     public void addProduct(Product p) {
         addItem(p, null, p.getPrice(), 1);
-    }
-
-    public void addProduct(Product p, int qty) {
-        addItem(p, null, p.getPrice(), qty);
     }
 
     public void addItem(Product p, String option, double unitPrice, int qty) {
@@ -126,18 +103,12 @@ public class CartService {
         }
     }
 
-    // =================================================
-    // Quantity updates & removal
-    // =================================================
     public void changeQty(CartItem it, int delta) {
         if (it == null) return;
 
         int newQty = it.getQuantity() + delta;
-        if (newQty <= 0) {
-            items.remove(it);
-        } else {
-            it.setQuantity(newQty);
-        }
+        if (newQty <= 0) items.remove(it);
+        else it.setQuantity(newQty);
     }
 
     public void remove(CartItem it) {
@@ -149,7 +120,7 @@ public class CartService {
     }
 
     // =================================================
-    // Custom cake handling
+    // Custom cake
     // =================================================
     public CartItem findCustomCakeItem() {
         for (CartItem it : items) {
@@ -163,7 +134,7 @@ public class CartService {
             String displayName,
             double unitPrice,
             int cakeId,
-            java.time.LocalDate pickupDate,
+            LocalDate pickupDate,
             String message,
             int flavourId,
             Integer toppingId,
@@ -176,8 +147,37 @@ public class CartService {
         if (old != null) items.remove(old);
 
         CartItem it = new CartItem(customCakeProduct.getProductId(), displayName, null, unitPrice, 1);
-
         it.setCustomBooking(cakeId, pickupDate, message, flavourId, toppingId, sizeId, shape);
+
+        items.add(it);
+    }
+
+    // =================================================
+    // DIY booking (NEW)
+    // =================================================
+    public CartItem findDiyBookingItem() {
+        for (CartItem it : items) {
+            if (it.isDiyBooking()) return it;
+        }
+        return null;
+    }
+
+    public void addOrReplaceDiyBooking(
+            Product diySessionProduct,   // <-- IMPORTANT: "DIY Session" product
+            String displayName,
+            double unitPrice,
+            int cakeId,
+            int memberId,
+            LocalDate sessionDate,
+            LocalTime sessionStart
+    ) {
+        if (diySessionProduct == null) return;
+
+        CartItem old = findDiyBookingItem();
+        if (old != null) items.remove(old);
+
+        CartItem it = new CartItem(diySessionProduct.getProductId(), displayName, null, unitPrice, 1);
+        it.setDiyBooking(cakeId, memberId, sessionDate, sessionStart);
 
         items.add(it);
     }

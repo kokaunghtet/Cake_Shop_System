@@ -1,6 +1,7 @@
 package com.cakeshopsystem.models;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 public class DiyCakeBooking {
 
@@ -9,20 +10,22 @@ public class DiyCakeBooking {
     private int memberId;
     private int cakeId;
     private int orderId;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
+
+    private LocalDate sessionDate;
+    private LocalTime sessionStart;
 
     public DiyCakeBooking() {
     }
 
-    public DiyCakeBooking(int diyCakeBookingId, int bookingId, int memberId, int cakeId, int orderId, LocalDateTime startTime, LocalDateTime endTime) {
+    public DiyCakeBooking(int diyCakeBookingId, int bookingId, int memberId, int cakeId, int orderId,
+                          LocalDate sessionDate, LocalTime sessionStart) {
         this.diyCakeBookingId = diyCakeBookingId;
         this.bookingId = bookingId;
         this.memberId = memberId;
         this.cakeId = cakeId;
         this.orderId = orderId;
-        this.startTime = startTime;
-        this.endTime = endTime;
+        this.sessionDate = sessionDate;
+        this.sessionStart = sessionStart;
     }
 
     public int getDiyCakeBookingId() {
@@ -65,32 +68,24 @@ public class DiyCakeBooking {
         this.orderId = orderId;
     }
 
-    public LocalDateTime getStartTime() {
-        return startTime;
+    public LocalDate getSessionDate() {
+        return sessionDate;
     }
 
-    public void setStartTime(LocalDateTime startTime) {
-        this.startTime = startTime;
+    public void setSessionDate(LocalDate sessionDate) {
+        this.sessionDate = sessionDate;
     }
 
-    public LocalDateTime getEndTime() {
-        return endTime;
+    public LocalTime getSessionStart() {
+        return sessionStart;
     }
 
-    public void setEndTime(LocalDateTime endTime) {
-        this.endTime = endTime;
+    public void setSessionStart(LocalTime sessionStart) {
+        this.sessionStart = sessionStart;
     }
 
-    @Override
-    public String toString() {
-        return "DiyCakeBooking{" +
-                "diyCakeBookingId=" + diyCakeBookingId +
-                ", bookingId=" + bookingId +
-                ", memberId=" + memberId +
-                ", cakeId=" + cakeId +
-                ", orderId=" + orderId +
-                ", startTime=" + startTime +
-                ", endTime=" + endTime +
-                '}';
+    // convenience: your duration is fixed 2 hours
+    public LocalTime getSessionEnd() {
+        return (sessionStart == null) ? null : sessionStart.plusHours(2);
     }
 }

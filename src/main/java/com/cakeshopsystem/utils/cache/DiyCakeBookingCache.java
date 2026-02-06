@@ -12,27 +12,28 @@ public class DiyCakeBookingCache {
 
     private static final ObservableList<DiyCakeBooking> list = FXCollections.observableArrayList();
     private static final Map<Integer, DiyCakeBooking> byId = new HashMap<>();
-    private static final Map<Integer, Integer> orderIdToBookingId = new HashMap<>();
+    private static final Map<Integer, Integer> orderIdToDiyId = new HashMap<>();
+
+    private static boolean loaded = false;
 
     private DiyCakeBookingCache() {}
 
     // ===================== GETTERS =====================
 
     public static ObservableList<DiyCakeBooking> getList() {
-        if (list.isEmpty()) refresh();
+        if (!loaded) refresh();
         return list;
     }
 
     public static DiyCakeBooking getById(int diyCakeBookingId) {
-        if (byId.isEmpty()) refresh();
+        if (!loaded) refresh();
         return byId.get(diyCakeBookingId);
     }
 
     public static DiyCakeBooking getByOrderId(int orderId) {
-        if (orderIdToBookingId.isEmpty()) refresh();
-        Integer id = orderIdToBookingId.get(orderId);
-        if (id == null) return null;
-        return getById(id);
+        if (!loaded) refresh();
+        Integer diyId = orderIdToDiyId.get(orderId);
+        return (diyId == null) ? null : byId.get(diyId);
     }
 
     // ===================== REFRESH =====================
@@ -40,47 +41,20 @@ public class DiyCakeBookingCache {
     public static void refresh() {
         list.clear();
         byId.clear();
-        orderIdToBookingId.clear();
+        orderIdToDiyId.clear();
 
-        for (DiyCakeBooking b : DiyCakeBookingDAO.getAllDiyCakeBooking()) {
+        for (DiyCakeBooking b : DiyCakeBookingDAO.getAllDiyCakeBookings()) {
             cacheOne(b);
         }
+
+        loaded = true;
     }
 
-    // ===================== CRUD WRAPPERS =====================
-
-    public static boolean add(DiyCakeBooking booking) {
-        if (booking == null) return false;
-
-        boolean ok = DiyCakeBookingDAO.insertDiyCakeBooking(booking);
-        if (ok) cacheOne(booking);
-
-        return ok;
-    }
-
-    public static boolean update(DiyCakeBooking booking) {
-        if (booking == null) return false;
-
-        boolean ok = DiyCakeBookingDAO.updateDiyCakeBooking(booking);
-        if (ok) cacheOne(booking);
-
-        return ok;
-    }
-
-    public static boolean delete(int diyCakeBookingId) {
-        boolean ok = DiyCakeBookingDAO.deleteDiyCakeBooking(diyCakeBookingId);
-        if (ok) {
-            DiyCakeBooking removed = byId.remove(diyCakeBookingId);
-            list.removeIf(x -> x.getDiyCakeBookingId() == diyCakeBookingId);
-
-            if (removed != null) {
-                orderIdToBookingId.remove(removed.getOrderId());
-            } else {
-                rebuildOrderMapFromList();
-            }
-        }
-        return ok;
-    }
+    // ===================== READ-ONLY CACHE =====================
+    // Option B reminder:
+    // - Do NOT insert/update/delete diy_cake_bookings here.
+    // - Insert must be done in OrderService transaction (reserve quota + insert booking).
+    // - Cancel should be done via BookingDAO.updateBookingStatus(...) which releases quota.
 
     // ===================== HELPERS =====================
 
@@ -94,7 +68,7 @@ public class DiyCakeBookingCache {
         else list.add(booking);
 
         byId.put(id, booking);
-        orderIdToBookingId.put(booking.getOrderId(), id);
+        orderIdToDiyId.put(booking.getOrderId(), id);
     }
 
     private static int findIndexById(int id) {
@@ -102,12 +76,5 @@ public class DiyCakeBookingCache {
             if (list.get(i).getDiyCakeBookingId() == id) return i;
         }
         return -1;
-    }
-
-    private static void rebuildOrderMapFromList() {
-        orderIdToBookingId.clear();
-        for (DiyCakeBooking b : list) {
-            orderIdToBookingId.put(b.getOrderId(), b.getDiyCakeBookingId());
-        }
     }
 }

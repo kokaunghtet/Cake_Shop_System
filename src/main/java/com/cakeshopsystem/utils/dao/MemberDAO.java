@@ -176,4 +176,21 @@ public class MemberDAO {
 
         return new Member(memberId, memberName, phone, memberSince, qualifiedOrderId);
     }
+
+    public static Integer findMemberIdByPhone(String phone) {
+        String sql = "SELECT member_id FROM members WHERE phone = ? LIMIT 1";
+
+        try (Connection con = DB.connect();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setString(1, phone);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error finding member by phone: " + e.getLocalizedMessage());
+        }
+        return null;
+    }
+
 }
