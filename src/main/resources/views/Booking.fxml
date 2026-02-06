@@ -6,9 +6,33 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
+<?import javafx.geometry.Insets?>
+<AnchorPane styleClass="container" xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.cakeshopsystem.controllers.BookingController"
-            prefHeight="400.0" prefWidth="600.0">
+            fx:controller="com.cakeshopsystem.controllers.BookingController">
+    <VBox spacing="20" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="20.0">
+        <!-- horizontal scrollers -->
+        <ScrollPane fx:id="spCustomOrder" fitToHeight="true" pannable="true" vbarPolicy="NEVER">
+            <VBox spacing="10">
+                <Label styleClass="title" text="Custom Cake Orders"/>
+                <HBox fx:id="hbCustomOrder" spacing="30">
+                    <padding>
+                        <Insets bottom="20" left="20" right="20" top="20"/>
+                    </padding>
+                </HBox>
+            </VBox>
+        </ScrollPane>
 
+
+        <ScrollPane fx:id="spDiyOrder" fitToHeight="true" vbarPolicy="NEVER">
+            <VBox>
+                <Label styleClass="title" text="DIY Session Bookings"/>
+                <HBox fx:id="hbDiyOrder" spacing="20">
+                    <padding>
+                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+                    </padding>
+                </HBox>
+            </VBox>
+        </ScrollPane>
+    </VBox>
 </AnchorPane>

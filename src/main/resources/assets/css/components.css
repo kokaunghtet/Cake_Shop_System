@@ -1,6 +1,6 @@
-/*************************
-Topbar
-*************************/
+/* =================================================
+   TOP BAR
+   ================================================= */
 .topbar {
     -fx-effect: -app-soft-shadow;
     -fx-background-color: -app-bg-color;
@@ -10,9 +10,9 @@ Topbar
     -fx-border-width: 1;
 }
 
-/************************
-Status pill
-************************/
+/* =================================================
+   STATUS PILLS
+   ================================================= */
 .status-active-pill,
 .status-inactive-pill {
     -fx-background-color: blue;
@@ -37,9 +37,9 @@ Status pill
     -fx-text-fill: derive(red, 950%);
 }
 
-/************************
-Breadcrumbs
-************************/
+/* =================================================
+   BREADCRUMBS
+   ================================================= */
 .breadcrumb-container {
     -fx-background-color: -app-icon-color;
 }
@@ -52,20 +52,19 @@ Breadcrumbs
     -fx-text-fill: -app-surface-color;
 }
 
-.breadcrumb-link:disabled{
-    -fx-opacity : 1;
+.breadcrumb-link:disabled {
+    -fx-opacity: 1;
 }
 
-/************************
-Popup Close Button
-************************/
+/* =================================================
+   POPUP CLOSE BUTTON
+   ================================================= */
 .popup-box-close-btn {
     -fx-background-color: rgba(116, 7, 27, 0.58);
 
     -fx-border-color: rgba(255,255,255,0.18);
     -fx-border-width: 0.8;
 
-    /* force circle */
     -fx-min-width: 28;
     -fx-pref-width: 28;
     -fx-max-width: 28;
@@ -80,10 +79,7 @@ Popup Close Button
     -fx-text-fill: rgba(255,255,255,0.95);
     -fx-font-weight: 800;
 
-    /* remove padding that breaks the circle */
     -fx-padding: 0;
-
-    /* keep content centered */
     -fx-alignment: center;
 }
 
@@ -95,11 +91,9 @@ Popup Close Button
     -fx-background-color: rgba(116, 7, 27, 0.98);
 }
 
-/* =========================
-   Card
-   ========================= */
-
-/* Card container (StackPane) */
+/* =================================================
+   CARD BASE
+   ================================================= */
 .card {
     -fx-background-color: -app-surface-color;
     -fx-background-radius: 16;
@@ -107,26 +101,23 @@ Popup Close Button
     -fx-border-radius: 16;
     -fx-border-width: 1;
 
-    /* spacing around content */
     -fx-padding: 14;
-
-    /* make it stand out from bg */
     -fx-effect: -app-soft-shadow;
 }
 
-/* hover: slightly lifted + clearer border */
 .card:hover {
-    -fx-border-color: rgba(70, 130, 180, 0.35); /* steelblue tint */
+    -fx-border-color: rgba(70, 130, 180, 0.35);
     -fx-effect: -app-strong-shadow;
     -fx-translate-y: -1;
 }
 
-/* Inner layout */
 .card-body {
     -fx-background-color: transparent;
 }
 
-/* Image wrap */
+/* =================================================
+   CARD IMAGE
+   ================================================= */
 .image-wrap {
     -fx-background-color: linear-gradient(to bottom right, #FFFFFF, #F7FAFF);
     -fx-background-radius: 12;
@@ -141,21 +132,21 @@ Popup Close Button
     -fx-smooth: true;
 }
 
-/* Header / Name */
+/* =================================================
+   CARD TEXT & META
+   ================================================= */
 .card-header {
     -fx-text-fill: -app-base-text-color;
     -fx-font-size: 15;
     -fx-font-weight: 800;
 }
 
-/* Meta small text (Price label) */
 .meta {
     -fx-text-fill: -app-muted-text-color;
     -fx-font-size: 12;
     -fx-font-weight: 600;
 }
 
-/* Price */
 .card-price {
     -fx-text-fill: -app-secondary-color;
     -fx-font-size: 13;
@@ -168,7 +159,9 @@ Popup Close Button
     -fx-font-weight: 900;
 }
 
-/* Badge (DIY availability) */
+/* =================================================
+   BADGES
+   ================================================= */
 .badge {
     -fx-text-fill: -app-secondary-color;
     -fx-font-size: 11;
@@ -178,7 +171,6 @@ Popup Close Button
     -fx-background-radius: 999;
     -fx-border-radius: 999;
 
-    /* mint tint so it matches accent but stays readable */
     -fx-background-color: rgba(45, 212, 191, 0.18);
     -fx-border-color: rgba(45, 212, 191, 0.45);
     -fx-border-width: 1;
@@ -193,13 +185,14 @@ Popup Close Button
     -fx-background-radius: 999;
     -fx-border-radius: 999;
 
-    /* mint tint so it matches accent but stays readable */
     -fx-background-color: rgba(255, 0, 0, 0.18);
     -fx-border-color: rgba(200, 0, 0, 0.45);
     -fx-border-width: 1;
 }
 
-/* Quantity stepper */
+/* =================================================
+   QUANTITY STEPPER
+   ================================================= */
 .qty-stepper {
     -fx-background-color: -app-bg-color;
     -fx-background-radius: 12;
@@ -208,14 +201,12 @@ Popup Close Button
     -fx-border-width: 1;
 }
 
-/* Qty label */
 .qty-label {
     -fx-text-fill: -app-base-text-color;
     -fx-font-size: 12;
     -fx-font-weight: 800;
 }
 
-/* Stepper buttons */
 .card-dec-btn,
 .card-inc-btn {
     -fx-background-color: transparent;
@@ -238,7 +229,9 @@ Popup Close Button
     -fx-background-color: rgba(70, 130, 180, 0.20);
 }
 
-/* Main button */
+/* =================================================
+   CARD BUTTONS
+   ================================================= */
 .card-btn {
     -fx-background-color: -app-primary-color;
     -fx-text-fill: white;
@@ -249,7 +242,6 @@ Popup Close Button
     -fx-padding: 8 14 8 14;
     -fx-cursor: hand;
 
-    /* subtle depth */
     -fx-effect: dropshadow(gaussian, rgba(70, 130, 180, 0.35), 10, 0.15, 0, 2);
 }
 
@@ -272,16 +264,16 @@ Popup Close Button
     -fx-text-fill: -app-base-text-color;
 }
 
+/* =================================================
+   ICON & CANCEL BUTTONS
+   ================================================= */
 .btn-danger-icon {
     -fx-background-color: transparent;
     -fx-cursor: hand;
     -fx-padding: 4 6 4 6;
 }
 
-.btn-danger-icon:hover {
-    -fx-background-color: transparent
-}
-
+.btn-danger-icon:hover,
 .btn-danger-icon:pressed {
     -fx-background-color: transparent;
 }
@@ -303,27 +295,24 @@ Popup Close Button
 }
 
 .cancel-btn.outline {
-  -fx-background-color: transparent;
-  -fx-border-color: -app-surface-color;
-  -fx-border-width: 1;
-  -fx-text-fill: -app-primary-hover-color;
-  -fx-border-radius: 8;
-  -fx-background-radius: 8;
+    -fx-background-color: transparent;
+    -fx-border-color: -app-surface-color;
+    -fx-border-width: 1;
+    -fx-text-fill: -app-primary-hover-color;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
 }
 
 .cancel-btn:hover,
-.cancel-btn:pressed {
-  -fx-background-color: -app-surface-hover-color;
-}
-
+.cancel-btn:pressed,
 .cancel-btn.outline:hover,
 .cancel-btn.outline:pressed {
-  -fx-background-color: -app-surface-hover-color;
+    -fx-background-color: -app-surface-hover-color;
 }
 
-/* =========================
-   Radio (Pill style)
-   ========================= */
+/* =================================================
+   RADIO BUTTON (PILL STYLE)
+   ================================================= */
 .radio-button {
     -fx-text-fill: -app-base-text-color;
     -fx-font-size: 12;
@@ -347,23 +336,18 @@ Popup Close Button
 .radio-button .dot {
     -fx-opacity: 0;
     -fx-padding: 0;
-
     -fx-min-width: 0;
     -fx-pref-width: 0;
     -fx-max-width: 0;
-
     -fx-min-height: 0;
     -fx-pref-height: 0;
     -fx-max-height: 0;
 }
 
-.radio-button > .container {
-    -fx-spacing: 0;
-    -fx-padding: 0;
-}
-
+.radio-button > .container,
 .radio-button > .container > .label {
     -fx-padding: 0;
+    -fx-spacing: 0;
 }
 
 .radio-button:hover {
@@ -382,17 +366,26 @@ Popup Close Button
 }
 
 .radio-button:disabled {
-    -fx-opacity: 0.6;
+    -fx-opacity: 1;
     -fx-cursor: default;
+
+    -fx-text-fill: rgba(220, 38, 38, 0.95);
+    -fx-border-color: rgba(220, 38, 38, 0.55);
+
+    -fx-background-color: linear-gradient(
+        to bottom,
+        rgba(220, 38, 38, 0.18),
+        rgba(220, 38, 38, 0.08)
+    );
 }
 
 .type-row {
     -fx-padding: 2 0 0 0;
 }
 
-/* =========================
-   Scroll Pane Scrollbars
-   ========================= */
+/* =================================================
+   SCROLL PANE SCROLLBARS
+   ================================================= */
 .scroll-pane .scroll-bar:horizontal {
     -fx-pref-height: 12;
     -fx-min-height: 12;
@@ -403,7 +396,6 @@ Popup Close Button
     -fx-pref-height: 12;
     -fx-min-height: 12;
     -fx-max-height: 12;
-
     -fx-background-color: -app-icon-color;
     -fx-background-radius: 999;
 }
@@ -418,7 +410,19 @@ Popup Close Button
     -fx-pref-width: 10;
     -fx-min-width: 10;
     -fx-max-width: 10;
-
     -fx-background-color: -app-icon-color;
     -fx-background-radius: 999;
+}
+
+/* =================================================
+   BOOKING CARD STATES
+   ================================================= */
+.card.status-cancelled {
+    -fx-background-color: rgba(255, 245, 245, 0.9);
+    -fx-border-color: rgba(255, 245, 245, 0.6);
+}
+
+.card.status-confirmed {
+    -fx-background-color: rgba(240, 255, 240, 0.9);
+    -fx-border-color: rgba(240, 255, 240, 0.6);
 }

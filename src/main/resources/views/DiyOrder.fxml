@@ -23,6 +23,5 @@
                 </padding>
             </FlowPane>
         </ScrollPane>
-        <Button fx:id="btnCreateDiyOrder" mnemonicParsing="false" text="Create Custom Order" StackPane.alignment="TOP_RIGHT" />
     </StackPane>
 </AnchorPane>
