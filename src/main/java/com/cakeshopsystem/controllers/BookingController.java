@@ -11,6 +11,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 public class BookingController {
 
@@ -24,7 +25,8 @@ public class BookingController {
     private ScrollPane spDiyOrder;
 
     private static final String BOOKING_CARD_FXML = "/views/BookingCard.fxml";
-    private static final DateTimeFormatter TIME_FMT = DateTimeFormatter.ofPattern("HH:mm");
+    private static final DateTimeFormatter TIME_FMT = DateTimeFormatter.ofPattern("h:mm a", Locale.ENGLISH);
+    private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("yyyy MMM dd", Locale.ENGLISH);
 
     @FXML
     public void initialize() {
@@ -45,7 +47,7 @@ public class BookingController {
                 c.setupForCustomCake(); // make sure you implemented in BookingCardController
 
                 c.lblBookingName.setText(buildCustomName(row));
-                c.lblPickupDate.setText("Pickup: " + row.getPickupDate());
+                c.lblPickupDate.setText("Pickup: " + row.getPickupDate().format(DATE_FMT));
 
                 wireStatusSave(
                         c,
@@ -64,7 +66,7 @@ public class BookingController {
     private void loadDiyBookings() {
         hbDiyOrder.getChildren().clear();
 
-        var rows = BookingDAO.getDiyBookingCards(); // you implement
+        var rows = BookingDAO.getDiyBookingCards();
         for (var row : rows) {
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource(BOOKING_CARD_FXML));
@@ -74,7 +76,7 @@ public class BookingController {
                 c.setupForDiy(); // make sure you implemented in BookingCardController
 
                 c.lblBookingName.setText("DIY Booking (Order #" + row.getOrderId() + ")");
-                c.lblPickupDate.setText("Date: " + row.getStartTime().toLocalDate());
+                c.lblPickupDate.setText("Date: " + row.getStartTime().toLocalDate().format(DATE_FMT));
 
                 setSessionTime(c, row.getStartTime().toLocalTime().format(TIME_FMT),
                         row.getEndTime().toLocalTime().format(TIME_FMT));
