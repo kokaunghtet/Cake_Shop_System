@@ -265,16 +265,41 @@ public class DiyOrderFormController {
         }
     }
 
+//    private String validatePhone() {
+//        String v = normalizePhone(tfPhoneNumber.getText()); // trims + removes spaces
+//
+//        if (v.isEmpty()) {
+//            showError("Phone number is required.");
+//            tfPhoneNumber.requestFocus();
+//            return null;
+//        }
+//
+//        if (PHONE_LOCAL.matcher(v).matches() || PHONE_INTL.matcher(v).matches()) {
+//            return v;
+//        }
+//
+//        showError("Use 09XXXXXXXXX or +959XXXXXXXXX.");
+//        tfPhoneNumber.requestFocus();
+//        return null;
+//    }
+
     private String validatePhone() {
-        String v = normalizePhone(tfPhoneNumber.getText()); // trims + removes spaces
+        String v = trimmed(tfPhoneNumber).replaceAll("\\s+", "");
 
         if (v.isEmpty()) {
-            showError("Phone number is required.");
+            showError("Member Phone Number is required.");
             tfPhoneNumber.requestFocus();
             return null;
         }
 
-        if (PHONE_LOCAL.matcher(v).matches() || PHONE_INTL.matcher(v).matches()) {
+        if (PHONE_LOCAL.matcher(v).matches()) {
+            String normalized = "+959" + v.substring(2);
+            tfPhoneNumber.setText(normalized);
+            return normalized;
+        }
+
+        if (PHONE_INTL.matcher(v).matches()) {
+            tfPhoneNumber.setText(v);
             return v;
         }
 
@@ -282,6 +307,7 @@ public class DiyOrderFormController {
         tfPhoneNumber.requestFocus();
         return null;
     }
+
 
     private String normalizePhone(String raw) {
         if (raw == null) return "";
@@ -293,5 +319,13 @@ public class DiyOrderFormController {
     // =====================================
     private void showError(String body) {
         SnackBar.show(SnackBarType.ERROR, "Failed!", body, Duration.seconds(2));
+    }
+
+    // =====================================
+    // UTILITY HELPERS
+    // =====================================
+    private static String trimmed(TextField tf) {
+        String t = tf.getText();
+        return (t == null) ? "" : t.trim();
     }
 }

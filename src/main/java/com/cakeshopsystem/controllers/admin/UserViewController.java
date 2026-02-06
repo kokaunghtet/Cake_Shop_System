@@ -5,7 +5,10 @@ import com.cakeshopsystem.models.User;
 import com.cakeshopsystem.utils.ImageHelper;
 import com.cakeshopsystem.utils.cache.RoleCache;
 import com.cakeshopsystem.utils.cache.UserCache;
+import com.cakeshopsystem.utils.components.SnackBar;
+import com.cakeshopsystem.utils.constants.SnackBarType;
 import com.cakeshopsystem.utils.dao.UserDAO;
+import com.cakeshopsystem.utils.session.SessionManager;
 import com.sun.tools.javac.Main;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
@@ -18,6 +21,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 
 public class UserViewController {
 
@@ -83,7 +87,7 @@ public class UserViewController {
 
             Task<Void> task = new Task<>() {
                 @Override protected Void call() {
-                    UserDAO.updateUser(user); // slow work here
+                    UserDAO.updateUser(user);
                     return null;
                 }
             };
@@ -122,6 +126,10 @@ public class UserViewController {
             row.setOnMouseClicked(event -> {
                 if (!row.isEmpty() && event.getClickCount() == 2) {
                     User selectedUser = row.getItem();
+                    if(SessionManager.getUser().getUserId() == selectedUser.getUserId()) {
+                        SnackBar.show(SnackBarType.ERROR, "Failed", "Can't update the own status", Duration.seconds(2));
+                        return;
+                    }
                     editUserStatus(selectedUser.getUserId());
                 }
             });

@@ -92,7 +92,7 @@ public class RegisterMemberController {
         String memberName = validateName();
         if (memberName == null) return;
 
-        String memberPhone = validatePhone();
+        String memberPhone = validateAndNormalizePhone();
         if (memberPhone == null) return;
 
         btnRegister.setDisable(true);
@@ -137,8 +137,26 @@ public class RegisterMemberController {
         return v;
     }
 
-    private String validatePhone() {
-        String v = trimmed(txtPhone);
+//    private String validatePhone() {
+//        String v = trimmed(txtPhone);
+//
+//        if (v.isEmpty()) {
+//            showError("Invalid", "Member Phone Number is required.");
+//            txtPhone.requestFocus();
+//            return null;
+//        }
+//
+//        if (PHONE_LOCAL.matcher(v).matches() || PHONE_INTL.matcher(v).matches()) {
+//            return v;
+//        }
+//
+//        showError("Invalid", "Use 09XXXXXXXXX or +959XXXXXXXXX.");
+//        txtPhone.requestFocus();
+//        return null;
+//    }
+
+    private String validateAndNormalizePhone() {
+        String v = trimmed(txtPhone).replaceAll("\\s+", ""); // optional: remove spaces
 
         if (v.isEmpty()) {
             showError("Invalid", "Member Phone Number is required.");
@@ -146,7 +164,12 @@ public class RegisterMemberController {
             return null;
         }
 
-        if (PHONE_LOCAL.matcher(v).matches() || PHONE_INTL.matcher(v).matches()) {
+        if (PHONE_LOCAL.matcher(v).matches()) {
+            String normalized = "+959" + v.substring(2);
+            return normalized;
+        }
+
+        if (PHONE_INTL.matcher(v).matches()) {
             return v;
         }
 
@@ -154,6 +177,7 @@ public class RegisterMemberController {
         txtPhone.requestFocus();
         return null;
     }
+
 
     // =====================================
     // VIEW TOGGLING
