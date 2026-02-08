@@ -48,6 +48,7 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 
 public class MainController {
 
@@ -67,6 +68,8 @@ public class MainController {
         t.setDaemon(true);
         return t;
     });
+
+    private final Consumer<User> onUserChanged = u -> updateUserInfo();
 
     /* =========================================================
      * 2. FXML INJECTIONS
@@ -93,7 +96,6 @@ public class MainController {
     //    public StackPane popupHost;
     @FXML
     private StackPane badgePane;
-
 
     @FXML
     private ImageView profileImageView;
@@ -155,6 +157,7 @@ public class MainController {
         staticOverlayPane.setVisible(false);
 
         updateUserInfo();
+        SessionManager.addUserListener(onUserChanged);
         configureRoleBasedAccess();
 
         if (signOutIcon != null) {
@@ -247,6 +250,12 @@ public class MainController {
         setActiveLink(navLink);
 
         BreadcrumbManager.setBreadcrumbs(new BreadcrumbBar.BreadcrumbItem(breadcrumbTitle, ev -> loadView(fxmlPath, navLink, windowTitle, breadcrumbTitle)));
+    }
+
+    private void loadView(String fxmlPath, String windowTitle, String breadCrumbTitle) {
+        setCenterContent(fxmlPath, windowTitle);
+
+        BreadcrumbManager.addBreadcrumb(new BreadcrumbBar.BreadcrumbItem(breadCrumbTitle, ev->loadView(fxmlPath, windowTitle, breadCrumbTitle)));
     }
 
     private void initCartUI() {
@@ -345,12 +354,13 @@ public class MainController {
      * 6. POPUP SYSTEM (Settings & Modal Popups)
      * ========================================================= */
     private void initSettingsPopup() {
-        Hyperlink link1 = new Hyperlink("User Configuration");
-        Hyperlink link2 = new Hyperlink("Payment Configuration");
+        Hyperlink link1 = new Hyperlink("User Profile");
+        Hyperlink link2 = new Hyperlink("Payment");
+        Hyperlink link3 = new Hyperlink("Cake Options");
 
         VBox box;
         if (SessionManager.isAdmin) {
-            box = new VBox(10, link1, link2);
+            box = new VBox(10, link1, link2, link3);
         } else {
             box = new VBox(link1);
         }
@@ -368,6 +378,10 @@ public class MainController {
             togglePopupContent("/views/EditPaymentConfig.fxml");
             settingsPopup.hide();
         });
+//        link3.setOnAction(event -> {
+//            loadView("/views/EditCakeOptions.fxml");
+//            settingsPopup.hide();
+//        });
     }
 
     private void showSettingsPopup() {
@@ -378,7 +392,7 @@ public class MainController {
         }
         var bounds = settingIcon.localToScreen(settingIcon.getBoundsInLocal());
         if (bounds != null) {
-            settingsPopup.show(settingIcon, bounds.getMaxX() - 140, bounds.getMaxY() + 20);
+            settingsPopup.show(settingIcon, bounds.getMaxX() - 80, bounds.getMaxY() + 20);
         }
     }
 
@@ -509,6 +523,7 @@ public class MainController {
      * 7. SESSION & USER UI HELPERS
      * ========================================================= */
     private void handleLogout() {
+        SessionManager.removeUserListener(onUserChanged);
         SessionManager.forceLogout();
         SnackBar.show(SnackBarType.SUCCESS, "Logged out successfully", "", Duration.seconds(3));
     }

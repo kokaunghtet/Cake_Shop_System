@@ -19,9 +19,21 @@ public class Validator {
     // =========================
     public static String validateUsername(String username) {
         username = normalize(username);
-        if (username.isEmpty()) {
-            return "Username cannot be empty";
+
+        if (username.isEmpty()) return "Username cannot be empty";
+
+        if (Character.isDigit(username.charAt(0))) {
+            return "Username must not start with a number";
         }
+
+        if (username.matches(".*\\d.*")) {
+            return "Username must not contain numbers";
+        }
+
+        if (!username.matches("^[A-Za-z ]+$")) {
+            return "Username can contain only letters and spaces";
+        }
+
         return null;
     }
 

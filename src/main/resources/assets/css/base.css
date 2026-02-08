@@ -16,8 +16,8 @@
   -fx-background-color: -app-surface-color;
   -fx-border-radius: 14;
   -fx-border-color: -app-border-color;
-  -fx-border-width: 1;
-  -fx-background-radius: 10;
+  -fx-border-width: 2;
+  -fx-background-radius: 14;
   -fx-effect: -app-soft-shadow;
   -fx-padding: 14;
 }
@@ -30,7 +30,7 @@
    Typography (Labels / Titles)
    ========================= */
 .label {
-  -fx-text-fill: -app-base-text-color;
+  -fx-text-fill: -app-icon-color;
   -fx-font-size: 14;
 }
 
@@ -75,7 +75,7 @@
 .text-field:focused,
  .password-field:focused {
     -fx-border-color: -app-accent-color;
-    -fx-border-width: 1.2px;
+    -fx-border-width: 1.4px;
 }
 
 .text-area {
@@ -96,7 +96,7 @@
 .text-area:focused {
     -fx-prompt-text-fill: rgba(0, 0, 0, 0.55);
     -fx-border-color: -app-accent-color;
-    -fx-border-width: 1.2px;
+    -fx-border-width: 1.4px;
 }
 
 .text-area .text,
@@ -180,14 +180,15 @@
     -fx-background-color: transparent;
 }
 
-/* Hover */
-.combo-box-popup .list-cell:hover {
-    -fx-background-color: -app-icon-color;
+/* hover row in dropdown */
+.combo-box-popup .list-view .list-cell:hover {
+    -fx-background-color: -app-secondary-color;
+    -fx-text-fill: white;
     -fx-background-radius: 8px;
 }
 
 /* Selected item in popup */
-.combo-box-popup .list-cell:selected {
+.combo-box-popup .list-view .list-cell:selected {
     -fx-background-color: -app-primary-color;
     -fx-text-fill: white;
     -fx-background-radius: 8px;
@@ -198,7 +199,6 @@
     -fx-border-color: -app-accent-color;
     -fx-border-width: 1.2px;
 }
-
 
 /* =========================
    Input Variants (Left Icon Padding)
@@ -212,7 +212,7 @@
    Icons (Ikonli)
    ========================= */
 .ikonli-font-icon {
-  -fx-icon-color: -app-icon-color;
+    -fx-icon-color: -app-icon-color;
 }
 
 .cart-icon {
@@ -224,6 +224,10 @@
   -fx-cursor: hand;
 }
 
+.icon-clickable:hover {
+    -fx-translate-y: -2px;
+}
+
 /* =========================
    Buttons (Base / Outline / States)
    ========================= */
@@ -232,32 +236,83 @@
 }
 
 .button {
-  -fx-font-weight: 700;
-  -fx-cursor: hand;
-  -fx-padding: 0 16 0 16;
-  -fx-alignment: center;
-  -fx-background-color: -app-primary-color;
-  -fx-text-fill: -app-surface-color;
-  -fx-graphic-text-gap: 8;
+    -fx-font-weight: 700;
+    -fx-cursor: hand;
+    -fx-padding: 0 16 0 16;
+    -fx-alignment: center;
+    -fx-text-fill: -app-surface-color;
+    -fx-graphic-text-gap: 8;
+
+    /* 3D base */
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+
+    /* A subtle rim to sell the 3D edge */
+    -fx-border-width: 1;
+    -fx-border-color: rgba(0,0,0,0.18);
+
+    /* Gradient fill (top -> bottom) using your theme colors */
+    -fx-background-color: linear-gradient(
+        to bottom,
+        derive(-app-primary-color, 18%),
+        -app-primary-color 55%,
+        derive(-app-primary-hover-color, -6%)
+    );
+}
+
+/* Hover: slightly brighter + a bit more lift */
+.button:hover {
+    -fx-background-color: linear-gradient(
+        to bottom,
+        derive(-app-primary-color, 28%),
+        derive(-app-primary-color, 8%) 55%,
+        -app-primary-hover-color
+    );
+}
+
+/* Pressed: look pushed in */
+.button:pressed {
+    -fx-background-color: linear-gradient(
+        to bottom,
+        -app-primary-hover-color,
+        derive(-app-primary-hover-color, -10%)
+    );
+    -fx-effect: innershadow(gaussian, rgba(0,0,0,0.35), 8, 0.2, 0, 2);
+    -fx-translate-y: 1;
 }
 
 .button.outline {
-  -fx-background-color: transparent;
-  -fx-border-color: -app-primary-hover-color;
-  -fx-border-width: 1;
-  -fx-text-fill: -app-surface-color;
-  -fx-border-radius: 8;
-  -fx-background-radius: 8;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+
+    -fx-background-color: transparent;
+    -fx-border-color: -app-primary-hover-color;
+    -fx-border-width: 1;
+
+    -fx-text-fill: -app-base-text-color;
+
+    /* slight lift */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.20), 8, 0.2, 0, 2);
 }
 
-.button:hover,
-.button:pressed {
-  -fx-background-color: -app-primary-hover-color;
+.button.outline:hover {
+    -fx-text-fill: -app-surface-color;
+    -fx-background-color: linear-gradient(
+        to bottom,
+        derive(-app-primary-color, 18%),
+        -app-primary-color 55%,
+        derive(-app-primary-hover-color, -6%)
+    );
 }
 
-.button.outline:hover,
 .button.outline:pressed {
-  -fx-background-color: -app-primary-hover-color;
+    -fx-background-color: linear-gradient(
+        to bottom,
+        -app-primary-hover-color,
+        derive(-app-primary-hover-color, -10%)
+    );
+    -fx-effect: innershadow(gaussian, rgba(0,0,0,0.35), 8, 0.2, 0, 2);
+    -fx-translate-y: 1;
 }
 
 .otp-button {
@@ -282,6 +337,7 @@
 }
 
 .hyperlink:focused {
+  -fx-text-fill: derive(-app-base-text-color, 100%);
   -fx-focus-color: transparent;
   -fx-faint-focus-color: transparent;
   -fx-border-color: transparent;

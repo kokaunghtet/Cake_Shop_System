@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.chart.BarChart?>
 <?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.NumberAxis?>
@@ -10,34 +11,36 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="salesProductPane" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cakeshopsystem.controllers.admin.SalesProductController">
-   <top>
-      <VBox BorderPane.alignment="CENTER">
-         <children>
+<BorderPane fx:id="salesProductPane" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cakeshopsystem.controllers.admin.SalesProductController">
+    <top>
+        <HBox spacing="20.0">
+            <ComboBox fx:id="productFilter" prefWidth="150.0" />
+            <ComboBox fx:id="dateFilter" prefWidth="150.0" />
+            <DatePicker fx:id="specificDatePicker" />
+         <BorderPane.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </BorderPane.margin>
+        </HBox>
+    </top>
+    <center>
+        <VBox BorderPane.alignment="CENTER">
+
             <HBox>
-               <children>
-                  <ComboBox fx:id="productFilter" prefWidth="150.0" />
-                  <ComboBox fx:id="dateFilter" prefWidth="150.0" />
-                  <DatePicker fx:id="specificDatePicker" />
-               </children>
+                <BarChart fx:id="productBarChart">
+                    <xAxis>
+                        <CategoryAxis label="Products" side="BOTTOM" />
+                    </xAxis>
+                    <yAxis>
+                        <NumberAxis label="Sales Count" side="LEFT" />
+                    </yAxis>
+                </BarChart>
+                <PieChart fx:id="productPieChart" />
             </HBox>
-         </children>
-      </VBox>
-   </top>
-   <center>
-       <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
-           <HBox fx:id="topProductsContainer"/>
-           <HBox prefHeight="100.0" prefWidth="200.0">
-               <BarChart fx:id="productBarChart">
-                   <xAxis>
-                       <CategoryAxis label="Products" side="BOTTOM"/>
-                   </xAxis>
-                   <yAxis>
-                       <NumberAxis label="Sales Count" side="LEFT"/>
-                   </yAxis>
-               </BarChart>
-               <PieChart fx:id="productPieChart"/>
-           </HBox>
-       </VBox>
-   </center>
+
+            <HBox fx:id="topProductsContainer" spacing="20.0" />
+         <BorderPane.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </BorderPane.margin>
+        </VBox>
+    </center>
 </BorderPane>

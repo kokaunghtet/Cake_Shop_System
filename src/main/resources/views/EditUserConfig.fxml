@@ -1,20 +1,172 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-
 <?import javafx.geometry.Insets?>
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.cakeshopsystem.controllers.EditUserConfigController">
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cakeshopsystem.controllers.EditUserConfigController">
+
     <padding>
-        <Insets bottom="25.0" left="25.0" right="25.0" top="25.0"/>
+        <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
     </padding>
-    <VBox alignment="CENTER" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-          AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-        <Label styleClass="title" text="User Configuration"/>
+    <VBox spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+
+        <!-- Header -->
+        <HBox alignment="CENTER_LEFT" spacing="12.0">
+            <Label styleClass="title" text="User Profile" />
+        </HBox>
+
+        <Separator />
+
+        <!-- Body -->
+        <HBox alignment="CENTER" spacing="20.0">
+            <!-- Left: Avatar -->
+            <StackPane fx:id="avatarHost" maxHeight="240.0" maxWidth="240.0" prefHeight="240.0" prefWidth="240.0" styleClass="avatar-host">
+
+                <clip>
+                    <Circle fx:id="avatarClip" centerX="120.0" centerY="120.0" radius="120.0" />
+                </clip>
+
+                <ImageView fx:id="ivUserProfile" fitHeight="240.0" fitWidth="240.0" pickOnBounds="true" preserveRatio="true" />
+
+                <Button fx:id="btnEditImage" styleClass="edit-avatar-btn" text="Edit Photo" StackPane.alignment="BOTTOM_CENTER">
+                </Button>
+
+            </StackPane>
+
+
+            <!-- Right: Form -->
+            <VBox spacing="16.0">
+                <GridPane hgap="10.0" vgap="5.0">
+                    <columnConstraints>
+                        <ColumnConstraints halignment="LEFT" hgrow="NEVER" minWidth="140.0" />
+                        <ColumnConstraints hgrow="ALWAYS" minWidth="220.0" />
+                    </columnConstraints>
+
+                    <rowConstraints>
+                        <!-- Username row + error row -->
+                        <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints vgrow="NEVER" />
+
+                        <!-- Email row -->
+                        <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
+
+                        <!-- Role row -->
+                        <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+
+                    <!-- Username -->
+                    <Label text="Username :" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                    <TextField fx:id="tfUsername" promptText="Username"
+                               GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                    <Label fx:id="lblUsernameError" wrapText="true"
+                           managed="false" visible="false" styleClass="error-message"
+                           GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                    <!-- Email -->
+                    <Label text="Email :" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                    <TextField fx:id="tfEmail" editable="false" promptText="Email"
+                               GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+                    <!-- Role -->
+                    <Label text="Role :" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                    <Label fx:id="lblRole" styleClass="badge" text="Role"
+                           GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                </GridPane>
+
+                <Separator />
+
+                <!-- Password toggle section (same idea as LoginForm.fxml) -->
+                <Label styleClass="sub-title" text="Change Password" />
+
+                <GridPane hgap="10.0" vgap="5.0">
+                    <columnConstraints>
+                        <ColumnConstraints halignment="LEFT" hgrow="NEVER" minWidth="140.0" />
+                        <ColumnConstraints hgrow="ALWAYS" minWidth="220.0" />
+                    </columnConstraints>
+
+                    <rowConstraints>
+                        <!-- Current password + error -->
+                        <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints vgrow="NEVER" />
+
+                        <!-- New password + error -->
+                        <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints vgrow="NEVER" />
+
+                        <!-- Confirm password + error -->
+                        <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints vgrow="NEVER" />
+                    </rowConstraints>
+
+                    <!-- Current Password -->
+                    <Label text="Current Password :" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+
+                    <PasswordField fx:id="pfCurrentPassword" promptText="Current password"
+                                   GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                    <TextField fx:id="tfCurrentPassword" promptText="Current password" visible="false"
+                               GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                    <FontIcon fx:id="icToggleCurrent" iconLiteral="fas-eye-slash" iconSize="18"
+                              styleClass="icon-clickable" translateX="-10.0"
+                              GridPane.columnIndex="1" GridPane.rowIndex="0"
+                              GridPane.halignment="RIGHT" GridPane.hgrow="ALWAYS" />
+
+                    <Label fx:id="lblCurrentPasswordError" wrapText="true"
+                           managed="false" visible="false" styleClass="error-message"
+                           GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                    <!-- New Password -->
+                    <Label text="New Password :" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+
+                    <PasswordField fx:id="pfNewPassword" promptText="New password"
+                                   GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                    <TextField fx:id="tfNewPassword" promptText="New password" visible="false"
+                               GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                    <FontIcon fx:id="icToggleNew" iconLiteral="fas-eye-slash" iconSize="18"
+                              styleClass="icon-clickable" translateX="-10.0"
+                              GridPane.columnIndex="1" GridPane.rowIndex="2"
+                              GridPane.halignment="RIGHT" GridPane.hgrow="ALWAYS" />
+
+                    <Label fx:id="lblNewPasswordError" wrapText="true"
+                           managed="false" visible="false" styleClass="error-message"
+                           GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
+                    <!-- Confirm Password -->
+                    <Label text="Confirm Password :" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+
+                    <PasswordField fx:id="pfConfirmPassword" promptText="Confirm new password"
+                                   GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                    <TextField fx:id="tfConfirmPassword" promptText="Confirm new password" visible="false"
+                               GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                    <FontIcon fx:id="icToggleConfirm" iconLiteral="fas-eye-slash" iconSize="18"
+                              styleClass="icon-clickable" translateX="-10.0"
+                              GridPane.columnIndex="1" GridPane.rowIndex="4"
+                              GridPane.halignment="RIGHT" GridPane.hgrow="ALWAYS" />
+
+                    <Label fx:id="lblConfirmPasswordError" wrapText="true"
+                           managed="false" visible="false" styleClass="error-message"
+                           GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                </GridPane>
+
+                <!-- Action buttons -->
+                <HBox alignment="CENTER_RIGHT" spacing="10.0">
+                    <Button fx:id="btnCancel" mnemonicParsing="false" styleClass="cancel-btn" text="Cancel" />
+                    <Button fx:id="btnSave" mnemonicParsing="false" text="Save Changes" />
+                </HBox>
+            </VBox>
+        </HBox>
     </VBox>
 </AnchorPane>

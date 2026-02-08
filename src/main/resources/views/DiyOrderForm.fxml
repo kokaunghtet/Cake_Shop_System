@@ -39,10 +39,9 @@
         <Label text="Search For Members" styleClass="title"/>
 
         <TextField fx:id="tfPhoneNumber"
-                   promptText="Enter Phone Number"
-                   maxWidth="360"/>
+                   promptText="Enter Phone Number"/>
 
-        <HBox alignment="CENTER" spacing="12.0">
+        <HBox alignment="CENTER_RIGHT" spacing="12.0">
             <Button fx:id="btnCancel" mnemonicParsing="false" styleClass="cancel-btn" text="Cancel"/>
             <Button fx:id="btnSearch" mnemonicParsing="false" text="Search"/>
         </HBox>
@@ -50,7 +49,6 @@
 
     <!-- DIY ORDER VIEW -->
     <VBox fx:id="vbDiyOrder"
-          alignment="TOP_LEFT"
           spacing="16.0"
           visible="false"
           managed="false"

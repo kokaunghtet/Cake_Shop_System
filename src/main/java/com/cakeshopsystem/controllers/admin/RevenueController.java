@@ -1,7 +1,7 @@
-
 package com.cakeshopsystem.controllers.admin;
 
 import com.cakeshopsystem.utils.dao.OrderDAO;
+import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -10,20 +10,19 @@ import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
+import javafx.util.StringConverter;
 
 import java.net.URL;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.temporal.IsoFields;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
-import javafx.scene.layout.HBox;
+import java.util.Set;
 
 public class RevenueController implements Initializable {
 
@@ -44,54 +43,201 @@ public class RevenueController implements Initializable {
 
     private volatile Task<Void> activeTask;
 
-    @FXML
-    void clickRefreshChartBtn(ActionEvent event) {
-        refreshChart();
-    }
+    // ---- Range picker state (single DatePicker) ----
+    private LocalDate startDate;
+    private LocalDate endDate;
+    private final Set<LocalDate> selectedRange = new HashSet<>();
+    private final java.time.format.DateTimeFormatter formatter =
+            java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
+        // -----------------
+        // Default filters
+        // -----------------
         filterCategory.getItems().setAll("All", "Cake", "Drink", "Accessory");
-        filterCategory.setValue("All");
-
         filterDate.getItems().setAll("Daily", "Weekly", "Monthly", "Yearly");
-        filterDate.setValue("Daily");
 
         xAxis.setTickLabelRotation(-45);
         revenueLineChart.setAnimated(false);
-        revenueLineChart.setCreateSymbols(true); // set false if you want no dots
+        revenueLineChart.setCreateSymbols(true);
 
-        customDatePicker.setValue(LocalDate.now());
+        // Enable range selection using ONE DatePicker
+        configureDatePicker();
 
-        // Auto refresh on changes
+        // Set UI defaults + load
+        resetFiltersToDefault();
+        refreshChart();
+
+        // Auto refresh on combobox changes (date range handled by clicks)
         filterDate.valueProperty().addListener((obs, o, n) -> refreshChart());
         filterCategory.valueProperty().addListener((obs, o, n) -> refreshChart());
-        customDatePicker.valueProperty().addListener((obs, o, n) -> refreshChart());
-        refreshBtn.setOnAction(e -> refreshChart());
 
+        // Refresh button resets everything then reloads
+        refreshBtn.setOnAction(e -> clickRefreshChartBtn(null));
+    }
+
+    // =========================================
+    // Range DatePicker (1 control, 2 clicks)
+    // =========================================
+    private void configureDatePicker() {
+        customDatePicker.setEditable(false);
+
+        // IMPORTANT:
+        // converter must return your range text (NOT ""), or JavaFX will blank the editor
+        customDatePicker.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(LocalDate date) {
+                if (startDate == null) return "";
+                if (endDate == null) return formatter.format(startDate);
+                return formatter.format(startDate) + " → " + formatter.format(endDate);
+            }
+
+            @Override
+            public LocalDate fromString(String s) {
+                return null; // no typing
+            }
+        });
+
+        customDatePicker.setDayCellFactory(dp -> new DateCell() {
+            @Override
+            public void updateItem(LocalDate item, boolean empty) {
+                super.updateItem(item, empty);
+
+                // reset (cells reused!)
+                setStyle("");
+                setOnMouseClicked(null);
+
+                if (empty || item == null) return;
+
+                // highlight range
+                if (selectedRange.contains(item)) {
+                    setStyle("-fx-background-color: rgba(76,175,80,0.25);");
+                }
+
+                // highlight start / end stronger
+                if (startDate != null && item.equals(startDate)) {
+                    setStyle("-fx-background-color: #4caf50; -fx-text-fill: white; -fx-font-weight: bold;");
+                }
+                if (endDate != null && item.equals(endDate)) {
+                    setStyle("-fx-background-color: #2e7d32; -fx-text-fill: white; -fx-font-weight: bold;");
+                }
+
+                final LocalDate clicked = item;
+                setOnMouseClicked(e -> {
+                    if (isDisable()) return;
+                    handleDateSelection(clicked);
+                    e.consume();
+                });
+            }
+        });
+    }
+
+    private void handleDateSelection(LocalDate clickedDate) {
+        // Keep the calendar focused on clicked month/day (good UX)
+        customDatePicker.setValue(clickedDate);
+
+        // FIRST click (or restart selection)
+        if (startDate == null || endDate != null) {
+            startDate = clickedDate;
+            endDate = null;
+
+            selectedRange.clear();
+            selectedRange.add(startDate);
+
+            // reopen so user can pick end date
+            Platform.runLater(customDatePicker::show);
+
+            // ❌ DO NOT refresh chart here (otherwise you query twice)
+            return;
+        }
+
+        // SECOND click (set end)
+        if (clickedDate.isBefore(startDate)) {
+            endDate = startDate;
+            startDate = clickedDate;
+        } else {
+            endDate = clickedDate;
+        }
+
+        fillDateRange();
+
+        // now close after full range chosen
+        customDatePicker.hide();
+
+        // ✅ refresh only after full range is selected
         refreshChart();
     }
 
+    private void fillDateRange() {
+        selectedRange.clear();
+        if (startDate == null) return;
+
+        LocalDate end = (endDate != null) ? endDate : startDate;
+
+        LocalDate d = startDate;
+        while (!d.isAfter(end)) {
+            selectedRange.add(d);
+            d = d.plusDays(1);
+        }
+    }
+
+    // =========================================
+    // Refresh button: reset + reload
+    // =========================================
+    private void resetFiltersToDefault() {
+        // reset combos
+        filterCategory.setValue("All");
+        filterDate.setValue("Daily");
+
+        // reset range to today (single-day range)
+        startDate = LocalDate.now();
+        endDate = null;
+        selectedRange.clear();
+        selectedRange.add(startDate);
+
+        // keep calendar anchored
+        customDatePicker.setValue(startDate);
+
+        // force editor to update now (sometimes needed)
+        Platform.runLater(() -> {
+            customDatePicker.getEditor().setText(customDatePicker.getConverter().toString(startDate));
+        });
+    }
+
+    @FXML
+    void clickRefreshChartBtn(ActionEvent event) {
+        resetFiltersToDefault();
+        refreshChart();
+    }
+
+    // =========================================
+    // Chart logic
+    // =========================================
     private void refreshChart() {
         String period = safe(filterDate.getValue(), "Daily");
         String category = safe(filterCategory.getValue(), "All");
-        LocalDate selectedDate = (customDatePicker.getValue() != null) ? customDatePicker.getValue() : LocalDate.now();
 
-        // Choose date range (history view like dashboard)
-        LocalDate startDate;
-        LocalDate endDate = selectedDate;
-
-        switch (period) {
-            case "Daily" -> startDate = selectedDate;
-            case "Weekly" -> startDate = selectedDate.minusWeeks(6).with(DayOfWeek.MONDAY);
-            case "Monthly" -> startDate = YearMonth.from(selectedDate.minusMonths(11)).atDay(1);
-            case "Yearly" -> startDate = LocalDate.of(selectedDate.getYear() - 3, 1, 1);
-            default -> startDate = selectedDate.minusDays(10);
+        // use selected range
+        if (startDate == null) {
+            startDate = LocalDate.now();
+            endDate = null;
+            selectedRange.clear();
+            selectedRange.add(startDate);
         }
 
-        LinkedHashMap<String, String> labels = generateLabels(period, startDate, endDate);
-        loadRevenueDataAsync(period, category, startDate, endDate, labels);
+        LocalDate start = startDate;
+        LocalDate end = (endDate != null) ? endDate : startDate;
+
+        if (end.isBefore(start)) {
+            LocalDate tmp = start;
+            start = end;
+            end = tmp;
+        }
+
+        LinkedHashMap<String, String> labels = generateLabels(period, start, end);
+        loadRevenueDataAsync(period, category, start, end, labels);
     }
 
     private LinkedHashMap<String, String> generateLabels(String period, LocalDate startDate, LocalDate endDate) {
@@ -101,13 +247,13 @@ public class RevenueController implements Initializable {
             case "Daily" -> {
                 LocalDate d = startDate;
                 while (!d.isAfter(endDate)) {
-                    String key = d.toString(); // yyyy-MM-dd
+                    String key = d.toString();
                     labels.put(key, key);
                     d = d.plusDays(1);
                 }
             }
             case "Weekly" -> {
-                LocalDate d = startDate; // assumed Monday
+                LocalDate d = startDate.with(DayOfWeek.MONDAY);
                 while (!d.isAfter(endDate)) {
                     int week = d.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR);
                     int year = d.get(IsoFields.WEEK_BASED_YEAR);
@@ -120,7 +266,7 @@ public class RevenueController implements Initializable {
                 YearMonth ym = YearMonth.from(startDate);
                 YearMonth endYm = YearMonth.from(endDate);
                 while (!ym.isAfter(endYm)) {
-                    String key = ym.toString(); // yyyy-MM
+                    String key = ym.toString();
                     labels.put(key, key);
                     ym = ym.plusMonths(1);
                 }
@@ -157,7 +303,6 @@ public class RevenueController implements Initializable {
             activeTask.cancel();
         }
 
-        // holders for background -> UI
         final XYChart.Series<String, Number>[] seriesHolder = new XYChart.Series[1];
         final int[] membersHolder = new int[1];
         final int[] ordersHolder = new int[1];
@@ -169,17 +314,14 @@ public class RevenueController implements Initializable {
             protected Void call() {
                 if (isCancelled()) return null;
 
-                // bucket map (x-axis labels -> revenue)
                 LinkedHashMap<String, Double> bucketRevenue = new LinkedHashMap<>();
                 labels.keySet().forEach(k -> bucketRevenue.put(k, 0.0));
 
                 Integer categoryId = mapCategoryToId(category);
 
-                // fetch daily revenue points from DAO
                 LinkedHashMap<LocalDate, Double> dailyRevenue =
                         OrderDAO.getRevenueByDateRange(startDate, endDate, categoryId);
 
-                // bucket daily revenue into period buckets
                 for (Map.Entry<LocalDate, Double> e : dailyRevenue.entrySet()) {
                     if (isCancelled()) return null;
 
@@ -189,7 +331,6 @@ public class RevenueController implements Initializable {
                     }
                 }
 
-                // build series
                 XYChart.Series<String, Number> s = new XYChart.Series<>();
                 s.setName("Revenue (" + category + ")");
                 for (Map.Entry<String, Double> e : bucketRevenue.entrySet()) {
@@ -197,11 +338,10 @@ public class RevenueController implements Initializable {
                 }
                 seriesHolder[0] = s;
 
-                // cards
                 membersHolder[0] = OrderDAO.getTotalMembers();
                 ordersHolder[0] = OrderDAO.getTotalOrders(startDate, endDate);
                 salesHolder[0] = OrderDAO.getTotalSales(startDate, endDate);
-               cancelHolder[0] = OrderDAO.getTotalCancelBookings(startDate, endDate);
+                cancelHolder[0] = OrderDAO.getTotalCancelBookings(startDate, endDate);
 
                 return null;
             }
@@ -229,7 +369,6 @@ public class RevenueController implements Initializable {
     }
 
     // ------------------- helpers -------------------
-
     private Integer mapCategoryToId(String category) {
         if (category == null || category.equalsIgnoreCase("All")) return null;
         return switch (category) {
@@ -242,13 +381,13 @@ public class RevenueController implements Initializable {
 
     private String toBucketKey(String period, LocalDate d) {
         return switch (period) {
-            case "Daily" -> d.toString(); // yyyy-MM-dd
+            case "Daily" -> d.toString();
             case "Weekly" -> {
                 int week = d.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR);
                 int year = d.get(IsoFields.WEEK_BASED_YEAR);
                 yield String.format("%d-W%02d", year, week);
             }
-            case "Monthly" -> YearMonth.from(d).toString(); // yyyy-MM
+            case "Monthly" -> YearMonth.from(d).toString();
             case "Yearly" -> String.valueOf(d.getYear());
             default -> d.toString();
         };

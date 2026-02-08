@@ -1,9 +1,5 @@
 package com.cakeshopsystem.models;
 
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-
-
 public class User {
     private int userId;
     private String userName;
@@ -87,10 +83,5 @@ public class User {
 
     public void setRole(int role) {
         this.role = role;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" + "userId=" + userId + ", userName='" + userName + '\'' + ", email='" + email + '\'' + ", password='" + password + '\'' + ", imagePath='" + imagePath + '\'' + ", isActive=" + isActive + ", role=" + role + '}';
     }
 }

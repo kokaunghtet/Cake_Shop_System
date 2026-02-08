@@ -585,16 +585,16 @@ public class ProductDAO {
     public static ObservableList<Product> getTopDiyCakes(LocalDate start, LocalDate end) {
         ObservableList<Product> list = FXCollections.observableArrayList();
         String sql = """
-        SELECT p.product_name, p.img_path, COUNT(*) AS total_orders
-        FROM diy_cake_bookings dcb
-        JOIN orders o ON dcb.order_id = o.order_id
-        JOIN cakes c ON dcb.cake_id = c.cake_id
-        JOIN products p ON c.product_id = p.product_id
-        WHERE o.order_date BETWEEN ? AND ?
-        GROUP BY p.product_name, p.img_path
-        ORDER BY total_orders DESC
-        LIMIT 5
-    """;
+                    SELECT p.product_name, p.img_path, COUNT(*) AS total_orders
+                    FROM diy_cake_bookings dcb
+                    JOIN orders o ON dcb.order_id = o.order_id
+                    JOIN cakes c ON dcb.cake_id = c.cake_id
+                    JOIN products p ON c.product_id = p.product_id
+                    WHERE o.order_date BETWEEN ? AND ?
+                    GROUP BY p.product_name, p.img_path
+                    ORDER BY total_orders DESC
+                    LIMIT 5
+                """;
 
         try (var con = DB.connect();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -621,16 +621,16 @@ public class ProductDAO {
     public static ObservableList<Product> getTopCustomCakes(LocalDate start, LocalDate end) {
         ObservableList<Product> list = FXCollections.observableArrayList();
         String sql = """
-        SELECT p.product_name, p.img_path, COUNT(*) AS total_orders
-        FROM custom_cake_bookings cb
-        JOIN orders o ON cb.order_id = o.order_id
-        JOIN cakes c ON cb.cake_id = c.cake_id
-        JOIN products p ON c.product_id = p.product_id
-        WHERE o.order_date BETWEEN ? AND ?
-        GROUP BY p.product_name, p.img_path
-        ORDER BY total_orders DESC
-        LIMIT 5
-    """;
+                    SELECT p.product_name, p.img_path, COUNT(*) AS total_orders
+                    FROM custom_cake_bookings cb
+                    JOIN orders o ON cb.order_id = o.order_id
+                    JOIN cakes c ON cb.cake_id = c.cake_id
+                    JOIN products p ON c.product_id = p.product_id
+                    WHERE o.order_date BETWEEN ? AND ?
+                    GROUP BY p.product_name, p.img_path
+                    ORDER BY total_orders DESC
+                    LIMIT 5
+                """;
 
         try (var con = DB.connect();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -657,16 +657,16 @@ public class ProductDAO {
     public static ObservableList<Product> getTopDrinks(LocalDate start, LocalDate end) {
         ObservableList<Product> list = FXCollections.observableArrayList();
         String sql = """
-        SELECT p.product_name, p.img_path, SUM(oi.quantity) AS total_sold
-        FROM order_items oi
-        JOIN orders o ON oi.order_id = o.order_id
-        JOIN drinks d ON oi.drink_id = d.drink_id
-        JOIN products p ON d.product_id = p.product_id
-        WHERE o.order_date BETWEEN ? AND ?
-        GROUP BY p.product_name, p.img_path
-        ORDER BY total_sold DESC
-        LIMIT 5
-    """;
+                    SELECT p.product_name, p.img_path, SUM(oi.quantity) AS total_sold
+                    FROM order_items oi
+                    JOIN orders o ON oi.order_id = o.order_id
+                    JOIN drinks d ON oi.drink_id = d.drink_id
+                    JOIN products p ON d.product_id = p.product_id
+                    WHERE o.order_date BETWEEN ? AND ?
+                    GROUP BY p.product_name, p.img_path
+                    ORDER BY total_sold DESC
+                    LIMIT 5
+                """;
 
         try (var con = DB.connect();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -689,24 +689,25 @@ public class ProductDAO {
 
         return list;
     }
+
     public static ObservableList<Product> getTopSellingProductsByType(String filter, LocalDate start, LocalDate end) {
         ObservableList<Product> list = FXCollections.observableArrayList();
 
         String sql = """
-        SELECT 
-            p.product_name,
-            p.img_path,
-            SUM(oi.quantity) AS total_sold
-        FROM order_items oi
-        JOIN products p ON oi.product_id = p.product_id
-        JOIN categories c ON p.category_id = c.category_id
-        JOIN orders o ON oi.order_id = o.order_id
-        WHERE c.category_name = ?
-        AND o.order_date BETWEEN ? AND ?
-        GROUP BY p.product_name, p.img_path
-        ORDER BY total_sold DESC
-        LIMIT 5
-    """;
+                    SELECT 
+                        p.product_name,
+                        p.img_path,
+                        SUM(oi.quantity) AS total_sold
+                    FROM order_items oi
+                    JOIN products p ON oi.product_id = p.product_id
+                    JOIN categories c ON p.category_id = c.category_id
+                    JOIN orders o ON oi.order_id = o.order_id
+                    WHERE c.category_name = ?
+                    AND o.order_date BETWEEN ? AND ?
+                    GROUP BY p.product_name, p.img_path
+                    ORDER BY total_sold DESC
+                    LIMIT 3
+                """;
 
         try (var con = DB.connect();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -730,6 +731,7 @@ public class ProductDAO {
 
         return list;
     }
+
     // ==========================
 // ===== DIY CAKE SALES =====
 // ==========================
@@ -737,16 +739,16 @@ public class ProductDAO {
         ObservableList<ProductSales> list = FXCollections.observableArrayList();
 
         String sql = """
-        SELECT p.product_name AS product_name,
-               COUNT(*) AS total_sold
-        FROM diy_cake_bookings dcb
-        JOIN orders o ON dcb.order_id = o.order_id
-        JOIN cakes c ON dcb.cake_id = c.cake_id
-        JOIN products p ON c.product_id = p.product_id
-        WHERE o.order_date BETWEEN ? AND ?
-        GROUP BY p.product_name
-        ORDER BY total_sold DESC
-    """;
+                    SELECT p.product_name AS product_name,
+                           COUNT(*) AS total_sold
+                    FROM diy_cake_bookings dcb
+                    JOIN orders o ON dcb.order_id = o.order_id
+                    JOIN cakes c ON dcb.cake_id = c.cake_id
+                    JOIN products p ON c.product_id = p.product_id
+                    WHERE o.order_date BETWEEN ? AND ?
+                    GROUP BY p.product_name
+                    ORDER BY total_sold DESC
+                """;
 
         try (PreparedStatement ps = DB.connect().prepareStatement(sql)) {
             ps.setDate(1, java.sql.Date.valueOf(start));
@@ -774,16 +776,16 @@ public class ProductDAO {
         ObservableList<ProductSales> list = FXCollections.observableArrayList();
 
         String sql = """
-        SELECT p.product_name AS product_name,
-               COUNT(*) AS total_sold
-        FROM custom_cake_bookings cb
-        JOIN orders o ON cb.order_id = o.order_id
-        JOIN cakes c ON cb.cake_id = c.cake_id
-        JOIN products p ON c.product_id = p.product_id
-        WHERE o.order_date BETWEEN ? AND ?
-        GROUP BY p.product_name
-        ORDER BY total_sold DESC
-    """;
+                    SELECT p.product_name AS product_name,
+                           COUNT(*) AS total_sold
+                    FROM custom_cake_bookings cb
+                    JOIN orders o ON cb.order_id = o.order_id
+                    JOIN cakes c ON cb.cake_id = c.cake_id
+                    JOIN products p ON c.product_id = p.product_id
+                    WHERE o.order_date BETWEEN ? AND ?
+                    GROUP BY p.product_name
+                    ORDER BY total_sold DESC
+                """;
 
         try (PreparedStatement ps = DB.connect().prepareStatement(sql)) {
             ps.setDate(1, java.sql.Date.valueOf(start));
@@ -811,16 +813,16 @@ public class ProductDAO {
         ObservableList<ProductSales> list = FXCollections.observableArrayList();
 
         String sql = """
-        SELECT p.product_name,
-               SUM(oi.quantity) AS total_sold
-        FROM order_items oi
-        JOIN orders o ON oi.order_id = o.order_id
-        JOIN drinks d ON oi.drink_id = d.drink_id
-        JOIN products p ON d.product_id = p.product_id
-        WHERE o.order_date BETWEEN ? AND ?
-        GROUP BY p.product_name
-        ORDER BY total_sold DESC
-    """;
+                    SELECT p.product_name,
+                           SUM(oi.quantity) AS total_sold
+                    FROM order_items oi
+                    JOIN orders o ON oi.order_id = o.order_id
+                    JOIN drinks d ON oi.drink_id = d.drink_id
+                    JOIN products p ON d.product_id = p.product_id
+                    WHERE o.order_date BETWEEN ? AND ?
+                    GROUP BY p.product_name
+                    ORDER BY total_sold DESC
+                """;
 
         try (PreparedStatement ps = DB.connect().prepareStatement(sql)) {
             ps.setDate(1, java.sql.Date.valueOf(start));
@@ -848,18 +850,18 @@ public class ProductDAO {
         ObservableList<ProductSales> salesList = FXCollections.observableArrayList();
 
         String sql = """
-        SELECT COALESCE(p.product_name, dp.product_name) AS name,
-               SUM(oi.quantity) AS total_sold
-        FROM order_items oi
-        JOIN orders o ON oi.order_id = o.order_id
-        LEFT JOIN products p ON oi.product_id = p.product_id
-        LEFT JOIN drinks d ON oi.drink_id = d.drink_id
-        LEFT JOIN products dp ON d.product_id = dp.product_id
-        WHERE (p.category_id = ? OR dp.category_id = ?)
-          AND o.order_date BETWEEN ? AND ?
-        GROUP BY name
-        ORDER BY total_sold DESC
-    """;
+                    SELECT COALESCE(p.product_name, dp.product_name) AS name,
+                           SUM(oi.quantity) AS total_sold
+                    FROM order_items oi
+                    JOIN orders o ON oi.order_id = o.order_id
+                    LEFT JOIN products p ON oi.product_id = p.product_id
+                    LEFT JOIN drinks d ON oi.drink_id = d.drink_id
+                    LEFT JOIN products dp ON d.product_id = dp.product_id
+                    WHERE (p.category_id = ? OR dp.category_id = ?)
+                      AND o.order_date BETWEEN ? AND ?
+                    GROUP BY name
+                    ORDER BY total_sold DESC
+                """;
 
         try (Connection con = DB.connect();
              PreparedStatement stmt = con.prepareStatement(sql)) {

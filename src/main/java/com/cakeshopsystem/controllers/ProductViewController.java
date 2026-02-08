@@ -16,6 +16,7 @@ import com.cakeshopsystem.utils.session.SessionManager;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -168,6 +169,10 @@ public class ProductViewController {
         if (!hasItems) return;
 
         for (Inventory inv : list) {
+
+            Product p = ProductCache.getProductById(inv.getProductId());
+            if (!isAdmin && !p.isActive()) continue;
+
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource(PRODUCT_CARD_FXML));
                 Parent card = loader.load();
@@ -176,7 +181,6 @@ public class ProductViewController {
                 controller.setExcludeDiscountStock(!isAdmin);
                 controller.applyRoleBasedBtn(roleName);
 
-                Product p = ProductCache.getProductById(inv.getProductId());
                 controller.setDiscountedItemsData(inv, p);
 
                 discountedItemsHBox.getChildren().add(card);

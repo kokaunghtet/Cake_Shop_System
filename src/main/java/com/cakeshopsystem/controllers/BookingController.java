@@ -44,7 +44,7 @@ public class BookingController {
                 Parent card = loader.load();
                 BookingCardController c = loader.getController();
 
-                c.setupForCustomCake(); // make sure you implemented in BookingCardController
+                c.setupForCustomCake();
 
                 c.lblBookingName.setText(buildCustomName(row));
                 c.lblPickupDate.setText("Pickup: " + row.getPickupDate().format(DATE_FMT));

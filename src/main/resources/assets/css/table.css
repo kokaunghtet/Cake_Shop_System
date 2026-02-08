@@ -69,7 +69,7 @@
 
 /* Hover */
 .table-row-cell:hover {
-    -fx-background-color: derive(-app-icon-color, 35%);
+    -fx-background-color: -app-bg-color;
 }
 
 /* Selected */

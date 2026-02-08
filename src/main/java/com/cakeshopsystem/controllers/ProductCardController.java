@@ -1,6 +1,7 @@
 package com.cakeshopsystem.controllers;
 
 import com.cakeshopsystem.controllers.admin.EditProductController;
+import com.cakeshopsystem.models.CartItem;
 import com.cakeshopsystem.models.Drink;
 import com.cakeshopsystem.models.Inventory;
 import com.cakeshopsystem.models.Product;
@@ -8,6 +9,8 @@ import com.cakeshopsystem.utils.cache.CakeCache;
 import com.cakeshopsystem.utils.cache.DrinkCache;
 import com.cakeshopsystem.utils.cache.InventoryCache;
 import com.cakeshopsystem.utils.cache.ProductCache;
+import com.cakeshopsystem.utils.components.SnackBar;
+import com.cakeshopsystem.utils.constants.SnackBarType;
 import com.cakeshopsystem.utils.services.CartService;
 import com.cakeshopsystem.utils.session.SessionManager;
 import javafx.beans.value.ChangeListener;
@@ -22,6 +25,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 
 public class ProductCardController {
 
@@ -89,6 +93,10 @@ public class ProductCardController {
                 onCardDoubleClick.accept(currentProduct);
             }
         });
+
+        cartService.getItems().addListener((javafx.collections.ListChangeListener<CartItem>) c -> {
+            refreshRemainingStockLabel();
+        });
     }
 
     // =====================================
@@ -142,6 +150,7 @@ public class ProductCardController {
         stockQuantityLabel.setManaged(true);
 
         setMaxQtyFromStock(batchQty);
+        refreshRemainingStockLabel();
         addToCartBtn.setDisable(batchQty <= 0);
         updateQtyButtonsState();
 
@@ -169,6 +178,7 @@ public class ProductCardController {
         }
 
         updateStockUI(product.getProductId());
+        refreshRemainingStockLabel();
         applyActiveState(product);
     }
 
@@ -221,6 +231,7 @@ public class ProductCardController {
         productPrice.setText(String.valueOf(product.getPrice()));
 
         updateStockUI(product.getProductId());
+        refreshRemainingStockLabel();
         applyActiveState(product);
     }
 
@@ -237,6 +248,7 @@ public class ProductCardController {
         productPrice.setText(String.valueOf(product.getPrice()));
 
         updateStockUI(product.getProductId());
+        refreshRemainingStockLabel();
         applyActiveState(product);
     }
 
@@ -269,6 +281,8 @@ public class ProductCardController {
         if (currentProduct == null) return;
         if (!currentProduct.isActive()) return;
         if (quantity <= 0) return;
+
+        SnackBar.show(SnackBarType.INFO, "Added to Cart", "You can adjust quantity in Cart", Duration.seconds(1));
 
         String option = optionOverride;
         double unitPrice = unitPriceOverride != null ? unitPriceOverride : currentProduct.getPrice();
@@ -310,6 +324,44 @@ public class ProductCardController {
     // =====================================
     // STOCK & QUANTITY LOGIC
     // =====================================
+    private void refreshRemainingStockLabel() {
+        if (currentProduct == null) return;
+
+        if (currentProduct.getCategoryId() == 2) return;
+
+        if (productStock == null || !productStock.isVisible()) return;
+
+        String option = optionOverride;
+        int alreadyInCart = cartService.getQuantity(currentProduct.getProductId(), option);
+
+        int remaining = Math.max(maxQty - alreadyInCart, 0);
+        if (remaining > 0) {
+            productStock.setText(String.valueOf(remaining));
+            productStock.getStyleClass().remove("badge-danger");
+
+            stockQuantityLabel.setVisible(true);
+            stockQuantityLabel.setManaged(true);
+
+            addToCartBtn.setDisable(!currentProduct.isActive());
+
+        } else {
+            productStock.setText("Out of Stock");
+            if (!productStock.getStyleClass().contains("badge-danger")) {
+                productStock.getStyleClass().add("badge-danger");
+            }
+
+            stockQuantityLabel.setVisible(false);
+            stockQuantityLabel.setManaged(false);
+
+            addToCartBtn.setDisable(true);
+
+            quantity = 1;
+            quantityLabel.setText("1");
+        }
+
+        updateQtyButtonsState();
+    }
+
     private void updateStockUI(int productId) {
         int totalQty = getAvailableQty(productId);
         setMaxQtyFromStock(totalQty);
