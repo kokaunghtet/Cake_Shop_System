@@ -95,6 +95,14 @@ public class RegisterMemberController {
         String memberPhone = validateAndNormalizePhone();
         if (memberPhone == null) return;
 
+        ObservableList<Member> members = MemberCache.getMembersList();
+        for(Member m: members) {
+            if(m.getPhone().equals(memberPhone)) {
+                SnackBar.show(SnackBarType.INFO, "Already Register", "This phone number is already registered as a member", Duration.seconds(2));
+                return;
+            }
+        }
+
         btnRegister.setDisable(true);
 
         Member newMember = new Member(

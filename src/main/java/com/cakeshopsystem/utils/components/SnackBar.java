@@ -105,28 +105,6 @@ public class SnackBar {
         }
     }
 
-//    private static void dismiss(VBox root) {
-//        double startY = -root.getHeight();
-//
-//        root.setMinHeight(root.getHeight());
-//        root.setMinWidth(root.getWidth());
-//
-//        Timeline slideOut = new Timeline(
-//                new KeyFrame(Duration.ZERO,
-//                        new KeyValue(root.translateYProperty(), 0),
-//                        new KeyValue(root.opacityProperty(), 1)),
-//                new KeyFrame(SLIDE_DURATION,
-//                        new KeyValue(root.translateYProperty(), startY),
-//                        new KeyValue(root.opacityProperty(), 0)));
-//
-//        slideOut.setOnFinished(e -> {
-//            root.setMinHeight(Region.USE_COMPUTED_SIZE);
-//            root.setMinWidth(Region.USE_COMPUTED_SIZE);
-//        });
-//
-//        slideOut.play();
-//    }
-
     private static void dismiss(VBox root) {
         VBox container = SessionManager.getSnackBarContainer();
         double startY = -root.getHeight();
@@ -153,6 +131,4 @@ public class SnackBar {
 
         slideOut.play();
     }
-
-
 }

@@ -37,7 +37,7 @@ public class AddUserController {
     // State
     // =========================
     private boolean attemptedSubmit = false;
-    private boolean isPasswordVisible = false;
+    private final boolean isPasswordVisible = false;
 
     // =========================
     // FXML: Inputs
@@ -202,7 +202,6 @@ public class AddUserController {
                 && roleError == null;
     }
 
-    // Single entry point for live validation (listeners call this)
     private void revalidate() {
         validateForm();
     }

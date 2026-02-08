@@ -49,9 +49,9 @@
                     <padding>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
                     </padding>
-                    <FontIcon fx:id="moonIcon" iconLiteral="fas-moon" iconSize="20" styleClass="icon-clickable"/>
-                    <FontIcon fx:id="settingIcon" iconLiteral="fas-cog" iconSize="20" styleClass="icon-clickable"/>
-                    <FontIcon fx:id="signOutIcon" iconLiteral="fas-sign-out-alt" iconSize="20"
+                    <FontIcon fx:id="moonIcon" iconLiteral="fas-moon" iconSize="24" styleClass="icon-clickable"/>
+                    <FontIcon fx:id="settingIcon" iconLiteral="fas-cog" iconSize="24" styleClass="icon-clickable"/>
+                    <FontIcon fx:id="signOutIcon" iconLiteral="fas-sign-out-alt" iconSize="24"
                               styleClass="icon-clickable"/>
                 </HBox>
             </HBox>
@@ -71,13 +71,13 @@
                 <StackPane fx:id="badgePane" AnchorPane.bottomAnchor="40.0" AnchorPane.rightAnchor="20.0">
                     <Button fx:id="cartBtn" mnemonicParsing="false" text="Cart">
                         <graphic>
-                            <FontIcon iconLiteral="fas-cart-plus" iconSize="15" styleClass="cart-icon"/>
+                            <FontIcon iconLiteral="fas-cart-plus" iconSize="24" styleClass="cart-icon"/>
                         </graphic>
                     </Button>
-                    <Circle fill="RED" radius="9" translateX="35.0" translateY="-10.0"/>
+                    <Circle fill="RED" radius="9" translateX="40.0" translateY="-14.0"/>
 
                     <Label fx:id="badgeLabel" style="-fx-text-fill: white; -fx-font-size: 10px; -fx-font-weight: bold;"
-                           text="0" translateX="35.0" translateY="-10.0"/>
+                           text="0" translateX="40.0" translateY="-14.0"/>
                 </StackPane>
 
             </AnchorPane>

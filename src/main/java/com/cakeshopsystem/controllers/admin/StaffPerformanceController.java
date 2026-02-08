@@ -5,6 +5,8 @@ import com.cakeshopsystem.controllers.MainController;
 import com.cakeshopsystem.models.ActivityItem;
 import com.cakeshopsystem.models.Order;
 import com.cakeshopsystem.models.User;
+import com.cakeshopsystem.utils.components.SnackBar;
+import com.cakeshopsystem.utils.constants.SnackBarType;
 import com.cakeshopsystem.utils.dao.OrderDAO;
 import com.cakeshopsystem.utils.dao.StaffPerformanceDAO;
 import com.cakeshopsystem.utils.databaseconnection.DB;
@@ -18,31 +20,35 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 import org.controlsfx.control.BreadCrumbBar;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
+
 import com.cakeshopsystem.utils.cache.UserCache;
 import com.cakeshopsystem.utils.cache.RoleCache;
 
 
 public class StaffPerformanceController {
 
-    @FXML private ComboBox<String> periodCombo;
-    @FXML private DatePicker datePicker;
-    @FXML private FlowPane cardContainer;
-    @FXML private ScrollPane scrollPane;
-    @FXML private BreadCrumbBar<String> breadCrumbBar;
+    @FXML
+    private ComboBox<String> periodCombo;
+    @FXML
+    private DatePicker datePicker;
+    @FXML
+    private FlowPane cardContainer;
+    @FXML
+    private ScrollPane scrollPane;
+    @FXML
+    private BreadCrumbBar<String> breadCrumbBar;
 
     @FXML
     private AnchorPane rootPane;
 
-
     private TreeItem<String> rootCrumb;
     private BreadCrumbBar<String> breadcrumbBar;
-
-
 
     // ===== TableView (CREATED IN CODE) =====
     private TableView<ActivityItem> tableView;
@@ -55,7 +61,7 @@ public class StaffPerformanceController {
         periodCombo.setValue("Daily");
         datePicker.setValue(LocalDate.now());
 
-       // breadCrumbBar.setVisible(false);
+        // breadCrumbBar.setVisible(false);
 
         scrollPane.setContent(cardContainer);
 
@@ -67,9 +73,9 @@ public class StaffPerformanceController {
         cardContainer.setVgap(15);
 
 
-      rootCrumb = new TreeItem<>("Home");
+        rootCrumb = new TreeItem<>("Home");
         breadCrumbBar.setVisible(false);
-        breadCrumbBar.setSelectedCrumb(rootCrumb);//edit//
+        breadCrumbBar.setSelectedCrumb(rootCrumb);
 
         breadCrumbBar.setOnCrumbAction(event -> handleBreadcrumbClick(event.getSelectedCrumb()));
 
@@ -81,7 +87,7 @@ public class StaffPerformanceController {
     }
 
 
-   private void handleBreadcrumbClick(TreeItem<String> selected) {
+    private void handleBreadcrumbClick(TreeItem<String> selected) {
         if (selected == null) return;
 
         if ("Home".equals(selected.getValue())) {
@@ -91,24 +97,6 @@ public class StaffPerformanceController {
         }
     }
 
-
-
-    /*private void reloadCurrentView() {
-        if (!breadCrumbBar.isVisible()) {
-            loadCashierCards();
-            return;
-        }
-
-        String current = breadCrumbBar.getSelectedCrumb().getValue();
-        if (!"Home".equals(current)) {
-            loadCashierCards();
-
-        } else {
-            int userId = getUserIdByName(current);
-            if (userId != -1) pushBreadcrumbAndLoadDetails(userId, current);
-
-        }
-    } //original//*/
     private void reloadCurrentView() {
         if (!breadCrumbBar.isVisible()) {
             loadCashierCards();
@@ -128,10 +116,6 @@ public class StaffPerformanceController {
         }
     }
 
-
-
-
-
     private String getDateFilter(String column) {
         LocalDate date = datePicker.getValue() != null ? datePicker.getValue() : LocalDate.now();
         switch (periodCombo.getValue()) {
@@ -149,35 +133,19 @@ public class StaffPerformanceController {
                 LocalDate firstY = date.withDayOfYear(1);
                 LocalDate lastY = date.withDayOfYear(date.lengthOfYear());
                 return "DATE(" + column + ") BETWEEN '" + firstY + "' AND '" + lastY + "'";
-            default: return "1=1";
+            default:
+                return "1=1";
         }
     }
 
-    /*public void loadCashierCards() {
+    public void loadCashierCards() {
         cardContainer.getChildren().clear();
 
         int cashierRoleId = RoleCache.getRoleIdByName("Cashier");
         ObservableList<User> cashiers = UserCache.getUsersByRole(cashierRoleId);
 
         if (cashiers.isEmpty()) {
-            System.out.println("No cashiers found in cache");
-            return;
-        }
-
-        for (User user : cashiers) {
-            if (!user.isActive()) continue;
-
-            int totalOrders = getOrderCountForUser(user.getUserId());
-            addUserCardToFlow(user, totalOrders);
-        }
-    }*/public void loadCashierCards() {
-        cardContainer.getChildren().clear();
-
-        int cashierRoleId = RoleCache.getRoleIdByName("Cashier");
-        ObservableList<User> cashiers = UserCache.getUsersByRole(cashierRoleId);
-
-        if (cashiers.isEmpty()) {
-            System.out.println("No cashiers found in cache");
+            SnackBar.show(SnackBarType.ERROR, "Failed", "No Cashier found in cache", Duration.seconds(2));
             return;
         }
 
@@ -190,8 +158,6 @@ public class StaffPerformanceController {
             addUserCardToFlow(user, totalOrders);
         }
     }
-
-
 
     private void addUserCardToFlow(User user, int orderCount) {
         try {
@@ -208,23 +174,14 @@ public class StaffPerformanceController {
             cardContainer.getChildren().add(card);
 
 
-
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    /*private int getOrderCountForUser(int userId) {
-        return OrderDAO.getAllOrder()
-                .stream()
-                .mapToInt(o -> o.getUserId() == userId ? 1 : 0)
-                .sum();
-    }*/
-
-
-    private int getOrderCountForUser(int userId,String dateFilter) {
+    private int getOrderCountForUser(int userId, String dateFilter) {
         // Apply the same date filter as the table
-       // String dateFilter = getDateFilter("order_date"); // make sure 'order_date' matches your DB column
+        // String dateFilter = getDateFilter("order_date"); // make sure 'order_date' matches your DB column
         String sql = "SELECT COUNT(*) AS total FROM orders WHERE user_id = ? AND " + dateFilter;
 
         try (var conn = DB.connect();
@@ -241,36 +198,38 @@ public class StaffPerformanceController {
     }
 
 
-
     private void pushBreadcrumbAndLoadDetails(int userId, String userName) {
-       breadCrumbBar.setVisible(true);
-       rootCrumb.getChildren().clear();
+        breadCrumbBar.setVisible(true);
+        rootCrumb.getChildren().clear();
 
-       //TreeItem<String> homeCrumb = new TreeItem<>("Home");
-       TreeItem<String> userCrumb = new TreeItem<>(userName);
+        //TreeItem<String> homeCrumb = new TreeItem<>("Home");
+        TreeItem<String> userCrumb = new TreeItem<>(userName);
 
-       rootCrumb.getChildren().add(userCrumb);
-       //homeCrumb.getChildren().add(userCrumb);
+        rootCrumb.getChildren().add(userCrumb);
+        //homeCrumb.getChildren().add(userCrumb);
 
-       breadCrumbBar.setSelectedCrumb(userCrumb);
+        breadCrumbBar.setSelectedCrumb(userCrumb);
 
-       loadStaffTable(userId);
-   }
+        loadStaffTable(userId);
+    }
 
 
     private int getUserIdByName(String name) {
         try (var conn = DB.connect();
              var ps = conn.prepareStatement("""
-                SELECT U.user_id FROM users U
-                JOIN roles R ON U.role_id = R.role_id
-                WHERE U.user_name = ? AND R.role_name = 'Cashier' AND U.is_active = TRUE
-             """)) {
+                        SELECT U.user_id FROM users U
+                        JOIN roles R ON U.role_id = R.role_id
+                        WHERE U.user_name = ? AND R.role_name = 'Cashier' AND U.is_active = TRUE
+                     """)) {
             ps.setString(1, name);
             var rs = ps.executeQuery();
             if (rs.next()) return rs.getInt("user_id");
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return -1;
     }
+
     private void loadStaffTable(int userId) {
         String filter = getDateFilter("activity_date");
 
@@ -279,12 +238,34 @@ public class StaffPerformanceController {
 
         tableView.setItems(data);
 
+        // ---- Table sizing / behavior ----
+        tableView.setColumnResizePolicy(javafx.scene.control.TableView.CONSTRAINED_RESIZE_POLICY);
+        tableView.setFixedCellSize(40);                 // row height
+        tableView.setPrefHeight(520);                   // visible height
+        tableView.setMaxWidth(900);                     // prevent stretching
+        tableView.setPrefWidth(900);
+
+        // ---- Wrapper (centers the table) ----
         VBox wrapper = new VBox(tableView);
-        wrapper.setStyle("-fx-padding: 15");
-        VBox.setVgrow(tableView, Priority.ALWAYS);
+        wrapper.setAlignment(javafx.geometry.Pos.CENTER);
+        wrapper.setPadding(new javafx.geometry.Insets(15));
+
+        // If you want the table to keep its height and not expand vertically, comment this out:
+        // VBox.setVgrow(tableView, Priority.ALWAYS);
+
+        // ---- ScrollPane styling ----
+        scrollPane.setFitToWidth(true);    // wrapper uses full scroll width (table stays centered due to maxWidth)
+        scrollPane.setFitToHeight(true);
+        scrollPane.setPannable(true);
+        scrollPane.setStyle(
+                "-fx-background: transparent;" +
+                        "-fx-background-color: transparent;" +
+                        "-fx-padding: 0;"
+        );
 
         scrollPane.setContent(wrapper);
     }
+
 
     private void setupTable() {
         tableView = new TableView<>();

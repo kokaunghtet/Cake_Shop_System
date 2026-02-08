@@ -9,16 +9,14 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.sql.*;
-import java.time.LocalDate;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class UserDAO {
     // ========================
     // ==== AUTHENTICATION ====
     // ========================
-    public static AuthResult authenticateUser(String username, String password) throws SQLException {
+    public static AuthResult authenticateUser(String username, String password) {
         final String SQL_SELECT_USER_BY_USERNAME =
                 "SELECT user_id, role_id, password_hash, email, user_name, image_path, is_active " +
                         "FROM users WHERE user_name = ?";

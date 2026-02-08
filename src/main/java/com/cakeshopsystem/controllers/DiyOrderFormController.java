@@ -64,7 +64,7 @@ public class DiyOrderFormController {
         memberId = null;
         baseCakeProduct = null;
 
-        blockPastDates(dbOrderDate);
+        blockPastAndToday(dbOrderDate);
 
         btnCancel.setOnAction(e -> MainController.handleClosePopupContent());
         btnSearch.setOnAction(e -> handleSearchMember());
@@ -238,7 +238,7 @@ public class DiyOrderFormController {
     // =====================================
     // DATE & UI UTILITIES
     // =====================================
-    public static void blockPastDates(DatePicker datePicker) {
+    public static void blockPastAndToday(DatePicker datePicker) {
         LocalDate today = LocalDate.now();
 
         datePicker.setDayCellFactory(dp -> new DateCell() {
@@ -247,16 +247,19 @@ public class DiyOrderFormController {
                 super.updateItem(item, empty);
                 if (empty || item == null) return;
 
-                boolean isPast = item.isBefore(today);
-                setDisable(isPast);
-                setStyle(isPast ? "-fx-opacity: 0.4;" : "");
+                boolean disableDay = !item.isAfter(today); // <= today
+                setDisable(disableDay);
+                setStyle(disableDay ? "-fx-opacity: 0.4;" : "");
             }
         });
 
         datePicker.valueProperty().addListener((obs, oldV, newV) -> {
-            if (newV != null && newV.isBefore(today)) datePicker.setValue(null);
+            if (newV != null && !newV.isAfter(today)) { // <= today
+                datePicker.setValue(null);
+            }
         });
     }
+
 
     private void bindManagedToVisible(Region... regions) {
         for (Region r : regions) {
