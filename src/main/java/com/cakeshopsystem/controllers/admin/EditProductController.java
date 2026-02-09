@@ -119,6 +119,43 @@ public class EditProductController {
 
         btnAddStock.setOnAction(e -> handleAddStock());
         setupShelfLifePreview();
+        setupDiyRadioStyles();
+        setupStatusRadioStyles();
+    }
+
+    private void setupDiyRadioStyles() {
+        updateDiyRadioStyles();
+
+        rbDiyYes.selectedProperty().addListener((obs, oldV, newV) -> updateDiyRadioStyles());
+        rbDiyNo.selectedProperty().addListener((obs, oldV, newV) -> updateDiyRadioStyles());
+    }
+
+    private void setupStatusRadioStyles() {
+        updateStatusRadioStyles();
+
+        rbActive.selectedProperty().addListener((obs, oldV, newV) -> updateStatusRadioStyles());
+        rbInactive.selectedProperty().addListener((obs, oldV, newV) -> updateStatusRadioStyles());
+    }
+
+    private void updateDiyRadioStyles() {
+        // add .inactive when "No" is selected
+        if (rbDiyNo.isSelected()) {
+            if (!rbDiyNo.getStyleClass().contains("inactive")) {
+                rbDiyNo.getStyleClass().add("inactive");
+            }
+        } else {
+            rbDiyNo.getStyleClass().remove("inactive");
+        }
+    }
+
+    private void updateStatusRadioStyles() {
+        if (rbInactive.isSelected()) {
+            if (!rbInactive.getStyleClass().contains("inactive")) {
+                rbInactive.getStyleClass().add("inactive");
+            }
+        } else {
+            rbInactive.getStyleClass().remove("inactive");
+        }
     }
 
     // =====================================
@@ -165,6 +202,8 @@ public class EditProductController {
 
         rbDiyYes.setSelected(diyAllowed);
         rbDiyNo.setSelected(!diyAllowed);
+
+        updateDiyRadioStyles();
     }
 
     private void applyCategoryRules(Product p) {

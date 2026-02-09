@@ -55,3 +55,40 @@
     -app-warning-color : #F59E0B;
     -app-info-color : #38BDF8;
 }
+
+.root.dark {
+    -app-base-text-color : #F2E6D6;
+    -app-muted-text-color : #CDBAA4;
+
+    /* ✅ less dark than before */
+    -app-bg-color : #171311;          /* was #0E0B09 */
+    -app-border-color : #3A2E27;      /* was #2B211B */
+
+    -app-surface-color : #221B17;     /* was #171210 */
+    -app-surface-hover-color : #2D241E; /* was #221B16 */
+
+    -app-primary-color : #D8A25E;
+    -app-primary-hover-color : #E7BD7F;
+
+    -app-secondary-color : #A85C2E;
+    -app-accent-color : #3F6A45;
+
+    -app-icon-color : #D9B58A;
+
+    /* ✅ softer shadows */
+    -app-soft-shadow: dropshadow(gaussian, rgba(0, 0, 0, 0.65), 12, 0.25, 0, 2);
+    -app-strong-shadow: dropshadow(gaussian, rgba(0, 0, 0, 0.78), 20, 0.30, 0, 6);
+
+    -app-success-color : #2FD08B;
+    -app-error-color : #FF6B6B;
+    -app-warning-color : #FFB020;
+    -app-info-color : #5FA8FF;
+}
+
+.root.dark .text-field,
+.root.dark .password-field {
+    -fx-prompt-text-fill: -app-base-text-color;
+}
+
+
+

@@ -22,6 +22,7 @@ public class BookingCardController {
 
     @FXML public ImageView ivBooking;
 
+    @FXML public Label lblMemberPhone;
     @FXML public Label lblBookingName;
     @FXML public Label lblPickupDate;
 
@@ -68,6 +69,7 @@ public class BookingCardController {
     // CARD MODE CONFIGURATION
     // =====================================
     public void setupForCustomCake() {
+        setVisibleManaged(lblMemberPhone, false);
         setVisibleManaged(ivBooking, false);
         setVisibleManaged(hbSessionTime, false);
         setVisibleManaged(lblStartTime, false);
@@ -75,6 +77,7 @@ public class BookingCardController {
     }
 
     public void setupForDiy() {
+        setVisibleManaged(lblMemberPhone, true);
         setVisibleManaged(ivBooking, true);
         setVisibleManaged(hbSessionTime, true);
         setVisibleManaged(lblStartTime, true);

@@ -36,7 +36,26 @@ public class SessionManager {
     public static User user;
     public static boolean isAdmin;
     public static boolean isDarkModeOn = false;
-    public static double discountRate = 0.5; // 50% discount rate for expired soon products
+
+    public static boolean isIsDarkModeOn() {
+        return isDarkModeOn;
+    }
+
+    public static void setIsDarkModeOn(boolean isDarkModeOn) {
+        SessionManager.isDarkModeOn = isDarkModeOn;
+    }
+
+    public static double discountRate = 0.5;
+
+    public static double getDiscountRate() {
+        return discountRate;
+    }
+
+    public static void setDiscountRate(double discountRate) {
+        SessionManager.discountRate = discountRate;
+    }
+
+    // 50% discount rate for expired soon products
 
     // Utility class (prevent instantiation)
     private SessionManager() {}
