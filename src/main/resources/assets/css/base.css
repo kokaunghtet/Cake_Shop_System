@@ -2,10 +2,10 @@
    Root / Global Defaults
    ========================= */
 .root {
-  -fx-font-family: Arial, sans-serif;
-  -fx-font-size: 16;
-  -fx-font-weight: normal;
-  -fx-background-color: -app-bg-color;
+    -fx-font-family: Arial, sans-serif;
+    -fx-font-size: 16;
+    -fx-font-weight: normal;
+    -fx-background-color: -app-bg-color;
 }
 
 /* =========================
@@ -24,6 +24,19 @@
 
 .container * {
   -fx-background-color: transparent;
+}
+
+.chart-container {
+  -fx-background-color: -app-surface-color;
+  -fx-border-radius: 14;
+  -fx-border-color: -app-border-color;
+  -fx-border-width: 2;
+  -fx-background-radius: 14;
+  -fx-effect: -app-soft-shadow;
+  -fx-padding: 14;
+}
+.chart-background {
+    -fx-background-color: -app-surface-color;
 }
 
 /* =========================

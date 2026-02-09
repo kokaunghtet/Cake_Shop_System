@@ -403,6 +403,10 @@
 /* =================================================
    SCROLL PANE SCROLLBARS
    ================================================= */
+.scroll-pane .scroll-bar {
+    -fx-background-color: transparent;
+}
+
 .scroll-pane .scroll-bar:horizontal {
     -fx-pref-height: 12;
     -fx-min-height: 12;
@@ -468,3 +472,36 @@
 .edit-avatar-btn:hover{
     -fx-background-color: rgba(0,0,0,0.70);
 }
+
+/* ===== Charts background to match surface ===== */
+.chart {
+    -fx-background-color: -app-surface-color;
+    -fx-padding: 10;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-border-color: -app-border-color;
+    -fx-border-width: 1;
+}
+
+/* The inner plot area (where bars/lines are drawn) */
+.chart-plot-background {
+    -fx-background-color: -app-surface-color;
+}
+
+/* Remove Modena's alternating background stripes (optional) */
+.chart-alternative-row-fill,
+.chart-alternative-column-fill {
+    -fx-fill: transparent;
+}
+
+/* Make grid lines softer (optional) */
+.chart-horizontal-grid-lines,
+.chart-vertical-grid-lines {
+    -fx-stroke: rgba(0,0,0,0.10);
+}
+
+/* Also helps with the legend background (optional) */
+.chart-legend {
+    -fx-background-color: transparent;
+}
+

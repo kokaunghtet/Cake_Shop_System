@@ -19,7 +19,8 @@ public class SessionManager {
     // =========================
     // App Constants
     // =========================
-    public static final int PAGINATION_LIMIT = 10;
+    public static final int TABLE_CELL_SIZE = 44;
+//    public static final int PAGINATION_LIMIT = 10;
     private static final List<Consumer<User>> USER_LISTENERS = new CopyOnWriteArrayList<>();
 
     // =========================

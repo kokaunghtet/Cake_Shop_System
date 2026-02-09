@@ -21,7 +21,7 @@ public class ChangeScene {
             return;
 
         boolean wasMaximized = stage.isMaximized(); // Save the current maximized state
-        System.out.println("Stage was maximized: " + wasMaximized); // Debugging log
+//        System.out.println("Stage was maximized: " + wasMaximized); // Debugging log
 
         try {
             URL fxmlURL = ChangeScene.class.getResource("/views/" + fxmlFile);
@@ -52,8 +52,8 @@ public class ChangeScene {
                 if (wasMaximized) {
                     tryManualSizing(stage); // Call the new method for manual sizing
                     stage.setMaximized(true); // Force the stage to maximize
-                    System.out.println("Restoring maximized state");
-                    System.out.println("Stage is now maximized: " + stage.isMaximized());
+//                    System.out.println("Restoring maximized state");
+//                    System.out.println("Stage is now maximized: " + stage.isMaximized());
 
                     // Fallback: Try again after a short delay if not maximized
                     if (!stage.isMaximized()) {
@@ -61,8 +61,8 @@ public class ChangeScene {
                         pause.setOnFinished(_ -> {
                             tryManualSizing(stage); // Try manual sizing again
                             stage.setMaximized(true);
-                            System.out.println("Fallback: Restoring maximized state again");
-                            System.out.println("Stage is now maximized after fallback: " + stage.isMaximized());
+//                            System.out.println("Fallback: Restoring maximized state again");
+//                            System.out.println("Stage is now maximized after fallback: " + stage.isMaximized());
                         });
                         pause.play();
                     }
@@ -87,8 +87,7 @@ public class ChangeScene {
             stage.setHeight(screenHeight);
             stage.setX(screen.getVisualBounds().getMinX()); // Position at top-left
             stage.setY(screen.getVisualBounds().getMinY());
-            System.out
-                    .println("Manual sizing applied: Width = " + stage.getWidth() + ", Height = " + stage.getHeight());
+//            System.out.println("Manual sizing applied: Width = " + stage.getWidth() + ", Height = " + stage.getHeight());
         } catch (Exception e) {
             System.err.println("Failed to apply manual sizing: " + e.getMessage());
         }

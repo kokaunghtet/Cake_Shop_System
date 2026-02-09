@@ -23,6 +23,8 @@ public class CakeShopSystemApplication extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
+        Application.setUserAgentStylesheet(Application.STYLESHEET_MODENA);
+
         // Load the first screen (Login form) from FXML.
         Parent mainContent = FXMLLoader.load(
                 Objects.requireNonNull(
@@ -33,6 +35,7 @@ public class CakeShopSystemApplication extends Application {
 
         // Root container for the whole app scene (lets us overlay things like SnackBar on top).
         StackPane root = new StackPane(mainContent);
+        root.getStyleClass().add("root");
 
         // Container that will hold SnackBar notifications (positioned at the top-center).
         VBox snackBarContainer = new VBox(10);            // 10px spacing between snackbars

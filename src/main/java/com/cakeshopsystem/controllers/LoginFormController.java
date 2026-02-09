@@ -59,12 +59,6 @@ public class LoginFormController {
     // =====================================
     @FXML
     private void initialize() {
-        usernameTextField.setText("Nub Cat");
-        pswPasswordField.setText("Nubcat123!@#");
-
-//        usernameTextField.setText("Admin");
-//        pswPasswordField.setText("Admin123!@#");
-
         usernameTextField.requestFocus();
 
         pswPasswordField.managedProperty().bind(pswPasswordField.visibleProperty());

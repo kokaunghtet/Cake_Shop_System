@@ -191,7 +191,7 @@
 
 /* selected day */
 .date-picker-popup .day-cell:selected {
-    -fx-background-color: -app-primary-color;
+    -fx-background-color: -app-primary-hover-color;
     -fx-text-fill: -app-surface-color;
     -fx-font-weight: 700;
 }

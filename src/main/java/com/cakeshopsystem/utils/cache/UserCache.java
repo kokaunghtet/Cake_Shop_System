@@ -3,7 +3,6 @@ package com.cakeshopsystem.utils.cache;
 import com.cakeshopsystem.models.User;
 import com.cakeshopsystem.utils.AuthResult;
 import com.cakeshopsystem.utils.dao.UserDAO;
-import com.cakeshopsystem.utils.session.SessionManager;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -13,28 +12,32 @@ import java.util.Map;
 
 public class UserCache {
 
-    // ===================== Cache Containers =====================
+    // =====================================
+    // CACHE CONTAINERS
+    // =====================================
     private static final ObservableList<User> userList = FXCollections.observableArrayList();
     private static final Map<Integer, User> userMap = new HashMap<>();
     private static final Map<Integer, ObservableList<User>> usersByRole = new HashMap<>();
 
-    // ===================== State & Config =====================
+    // =====================================
+    // STATE & CONFIG
+    // =====================================
     private static final Object refreshLock = new Object();
-    private static final int DEFAULT_LIMIT = SessionManager.PAGINATION_LIMIT;
-
     private static volatile boolean isRefreshing = false;
-    private static int currentOffset = 0;
     private static int totalUsers = 0;
     private static Map<Integer, Integer> totalUsersByRole = new HashMap<>();
 
     private UserCache() {}
 
-    // ===================== Public Accessors =====================
-
+    // =====================================
+    // PUBLIC ACCESSORS
+    // =====================================
     public static ObservableList<User> getUsersList() {
-        if (userList.isEmpty()) refreshUsers();
+        int total = UserDAO.getTotalUserCount();
+        if (userList.size() < total) refreshUsers();
         return userList;
     }
+
 
     public static User getUserById(int userId) {
         User cached = userMap.get(userId);
@@ -79,61 +82,18 @@ public class UserCache {
         return cached;
     }
 
-    // ===================== Pagination / Loading =====================
-
-    /**
-     * Loads a page from DB and merges into cache. Returns ONLY the freshly loaded page.
-     */
-    public static ObservableList<User> loadMoreUsers(int limit, int offset) {
-        synchronized (refreshLock) {
-            if (isRefreshing) return FXCollections.observableArrayList();
-            isRefreshing = true;
-        }
-
-        try {
-            int safeLimit = Math.max(1, limit);
-            int safeOffset = Math.max(0, offset);
-
-            ObservableList<User> users = UserDAO.getAllUsers(safeLimit, safeOffset);
-
-            synchronized (refreshLock) {
-                for (User user : users) {
-                    if (!userMap.containsKey(user.getUserId())) {
-                        addToCache(user);
-                    } else {
-                        // keep cache updated if the row changed
-                        addToCache(user);
-                    }
-                }
-                currentOffset = safeOffset;
-                FXCollections.sort(userList, Comparator.comparingInt(User::getUserId));
-            }
-
-            return FXCollections.observableArrayList(users);
-        } finally {
-            synchronized (refreshLock) {
-                isRefreshing = false;
-            }
-        }
-    }
-
-    // ===================== Refresh =====================
-
+    // =====================================
+    // REFRESH LOGIC
+    // =====================================
     public static void refreshUsers() {
-        refreshUsers(DEFAULT_LIMIT, currentOffset);
-    }
-
-    public static void refreshUsers(int limit, int offset) {
         synchronized (refreshLock) {
             if (isRefreshing) return;
             isRefreshing = true;
         }
 
         try {
-            int safeLimit = Math.max(1, limit);
-            int safeOffset = Math.max(0, offset);
-
-            ObservableList<User> users = UserDAO.getAllUsers(safeLimit, safeOffset);
+            // Calling the updated DAO method (No pagination parameters)
+            ObservableList<User> users = UserDAO.getAllUsers();
             totalUsers = UserDAO.getTotalUserCount();
             totalUsersByRole = UserDAO.getUserCountByRole();
 
@@ -150,7 +110,6 @@ public class UserCache {
                             .add(user);
                 }
 
-                currentOffset = safeOffset;
                 FXCollections.sort(userList, Comparator.comparingInt(User::getUserId));
             }
         } finally {
@@ -160,8 +119,9 @@ public class UserCache {
         }
     }
 
-    // ===================== CRUD Operations =====================
-
+    // =====================================
+    // CRUD OPERATIONS
+    // =====================================
     public static boolean addUser(User user) {
         AuthResult res = UserDAO.insertUser(user);
         if (res != null && res.success()) {
@@ -206,8 +166,9 @@ public class UserCache {
         return true;
     }
 
-    // ===================== Clear Cache =====================
-
+    // =====================================
+    // CACHE MANAGEMENT
+    // =====================================
     public static void clearCache() {
         synchronized (refreshLock) {
             userList.clear();
@@ -215,13 +176,13 @@ public class UserCache {
             usersByRole.clear();
             totalUsers = 0;
             totalUsersByRole.clear();
-            currentOffset = 0;
             isRefreshing = false;
         }
     }
 
-    // ===================== Internal Helpers =====================
-
+    // =====================================
+    // INTERNAL HELPERS
+    // =====================================
     private static void addToCache(User user) {
         if (user == null) return;
 

@@ -55,7 +55,7 @@ public class MainController {
     /* =========================================================
      * 1. CONSTANTS & STATE
      * ========================================================= */
-    private static final String DEFAULT_VIEW_FXML = "/views/admin/AdminDashboard.fxml";
+    private static final String DEFAULT_VIEW_FXML = "/views/admin/Dashboard.fxml";
     private static final String DEFAULT_CASHIER_VIEW_FXML = "/views/ProductView.fxml";
     private static final String DEFAULT_TITLE_PREFIX = "Cake Shop System | ";
 
@@ -107,7 +107,7 @@ public class MainController {
     private Label usernameLabel;
 
     @FXML
-    private Hyperlink adminDashboardLink;
+    private Hyperlink dashboardLink;
     @FXML
     private Hyperlink adminProductLink;
     @FXML
@@ -182,7 +182,7 @@ public class MainController {
 
         if (SessionManager.isAdmin) {
             BreadcrumbManager.setBreadcrumbs();
-            navigate(DEFAULT_VIEW_FXML, adminDashboardLink, "Dashboard");
+            navigate(DEFAULT_VIEW_FXML, dashboardLink, "Dashboard");
 
             hideCartUI();
         } else {
@@ -192,7 +192,7 @@ public class MainController {
             initCartUI();
         }
 
-        if (adminDashboardLink != null) adminDashboardLink.setOnMouseClicked(e -> loadAdminDashboard());
+        if (dashboardLink != null) dashboardLink.setOnMouseClicked(e -> loadDashboard());
         if (userLink != null) userLink.setOnMouseClicked(e -> loadUser());
         if (memberLink != null) memberLink.setOnMouseClicked(e -> loadMember());
         if (adminProductLink != null) adminProductLink.setOnMouseClicked(e -> loadAdminProduct());
@@ -209,9 +209,7 @@ public class MainController {
         loadView(fxmlPath, navLink, DEFAULT_TITLE_PREFIX + pageName, pageName);
     }
 
-    public void loadAdminDashboard() {
-        navigate("/views/admin/AdminDashboard.fxml", adminDashboardLink, "Dashboard");
-    }
+    public void loadDashboard() {navigate("/views/admin/Dashboard.fxml", dashboardLink, "Dashboard");}
 
     public void loadUser() {
         navigate("/views/admin/UserView.fxml", userLink, "Users");
@@ -559,7 +557,7 @@ public class MainController {
         if (roleName.equalsIgnoreCase("Admin")) {
             hideLinks(customOrderLink, staffProductLink, bookingLink, diyOrderLink);
         } else if (roleName.equalsIgnoreCase("Cashier")) {
-            hideLinks(adminDashboardLink, adminProductLink, memberLink, userLink);
+            hideLinks(dashboardLink, adminProductLink, memberLink, userLink);
         }
     }
 

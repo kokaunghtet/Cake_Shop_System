@@ -2,6 +2,7 @@ package com.cakeshopsystem.controllers.admin;
 
 import com.cakeshopsystem.models.Member;
 import com.cakeshopsystem.utils.cache.MemberCache;
+import com.cakeshopsystem.utils.session.SessionManager;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -33,7 +34,7 @@ public class MemberViewController {
     }
 
     private void configureTable() {
-        memberTableView.setFixedCellSize(50);
+        memberTableView.setFixedCellSize(SessionManager.TABLE_CELL_SIZE);
 
         colName.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getMemberName()));
         colPhoneNumber.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getPhone()));

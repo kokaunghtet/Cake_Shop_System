@@ -256,23 +256,19 @@ public class UserDAO {
     // =======================
     // ====== User List ======
     // =======================
-    public static ObservableList<User> getAllUsers(int limit, int offset) {
+    // =====================================
+    // DATABASE OPERATIONS (READ)
+    // =====================================
+    public static ObservableList<User> getAllUsers() {
         ObservableList<User> users = FXCollections.observableArrayList();
 
-        int safeLimit = Math.max(1, limit);
-        int safeOffset = Math.max(0, offset);
-
-        final String SQL_SELECT_USERS_PAGED =
+        final String SQL_SELECT_ALL_USERS =
                 "SELECT user_id, user_name, role_id, email, image_path, is_active " +
                         "FROM users " +
-                        "ORDER BY user_id " +
-                        "LIMIT ? OFFSET ?";
+                        "ORDER BY user_id";
 
         try (Connection con = DB.connect();
-             PreparedStatement selectUsersStmt = con.prepareStatement(SQL_SELECT_USERS_PAGED)) {
-
-            selectUsersStmt.setInt(1, safeLimit);
-            selectUsersStmt.setInt(2, safeOffset);
+             PreparedStatement selectUsersStmt = con.prepareStatement(SQL_SELECT_ALL_USERS)) {
 
             try (ResultSet rs = selectUsersStmt.executeQuery()) {
                 while (rs.next()) {
@@ -281,7 +277,7 @@ public class UserDAO {
             }
 
         } catch (SQLException ex) {
-            System.err.println("Error fetching paginated user: " + ex.getLocalizedMessage());
+            System.err.println("Error fetching all users: " + ex.getLocalizedMessage());
         }
 
         return users;
@@ -333,9 +329,9 @@ public class UserDAO {
         String sql = "SELECT * FROM users WHERE user_id = ?";
         try (Connection con = DB.connect(); PreparedStatement stmt = con.prepareStatement(sql)) {
             stmt.setInt(1, userId);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next())
-                return extractUser(rs);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) return extractUser(rs);
+            }
         } catch (SQLException err) {
             System.err.println("Error fetching user: " + err.getLocalizedMessage());
         }
