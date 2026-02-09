@@ -53,7 +53,12 @@ public class UserViewController {
     private TextField txtSearch;
 
     public void initialize() {
+//        ObservableList<User> userList = UserDAO.getAllUsers();
         ObservableList<User> userList = UserCache.getUsersList();
+
+        for(User u : userList) {
+            System.out.println(u.getUserName());
+        }
         userTableView.setItems(userList);
 
         configureTable();
@@ -138,7 +143,7 @@ public class UserViewController {
     }
 
     private void configureTable() {
-        userTableView.setFixedCellSize(50);
+        userTableView.setFixedCellSize(SessionManager.TABLE_CELL_SIZE);
 
         colAvatar.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getImagePath()));
 
@@ -177,7 +182,7 @@ public class UserViewController {
 
             {
                 box.setAlignment(Pos.CENTER);
-                setText(null); // this cell uses graphic only
+                setText(null);
             }
 
             @Override
@@ -189,7 +194,7 @@ public class UserViewController {
                     return;
                 }
 
-                statusLabel.setText(item); // "Active" or "Inactive"
+                statusLabel.setText(item);
                 statusLabel.getStyleClass().setAll("status-" + item.replace(" ", "-").toLowerCase() + "-pill");
                 setGraphic(box);
             }
@@ -199,6 +204,4 @@ public class UserViewController {
     private void handleAddUser() {
         MainController.togglePopupContent("/views/admin/AddUser.fxml");
     }
-
-
 }

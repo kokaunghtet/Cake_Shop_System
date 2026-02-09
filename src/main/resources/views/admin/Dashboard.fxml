@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<AnchorPane fx:id="root" styleClass="chart-container" xmlns="http://javafx.com/javafx/25"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.cakeshopsystem.controllers.admin.DashboardController">
+
+    <ScrollPane fx:id="spDashboard" fitToWidth="true" styleClass="chart-background" AnchorPane.bottomAnchor="20.0"
+                AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+
+        <VBox alignment="CENTER" spacing="20.0" styleClass="chart-background">
+
+            <!-- Filter Combos Section -->
+            <HBox fx:id="hbFilters" alignment="CENTER_RIGHT" spacing="20.0" VBox.vgrow="ALWAYS">
+                <ComboBox fx:id="cbProductFilter"/>
+                <ComboBox fx:id="cbPeriodFilter"/>
+                <DatePicker fx:id="dpDateFilter"/>
+                <Button fx:id="btnRefresh" text="Refresh"/>
+            </HBox>
+
+            <!-- Top Products Cards & Revenue Section -->
+            <HBox spacing="20.0" VBox.vgrow="ALWAYS">
+
+                <!-- Revenue Section -->
+                <HBox fx:id="hbKpiSection" alignment="CENTER" spacing="20.0">
+                    <VBox spacing="20.0">
+
+                        <!-- Total Member -->
+                        <HBox fx:id="cardTotalMembers" alignment="CENTER" spacing="20.0" styleClass="card">
+                            <FontIcon iconLiteral="fas-users" iconSize="32"/>
+                            <VBox alignment="CENTER_LEFT" spacing="20.0">
+                                <Label styleClass="sub-title" text="Total Members"/>
+                                <Label fx:id="lblTotalMembers" text="0"/>
+                            </VBox>
+                        </HBox>
+
+                        <!-- Total Orders -->
+                        <HBox fx:id="cardTotalOrders" alignment="CENTER" spacing="20.0" styleClass="card">
+                            <FontIcon iconLiteral="fas-receipt" iconSize="32"/>
+                            <VBox alignment="CENTER_LEFT" spacing="20.0">
+                                <Label styleClass="sub-title" text="Total Orders"/>
+                                <Label fx:id="lblTotalOrders" text="0"/>
+                            </VBox>
+                        </HBox>
+
+                    </VBox>
+
+                    <VBox spacing="20.0">
+
+                        <!-- Total Sales -->
+                        <HBox fx:id="cardTotalSales" alignment="CENTER" spacing="20.0" styleClass="card">
+                            <FontIcon iconLiteral="fas-coins" iconSize="32"/>
+                            <VBox alignment="CENTER_LEFT" spacing="20.0">
+                                <Label styleClass="sub-title" text="Total Sales"/>
+                                <Label fx:id="lblTotalSales" text="0"/>
+                            </VBox>
+                        </HBox>
+
+                        <!-- Total Cancel -->
+                        <HBox fx:id="cardTotalCancel" alignment="CENTER" spacing="20.0" styleClass="card">
+                            <FontIcon iconLiteral="fas-ban" iconSize="32"/>
+                            <VBox alignment="CENTER_LEFT" spacing="20.0">
+                                <Label styleClass="sub-title" text="Total Cancel"/>
+                                <Label fx:id="lblTotalCancel" text="0"/>
+                            </VBox>
+                        </HBox>
+
+                    </VBox>
+                    <padding>
+                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+                    </padding>
+                </HBox>
+
+                <!-- Top Products Section -->
+                <VBox spacing="20.0">
+                    <Label styleClass="sub-title" text="Top Selling Items"/>
+                    <HBox fx:id="hbTopSalesProduct" spacing="20.0"/>
+                </VBox>
+
+            </HBox>
+
+            <Separator/>
+
+            <!-- Bar Chart And Pie Chart Section -->
+            <HBox spacing="20.0" VBox.vgrow="ALWAYS">
+                <BarChart fx:id="bcProduct" HBox.hgrow="ALWAYS">
+                    <xAxis>
+                        <CategoryAxis label="Products" side="BOTTOM"/>
+                    </xAxis>
+                    <yAxis>
+                        <NumberAxis label="Sales Count" side="LEFT"/>
+                    </yAxis>
+                </BarChart>
+
+                <PieChart fx:id="pcProduct" HBox.hgrow="ALWAYS"/>
+            </HBox>
+
+            <!-- Line Chart -->
+            <HBox VBox.vgrow="ALWAYS">
+                <LineChart fx:id="lcRevenue" HBox.hgrow="ALWAYS">
+                    <xAxis>
+                        <CategoryAxis label="Date" side="BOTTOM"/>
+                    </xAxis>
+                    <yAxis>
+                        <NumberAxis label="Revenue (MMK)" side="LEFT"/>
+                    </yAxis>
+                </LineChart>
+            </HBox>
+
+            <Separator/>
+
+            <VBox maxWidth="Infinity" spacing="12">
+                <Label styleClass="sub-title" text="Staff"/>
+
+                <ScrollPane fitToHeight="true" fitToWidth="true" vbarPolicy="NEVER">
+                    <HBox fx:id="hbStaffCard" spacing="20" styleClass="chart-background">
+                        <padding>
+                            <Insets bottom="10" left="10" right="10" top="10"/>
+                        </padding>
+                    </HBox>
+                </ScrollPane>
+            </VBox>
+
+            <!-- Staff Details (hidden until double-click) -->
+            <VBox fx:id="vbStaffDetails" alignment="CENTER" managed="false" maxWidth="Infinity" spacing="12"
+                  visible="false">
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label fx:id="lblStaffDetailsTitle" styleClass="sub-title" text="Staff Details"/>
+                    <HBox HBox.hgrow="ALWAYS"/>
+                    <Button fx:id="btnCloseStaffDetails" text="Close"/>
+                </HBox>
+
+                <TableView fx:id="tblStaffDetails">
+                    <columns>
+                        <TableColumn fx:id="colOrderId" text="Order #" prefWidth="90"/>
+                        <TableColumn fx:id="colOrderDate" text="Date" prefWidth="170"/>
+                        <TableColumn fx:id="colItems" text="Items" prefWidth="80"/>
+                        <TableColumn fx:id="colTotal" text="Total (MMK)" prefWidth="140"/>
+                    </columns>
+                </TableView>
+                <padding>
+                    <Insets bottom="10" left="10" right="10" top="10"/>
+                </padding>
+            </VBox>
+
+
+        </VBox>
+    </ScrollPane>
+</AnchorPane>

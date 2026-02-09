@@ -10,6 +10,7 @@ import com.cakeshopsystem.utils.constants.SnackBarType;
 import com.cakeshopsystem.utils.dao.OrderDAO;
 import com.cakeshopsystem.utils.dao.StaffPerformanceDAO;
 import com.cakeshopsystem.utils.databaseconnection.DB;
+import com.cakeshopsystem.utils.session.SessionManager;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -240,7 +241,7 @@ public class StaffPerformanceController {
 
         // ---- Table sizing / behavior ----
         tableView.setColumnResizePolicy(javafx.scene.control.TableView.CONSTRAINED_RESIZE_POLICY);
-        tableView.setFixedCellSize(40);                 // row height
+        tableView.setFixedCellSize(SessionManager.TABLE_CELL_SIZE);                 // row height
         tableView.setPrefHeight(520);                   // visible height
         tableView.setMaxWidth(900);                     // prevent stretching
         tableView.setPrefWidth(900);

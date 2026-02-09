@@ -28,11 +28,10 @@ public class UserCardController {
     private User user;
     private Object ScreenLoader;
 
-
     private void loadAvatar(String imagePath) {
         Image avatar = ImageHelper.load(imagePath);
         userImage.setImage(avatar);
-        ImageHelper.applyCircularAvatar(userImage, 64);
+        ImageHelper.applyCircularAvatar(userImage, 100);
     }
 
     private void updateOrderCount() {
