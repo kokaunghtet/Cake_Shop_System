@@ -22,15 +22,13 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.control.Hyperlink;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.*;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Popup;
 import javafx.util.Duration;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -164,6 +162,10 @@ public class MainController {
             signOutIcon.setOnMouseClicked(e -> handleLogout());
         }
 
+        if (moonIcon != null) {
+            moonIcon.setOnMouseClicked(e -> toggleDarkMode());
+        }
+
         loadingOverlay = createLoadingOverlay();
         loadingOverlay.setVisible(false);
         loadingOverlay.setManaged(false);
@@ -200,7 +202,66 @@ public class MainController {
         if (customOrderLink != null) customOrderLink.setOnMouseClicked(e -> loadCustomOrder());
         if (diyOrderLink != null) diyOrderLink.setOnMouseClicked(e -> loadDiyOrder());
         if (bookingLink != null) bookingLink.setOnMouseClicked(e -> loadBooking());
+
+        Platform.runLater(() -> {
+            boolean dark = SessionManager.isIsDarkModeOn();
+            setDarkMode(dark);
+        });
     }
+
+    private void toggleDarkMode() {
+        Scene scene = mainStackPane.getScene();
+        if (scene == null) return;
+
+        Parent appRoot = scene.getRoot(); // <-- the StackPane root from Application
+
+        boolean enableDark = !appRoot.getStyleClass().contains("dark");
+        setDarkMode(enableDark);
+
+        System.out.println("root classes = " + appRoot.getStyleClass());
+
+    }
+
+    private void setDarkMode(boolean enable) {
+        Scene scene = mainStackPane.getScene();
+        if (scene == null) return;
+
+        Parent appRoot = scene.getRoot();
+
+        if (enable) {
+            if (!appRoot.getStyleClass().contains("dark")) appRoot.getStyleClass().add("dark");
+        } else {
+            appRoot.getStyleClass().remove("dark");
+        }
+
+        // Optional: remember in your app (add these methods/field in SessionManager if you want)
+         SessionManager.setIsDarkModeOn(enable);
+
+        // Optional: change icon (moon <-> sun)
+        if (moonIcon != null) {
+            moonIcon.setIconLiteral(enable ? "fas-sun" : "fas-moon");
+        }
+
+        // Optional: if you use a Popup for settings, it won't inherit scene root variables unless you add "root"/"dark"
+        syncPopupTheme(enable);
+    }
+
+    private void syncPopupTheme(boolean dark) {
+        if (settingsPopup == null || settingsPopup.getContent().isEmpty()) return;
+
+        for (Node n : settingsPopup.getContent()) {
+            if (n instanceof Parent p) {
+                if (!p.getStyleClass().contains("root"))
+                    p.getStyleClass().add("root"); // important for your css variables
+                if (dark) {
+                    if (!p.getStyleClass().contains("dark")) p.getStyleClass().add("dark");
+                } else {
+                    p.getStyleClass().remove("dark");
+                }
+            }
+        }
+    }
+
 
     /* =========================================================
      * 5. NAVIGATION & VIEW LOADING
@@ -209,7 +270,9 @@ public class MainController {
         loadView(fxmlPath, navLink, DEFAULT_TITLE_PREFIX + pageName, pageName);
     }
 
-    public void loadDashboard() {navigate("/views/admin/Dashboard.fxml", dashboardLink, "Dashboard");}
+    public void loadDashboard() {
+        navigate("/views/admin/Dashboard.fxml", dashboardLink, "Dashboard");
+    }
 
     public void loadUser() {
         navigate("/views/admin/UserView.fxml", userLink, "Users");
@@ -253,7 +316,7 @@ public class MainController {
     private void loadView(String fxmlPath, String windowTitle, String breadCrumbTitle) {
         setCenterContent(fxmlPath, windowTitle);
 
-        BreadcrumbManager.addBreadcrumb(new BreadcrumbBar.BreadcrumbItem(breadCrumbTitle, ev->loadView(fxmlPath, windowTitle, breadCrumbTitle)));
+        BreadcrumbManager.addBreadcrumb(new BreadcrumbBar.BreadcrumbItem(breadCrumbTitle, ev -> loadView(fxmlPath, windowTitle, breadCrumbTitle)));
     }
 
     private void initCartUI() {
@@ -351,22 +414,67 @@ public class MainController {
     /* =========================================================
      * 6. POPUP SYSTEM (Settings & Modal Popups)
      * ========================================================= */
+//    private void initSettingsPopup() {
+//        Hyperlink link1 = new Hyperlink("User Profile");
+//        Hyperlink link2 = new Hyperlink("Payment");
+//        Hyperlink link3 = new Hyperlink("Options & Pricing");
+//        Separator divider1 = new Separator();
+//        Separator divider2 = new Separator();
+//
+//        VBox box;
+//        if (SessionManager.isAdmin) {
+//            box = new VBox(10, link1, divider1, link2, divider2, link3);
+//        } else {
+//            box = new VBox(link1);
+//        }
+//        box.getStyleClass().add("container");
+//
+//        settingsPopup = new Popup();
+//        settingsPopup.getContent().add(box);
+//        settingsPopup.setAutoHide(true);
+//
+//        link1.setOnAction(e -> {
+//            togglePopupContent("/views/EditUserConfig.fxml");
+//            settingsPopup.hide();
+//        });
+//        link2.setOnAction(e -> {
+//            togglePopupContent("/views/EditPaymentConfig.fxml");
+//            settingsPopup.hide();
+//        });
+//        link3.setOnAction(event -> {
+//            togglePopupContent("/views/OptionsAndPricing.fxml");
+//            settingsPopup.hide();
+//        });
+//    }
+
     private void initSettingsPopup() {
         Hyperlink link1 = new Hyperlink("User Profile");
         Hyperlink link2 = new Hyperlink("Payment");
-        Hyperlink link3 = new Hyperlink("Cake Options");
+        Hyperlink link3 = new Hyperlink("Options & Pricing");
+        Separator divider1 = new Separator();
+        Separator divider2 = new Separator();
 
-        VBox box;
-        if (SessionManager.isAdmin) {
-            box = new VBox(10, link1, link2, link3);
-        } else {
-            box = new VBox(link1);
-        }
+        VBox box = SessionManager.isAdmin
+                ? new VBox(10, link1, divider1, link2, divider2, link3)
+                : new VBox(link1);
+
         box.getStyleClass().add("container");
 
+        // ✅ Clip the box so corners are truly rounded (including anything behind)
+        Rectangle clip = new Rectangle();
+        clip.setArcWidth(22);
+        clip.setArcHeight(22);
+        clip.widthProperty().bind(box.widthProperty());
+        clip.heightProperty().bind(box.heightProperty());
+        box.setClip(clip);
+
+        StackPane wrapper = new StackPane(box);
+        wrapper.getStyleClass().add("popup-wrapper"); // shadow goes here
+
         settingsPopup = new Popup();
-        settingsPopup.getContent().add(box);
+        settingsPopup.getContent().add(wrapper);
         settingsPopup.setAutoHide(true);
+        settingsPopup.setAutoFix(true);
 
         link1.setOnAction(e -> {
             togglePopupContent("/views/EditUserConfig.fxml");
@@ -376,11 +484,12 @@ public class MainController {
             togglePopupContent("/views/EditPaymentConfig.fxml");
             settingsPopup.hide();
         });
-//        link3.setOnAction(event -> {
-//            loadView("/views/EditCakeOptions.fxml");
-//            settingsPopup.hide();
-//        });
+        link3.setOnAction(e -> {
+            togglePopupContent("/views/OptionsAndPricing.fxml");
+            settingsPopup.hide();
+        });
     }
+
 
     private void showSettingsPopup() {
         if (settingsPopup == null) return;
@@ -420,38 +529,8 @@ public class MainController {
     }
 
     private static void loadPopupContent(Parent content) {
-        Button existingCloseBtn = (Button) staticPopupContentPane.lookup("#closeBtn");
-        if (existingCloseBtn == null) {
-            Button closeBtn = createCloseButton();
-            staticPopupContentPane.getChildren().add(closeBtn);
-        }
         setPopupContent(content);
     }
-
-//    private static void setPopupContent(Parent content) {
-//        if (content instanceof Region r) {
-//            r.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-//        }
-//
-//        Button closeBtn = (Button) staticPopupContentPane.lookup("#closeBtn");
-//        if (closeBtn == null) closeBtn = createCloseButton();
-//
-//        StackPane wrapper = new StackPane();
-//        wrapper.setPadding(new Insets(15));
-//        wrapper.getChildren().addAll(content, closeBtn);
-//        StackPane.setAlignment(closeBtn, Pos.TOP_RIGHT);
-//
-//        AnchorPane.setTopAnchor(wrapper, 0.0);
-//        AnchorPane.setRightAnchor(wrapper, 0.0);
-//        AnchorPane.setBottomAnchor(wrapper, 0.0);
-//        AnchorPane.setLeftAnchor(wrapper, 0.0);
-//
-//        staticPopupContentPane.getChildren().setAll(wrapper);
-//        Platform.runLater(() -> installFocusTrap(wrapper));
-//
-//        wrapper.setOpacity(0);
-//        new Timeline(new KeyFrame(Duration.millis(200), new KeyValue(wrapper.opacityProperty(), 1, Interpolator.EASE_BOTH))).play();
-//    }
 
     private static void setPopupContent(Parent content) {
         if (content instanceof Region r) {

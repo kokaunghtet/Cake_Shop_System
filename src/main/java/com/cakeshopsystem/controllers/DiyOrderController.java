@@ -49,6 +49,8 @@ public class DiyOrderController {
         ObservableList<Product> cakeList = ProductCache.getProductsByCategoryId(1);
         for (Product p : cakeList) {
 
+            if (!p.isActive()) continue;
+
             Cake cake = CakeCache.getCakeByProductId(p.getProductId());
             if (cake == null) continue;
 

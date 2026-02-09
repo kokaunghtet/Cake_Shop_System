@@ -505,3 +505,28 @@
     -fx-background-color: transparent;
 }
 
+.settings-menu-bg {
+    -fx-fill: -app-surface-color;
+    -fx-stroke: -app-border-color;
+    -fx-stroke-width: 1;
+    -fx-effect: -app-strong-shadow;   /* your dropshadow variable */
+}
+
+.settings-menu-content {
+    -fx-padding: 14;
+}
+
+.settings-menu-content .hyperlink {
+    -fx-text-fill: -app-base-text-color;
+    -fx-padding: 8 12 8 12;
+    -fx-border-color: transparent;
+}
+
+.settings-menu-content .hyperlink:hover {
+    -fx-background-color: -app-surface-hover-color;
+    -fx-background-radius: 12;
+}
+
+.settings-menu-content .separator *.line {
+    -fx-border-color: -app-border-color;
+}

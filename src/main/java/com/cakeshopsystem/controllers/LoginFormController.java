@@ -5,11 +5,16 @@ import com.cakeshopsystem.utils.ChangeScene;
 import com.cakeshopsystem.utils.components.SnackBar;
 import com.cakeshopsystem.utils.constants.SnackBarType;
 import com.cakeshopsystem.utils.dao.UserDAO;
+import com.cakeshopsystem.utils.session.SessionManager;
 import com.cakeshopsystem.utils.validators.Validator;
 import javafx.animation.PauseTransition;
+import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
@@ -87,6 +92,24 @@ public class LoginFormController {
 
         loginButton.setOnAction(e -> attemptLogin());
         forgotPasswordLink.setOnAction(this::handleForgotPassword);
+
+        Platform.runLater(() -> {
+            boolean dark = SessionManager.isIsDarkModeOn();
+            setDarkMode(dark);
+        });
+    }
+
+    private void setDarkMode(boolean enable) {
+        Scene scene = loginStackPane.getScene();
+        if (scene == null) return;
+
+        Parent appRoot = scene.getRoot();
+
+        if (enable) {
+            if (!appRoot.getStyleClass().contains("dark")) appRoot.getStyleClass().add("dark");
+        } else {
+            appRoot.getStyleClass().remove("dark");
+        }
     }
 
     // =====================================

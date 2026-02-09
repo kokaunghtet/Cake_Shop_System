@@ -2,6 +2,7 @@ package com.cakeshopsystem.controllers;
 
 import com.cakeshopsystem.utils.constants.BookingStatus;
 import com.cakeshopsystem.utils.dao.BookingDAO;
+import com.cakeshopsystem.utils.dao.DiyCakeBookingDAO;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -73,19 +74,22 @@ public class BookingController {
                 Parent card = loader.load();
                 BookingCardController c = loader.getController();
 
-                c.setupForDiy(); // make sure you implemented in BookingCardController
+                c.setupForDiy();
+
+                String phone = row.getMemberPhone();
+                if (phone == null || phone.isBlank()) phone = "-";
+                c.lblMemberPhone.setText("Member Phone: " + phone);
 
                 c.lblBookingName.setText("DIY Booking (Order #" + row.getOrderId() + ")");
                 c.lblPickupDate.setText("Date: " + row.getStartTime().toLocalDate().format(DATE_FMT));
 
-                setSessionTime(c, row.getStartTime().toLocalTime().format(TIME_FMT),
-                        row.getEndTime().toLocalTime().format(TIME_FMT));
-
-                wireStatusSave(
+                setSessionTime(
                         c,
-                        row.getBookingId(),
-                        row.getStatus()
+                        row.getStartTime().toLocalTime().format(TIME_FMT),
+                        row.getEndTime().toLocalTime().format(TIME_FMT)
                 );
+
+                wireStatusSave(c, row.getBookingId(), row.getStatus());
 
                 hbDiyOrder.getChildren().add(card);
 
@@ -110,7 +114,7 @@ public class BookingController {
         }
 
         // this holds the latest saved status (NOT the combo current selection)
-        final BookingStatus[] savedStatus = { initialStatus };
+        final BookingStatus[] savedStatus = {initialStatus};
 
         // apply initial style + lock
         c.applyStatusStyle(savedStatus[0]);

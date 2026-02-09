@@ -32,32 +32,53 @@ public class ProductCardController {
     // =====================================
     // FXML UI COMPONENTS
     // =====================================
-    @FXML private StackPane productCardStackPane;
-    @FXML private VBox productCardVBox;
-    @FXML private ImageView productImage;
-    @FXML private Label productName;
+    @FXML
+    private StackPane productCardStackPane;
+    @FXML
+    private VBox productCardVBox;
+    @FXML
+    private ImageView productImage;
+    @FXML
+    private Label productName;
 
-    @FXML private HBox drinkOptions;
-    @FXML private RadioButton hotOption;
-    @FXML private RadioButton coldOption;
-    @FXML private ToggleGroup drinkOptionsRadioBtn;
+    @FXML
+    private HBox drinkOptions;
+    @FXML
+    private RadioButton hotOption;
+    @FXML
+    private RadioButton coldOption;
+    @FXML
+    private ToggleGroup drinkOptionsRadioBtn;
 
-    @FXML private Label productPrice;
-    @FXML private Label diyAvailability;
+    @FXML
+    private Label productPrice;
+    @FXML
+    private Label diyAvailability;
 
-    @FXML private HBox inStockItemsHBox;
-    @FXML private Label stockQuantityLabel;
-    @FXML private Label productStock;
+    @FXML
+    private HBox inStockItemsHBox;
+    @FXML
+    private Label stockQuantityLabel;
+    @FXML
+    private Label productStock;
 
-    @FXML private HBox qtyBtnHBox;
-    @FXML private HBox qtyStepperHBox;
-    @FXML private Button decreaseBtn;
-    @FXML private Label quantityLabel;
-    @FXML private Button increaseBtn;
+    @FXML
+    private HBox qtyBtnHBox;
+    @FXML
+    private HBox qtyStepperHBox;
+    @FXML
+    private Button decreaseBtn;
+    @FXML
+    private Label quantityLabel;
+    @FXML
+    private Button increaseBtn;
 
-    @FXML private HBox priceHBox;
-    @FXML private Button addToCartBtn;
-    @FXML private Button addStockQtyBtn;
+    @FXML
+    private HBox priceHBox;
+    @FXML
+    private Button addToCartBtn;
+    @FXML
+    private Button addStockQtyBtn;
 
     // =====================================
     // INTERNAL STATE
@@ -82,6 +103,11 @@ public class ProductCardController {
     // =====================================
     @FXML
     private void initialize() {
+        productImage.setFitWidth(180);
+        productImage.setFitHeight(140);
+        productImage.setPreserveRatio(true);
+        productImage.setSmooth(true);
+
         increaseBtn.setOnAction(e -> handleIncrementQuantity());
         decreaseBtn.setOnAction(e -> handleDecrementQuantity());
 
@@ -132,7 +158,7 @@ public class ProductCardController {
         if (inv == null || product == null) return;
 
         this.currentProduct = product;
-        this.unitPriceOverride = product.getPrice() * SessionManager.discountRate;
+        this.unitPriceOverride = product.getPrice() - (product.getPrice() * SessionManager.discountRate);
         this.optionOverride = "DISCOUNT";
 
         disableDrinkOptions();
@@ -527,10 +553,10 @@ public class ProductCardController {
     // =====================================
     private void loadProductImage(String imagePath) {
         try {
-            Image image = loadImageSmart(imagePath);
+            Image image = loadImageSmart(imagePath, 180, 140);
 
             if (image == null || image.isError()) {
-                image = loadImageSmart("/images/default-product.png");
+                image = loadImageSmart("/images/default-product.png", 180, 140);
             }
 
             if (image != null && !image.isError()) {
@@ -542,26 +568,50 @@ public class ProductCardController {
         }
     }
 
-    private Image loadImageSmart(String path) {
+    //    private Image loadImageSmart(String path) {
+//        if (path == null || path.isBlank()) return null;
+//
+//        if (path.matches("^(https?|file|jar):.*")) {
+//            return new Image(path, true);
+//        }
+//
+//        String res = path.startsWith("/") ? path : "/" + path;
+//        var url = getClass().getResource(res);
+//        if (url != null) {
+//            return new Image(url.toExternalForm(), true);
+//        }
+//
+//        var f = new java.io.File(path);
+//        if (f.exists()) {
+//            return new Image(f.toURI().toString(), true);
+//        }
+//
+//        return null;
+//    }
+    private Image loadImageSmart(String path, double reqW, double reqH) {
         if (path == null || path.isBlank()) return null;
 
+        String urlStr = null;
+
         if (path.matches("^(https?|file|jar):.*")) {
-            return new Image(path, true);
+            urlStr = path;
+        } else {
+            String res = path.startsWith("/") ? path : "/" + path;
+            var url = getClass().getResource(res);
+            if (url != null) {
+                urlStr = url.toExternalForm();
+            } else {
+                var f = new java.io.File(path);
+                if (f.exists()) urlStr = f.toURI().toString();
+            }
         }
 
-        String res = path.startsWith("/") ? path : "/" + path;
-        var url = getClass().getResource(res);
-        if (url != null) {
-            return new Image(url.toExternalForm(), true);
-        }
+        if (urlStr == null) return null;
 
-        var f = new java.io.File(path);
-        if (f.exists()) {
-            return new Image(f.toURI().toString(), true);
-        }
-
-        return null;
+        // ✅ scaled decode
+        return new Image(urlStr, reqW, reqH, true, true, true);
     }
+
 
     // =====================================
     // ADMIN POPUPS & REFRESH

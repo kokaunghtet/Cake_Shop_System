@@ -58,15 +58,17 @@ public class BookingDAO {
         private final BookingStatus status;
         private final LocalDateTime startTime;
         private final LocalDateTime endTime;
+        private final String memberPhone;
 
         public DiyCardRow(int diyCakeBookingId, int orderId, int bookingId,
-                          BookingStatus status, LocalDateTime startTime, LocalDateTime endTime) {
+                          BookingStatus status, LocalDateTime startTime, LocalDateTime endTime, String memberPhone) {
             this.diyCakeBookingId = diyCakeBookingId;
             this.orderId = orderId;
             this.bookingId = bookingId;
             this.status = status;
             this.startTime = startTime;
             this.endTime = endTime;
+            this.memberPhone = memberPhone;
         }
 
         public int getDiyCakeBookingId() { return diyCakeBookingId; }
@@ -75,6 +77,7 @@ public class BookingDAO {
         public BookingStatus getStatus() { return status; }
         public LocalDateTime getStartTime() { return startTime; }
         public LocalDateTime getEndTime() { return endTime; }
+        public String getMemberPhone() {return memberPhone;}
     }
 
     // =====================================
@@ -556,18 +559,20 @@ public class BookingDAO {
         ObservableList<DiyCardRow> rows = FXCollections.observableArrayList();
 
         String sql = """
-            SELECT
-              dcb.diy_cake_booking_id,
-              dcb.order_id,
-              dcb.booking_id,
-              b.booking_status,
-              dcb.session_date,
-              dcb.session_start
-            FROM diy_cake_bookings dcb
-            JOIN bookings b ON b.booking_id = dcb.booking_id
-            WHERE dcb.session_date >= CURRENT_DATE
-            ORDER BY dcb.session_date ASC, dcb.session_start ASC, dcb.diy_cake_booking_id DESC
-            """;
+        SELECT
+          dcb.diy_cake_booking_id,
+          dcb.order_id,
+          dcb.booking_id,
+          b.booking_status,
+          dcb.session_date,
+          dcb.session_start,
+          m.phone AS member_phone
+        FROM diy_cake_bookings dcb
+        JOIN bookings b ON b.booking_id = dcb.booking_id
+        JOIN members  m ON m.member_id  = dcb.member_id
+        WHERE dcb.session_date >= CURRENT_DATE
+        ORDER BY dcb.session_date ASC, dcb.session_start ASC, dcb.diy_cake_booking_id DESC
+        """;
 
         try (Connection con = DB.connect();
              PreparedStatement stmt = con.prepareStatement(sql);
@@ -583,10 +588,14 @@ public class BookingDAO {
                 Date d = rs.getDate("session_date");
                 Time t = rs.getTime("session_start");
 
-                LocalDateTime start = (d == null || t == null) ? null : LocalDateTime.of(d.toLocalDate(), t.toLocalTime());
+                LocalDateTime start = (d == null || t == null) ? null
+                        : LocalDateTime.of(d.toLocalDate(), t.toLocalTime());
+
                 LocalDateTime end = (start == null) ? null : start.plusHours(2);
 
-                rows.add(new DiyCardRow(id, orderId, bookingId, status, start, end));
+                String phone = rs.getString("member_phone");
+
+                rows.add(new DiyCardRow(id, orderId, bookingId, status, start, end, phone));
             }
 
         } catch (SQLException err) {
@@ -595,6 +604,7 @@ public class BookingDAO {
 
         return rows;
     }
+
 
     // -----------------------------
     // Mappers
