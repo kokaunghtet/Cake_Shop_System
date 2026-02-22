@@ -213,13 +213,10 @@ public class MainController {
         Scene scene = mainStackPane.getScene();
         if (scene == null) return;
 
-        Parent appRoot = scene.getRoot(); // <-- the StackPane root from Application
+        Parent appRoot = scene.getRoot();
 
         boolean enableDark = !appRoot.getStyleClass().contains("dark");
         setDarkMode(enableDark);
-
-        System.out.println("root classes = " + appRoot.getStyleClass());
-
     }
 
     private void setDarkMode(boolean enable) {
