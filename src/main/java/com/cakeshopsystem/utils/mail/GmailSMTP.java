@@ -48,9 +48,6 @@ public class GmailSMTP {
     }
 
     public static boolean sendMail(String targetAddress, String body) {
-        System.out.println("TO  = " + targetAddress);
-        System.out.println("FROM= " + username);
-        System.out.println("PASS is null? " + (password == null));
         try {
             Transport.send(buildMessage(targetAddress, body));
             return true;
